@@ -65,7 +65,7 @@ export default function Home() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">
-        {/* Background Effects - REMOVED grid.svg */}
+        {/* Background Effects */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl" />
           <div className="absolute bottom-0 left-0 -z-10 h-[400px] w-[400px] rounded-full bg-gradient-to-tr from-pink-500/10 to-orange-500/10 blur-3xl" />
@@ -102,13 +102,13 @@ export default function Home() {
             Powerful, simple online tools for students, developers, office workers, and everyday tasks.
           </p>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons - FIXED */}
           <div className="mt-8 flex flex-wrap justify-center gap-4">
             <Link href="/tools" className="btn-primary">
               Browse All Tools
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
-            <Link href="/tools/qr-code-generator" className="btn-secondary bg-white text-slate-900 hover:bg-slate-50 shadow-lg">
+            <Link href="/tools/qr-code-generator" className="btn-secondary bg-white text-slate-900 hover:bg-slate-50 shadow-lg border border-slate-200">
               Try a Popular Tool
             </Link>
           </div>
