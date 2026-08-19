@@ -22,26 +22,10 @@ import {
   FileText,
   X,
   Sparkles,
-  Link2,
-  Mail,
-  Lock,
-  Globe,
-  Share2,
-  Download,
-  Upload,
-  RefreshCw,
-  CheckCircle,
-  AlertCircle,
-  Info,
-  HelpCircle,
-  Shield,
-  Users,
-  Briefcase,
-  GraduationCap,
-  Code
+  RefreshCw
 } from 'lucide-react';
 
-// All tools data - 15+ tools
+// All tools data - REMOVED Character Counter
 const ALL_TOOLS = [
   // ========== Developer Tools (6) ==========
   {
@@ -92,7 +76,7 @@ const ALL_TOOLS = [
     category: 'Developer Tools',
     color: 'from-rose-500 to-red-500',
   },
-  // ========== Text Tools (4) ==========
+  // ========== Text Tools (3) - REMOVED Character Counter ==========
   {
     name: 'Word Counter',
     description: 'Count words, characters, and sentences in any text.',
@@ -100,14 +84,6 @@ const ALL_TOOLS = [
     href: '/tools/word-counter',
     category: 'Text Tools',
     color: 'from-rose-500 to-pink-500',
-  },
-  {
-    name: 'Character Counter',
-    description: 'Count characters with and without spaces.',
-    icon: Hash,
-    href: '/tools/character-counter',
-    category: 'Text Tools',
-    color: 'from-cyan-500 to-blue-500',
   },
   {
     name: 'Text to ASCII',
@@ -125,7 +101,7 @@ const ALL_TOOLS = [
     category: 'Text Tools',
     color: 'from-green-500 to-emerald-500',
   },
-  // ========== Calculator Tools (4) ==========
+  // ========== Calculator Tools (3) - REMOVED Character Counter ==========
   {
     name: 'Percentage Calculator',
     description: 'Calculate percentages quickly and easily.',
@@ -234,7 +210,7 @@ export default function AllTools() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="🔍 Search {ALL_TOOLS.length} tools by name, description, or category..."
+              placeholder={`🔍 Search ${ALL_TOOLS.length} tools by name, description, or category...`}
               className="w-full rounded-2xl border-2 border-slate-200 bg-white py-4 pl-12 pr-12 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/20 shadow-lg text-lg transition-all"
             />
             {searchQuery && (
