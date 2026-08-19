@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
   },
   
   verification: {
-    google: "YOUR_GOOGLE_VERIFICATION_CODE",
+    google: "",
   },
 };
 
@@ -81,10 +82,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="theme-color" content="#6366f1" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        
-        {/* Google Analytics Script */}
+      </head>
+      <body className={`${inter.variable} font-sans antialiased`}>
+        {/* Google Analytics */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
@@ -96,11 +98,14 @@ export default function RootLayout({
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}', {
               page_path: window.location.pathname,
+              send_page_view: true
             });
           `}
         </Script>
-      </head>
-      <body className={`${inter.variable} font-sans antialiased`}>
+
+        {/* Vercel Analytics - Not blocked by ad blockers */}
+        <Analytics />
+
         <Header />
         <main className="pt-16">
           {children}
