@@ -54,8 +54,9 @@ export const metadata: Metadata = {
     images: ["/logo.png"],
   },
   
+  // ✅ Google Search Console Verification
   verification: {
-    google: "",
+    google: "r7k1VSL4u3yoNvLHtX2qXYQweNMemcjCC46FI6DpJBs",
   },
 };
 
