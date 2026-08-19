@@ -1,6 +1,45 @@
-import { Users, Target, Shield, Zap } from 'lucide-react';
+import { Users, Target, Shield, Zap, Award, Heart } from 'lucide-react';
 
 export default function AboutPage() {
+  const values = [
+    {
+      icon: Shield,
+      title: 'Privacy First',
+      description: 'All tools process data in your browser. Nothing is uploaded to servers.',
+      color: 'from-indigo-500 to-purple-500',
+    },
+    {
+      icon: Zap,
+      title: 'Fast & Light',
+      description: 'Built with Next.js 14 for lightning-fast performance.',
+      color: 'from-amber-500 to-orange-500',
+    },
+    {
+      icon: Users,
+      title: 'For Everyone',
+      description: 'Students, developers, office workers, and casual users.',
+      color: 'from-emerald-500 to-teal-500',
+    },
+    {
+      icon: Award,
+      title: '100% Free',
+      description: 'All tools are completely free with no hidden charges.',
+      color: 'from-rose-500 to-pink-500',
+    },
+    {
+      icon: Target,
+      title: 'Simple & Effective',
+      description: 'No complicated interfaces. Just the tools you need.',
+      color: 'from-blue-500 to-cyan-500',
+    },
+    {
+      icon: Heart,
+      title: 'Built with Love',
+      description: 'Made by developers who care about user experience.',
+      color: 'from-red-500 to-rose-500',
+    },
+  ];
+
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
       <div className="mx-auto max-w-4xl">
@@ -11,7 +50,8 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-8 shadow-xl space-y-6">
+        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-8 shadow-xl space-y-8">
+          {/* Mission */}
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Our Mission</h2>
             <p className="mt-2 text-slate-600">
@@ -21,56 +61,38 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="rounded-xl bg-indigo-50/50 p-6 border border-indigo-200/50">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-indigo-600 p-2">
-                  <Target className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="font-semibold text-slate-900">Why We Built This</h3>
-              </div>
-              <p className="mt-2 text-sm text-slate-600">
-                We needed tools that work quickly, without ads, without signups, and without 
-                sending data to servers. So we built them.
-              </p>
+          {/* Values Grid */}
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900 mb-4">What We Stand For</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {values.map((value) => {
+                const Icon = value.icon;
+                return (
+                  <div key={value.title} className="rounded-xl bg-slate-50/80 p-4 border border-slate-200/50">
+                    <div className={`inline-flex rounded-lg bg-gradient-to-r ${value.color} p-2`}>
+                      <Icon className="h-4 w-4 text-white" />
+                    </div>
+                    <h3 className="mt-2 font-semibold text-slate-900">{value.title}</h3>
+                    <p className="text-sm text-slate-600">{value.description}</p>
+                  </div>
+                );
+              })}
             </div>
+          </div>
 
-            <div className="rounded-xl bg-purple-50/50 p-6 border border-purple-200/50">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-purple-600 p-2">
-                  <Shield className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="font-semibold text-slate-900">Privacy First</h3>
-              </div>
-              <p className="mt-2 text-sm text-slate-600">
-                All tools process data in your browser. Nothing is uploaded to any server. 
-                Your data stays on your device.
-              </p>
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-200/50">
+            <div className="text-center">
+              <p className="text-2xl font-bold text-indigo-600">5+</p>
+              <p className="text-sm text-slate-600">Free Tools</p>
             </div>
-
-            <div className="rounded-xl bg-emerald-50/50 p-6 border border-emerald-200/50">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-emerald-600 p-2">
-                  <Zap className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="font-semibold text-slate-900">Fast & Light</h3>
-              </div>
-              <p className="mt-2 text-sm text-slate-600">
-                Built with Next.js 14 and optimized for speed. All tools load instantly and 
-                work offline.
-              </p>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-indigo-600">100%</p>
+              <p className="text-sm text-slate-600">Browser-Based</p>
             </div>
-
-            <div className="rounded-xl bg-amber-50/50 p-6 border border-amber-200/50">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-amber-600 p-2">
-                  <Users className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="font-semibold text-slate-900">For Everyone</h3>
-              </div>
-              <p className="mt-2 text-sm text-slate-600">
-                Students, developers, office workers, and casual users — there's a tool for everyone.
-              </p>
+            <div className="text-center">
+              <p className="text-2xl font-bold text-indigo-600">0</p>
+              <p className="text-sm text-slate-600">Server Uploads</p>
             </div>
           </div>
         </div>
