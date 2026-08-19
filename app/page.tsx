@@ -100,33 +100,73 @@ export default function Home() {
     { 
       icon: Zap, 
       title: '100% Free', 
-      description: 'All tools are completely free with no hidden charges, subscriptions, or paywalls.' 
+      description: 'All tools are completely free with no hidden charges, subscriptions, or paywalls.',
+      href: '/tools' 
     },
     { 
       icon: Shield, 
       title: 'Privacy First', 
-      description: 'Everything processes in your browser. No data is ever uploaded to any server.' 
+      description: 'Everything processes in your browser. No data is ever uploaded to any server.',
+      href: '/privacy' 
     },
     { 
       icon: Clock, 
       title: 'Fast & Reliable', 
-      description: 'Optimized for speed with instant results. No waiting, no loading delays.' 
+      description: 'Optimized for speed with instant results. No waiting, no loading delays.',
+      href: '/tools' 
     },
     { 
       icon: Smartphone, 
       title: 'Works Everywhere', 
-      description: 'Use on any device — desktop, tablet, or phone. No app download needed.' 
+      description: 'Use on any device — desktop, tablet, or phone. No app download needed.',
+      href: '/tools' 
     },
   ];
 
-  // Tool categories for SEO-friendly section
+  // Tool categories with clickable links
   const toolCategories = [
-    { name: 'QR Code Tools', icon: Scan, description: 'Generate and scan QR codes' },
-    { name: 'Image Tools', icon: ImageIcon, description: 'Resize, crop, and edit images' },
-    { name: 'Text Tools', icon: Type, description: 'Count words, convert text, and more' },
-    { name: 'Calculator Tools', icon: Calculator, description: 'Calculate percentages, convert numbers' },
-    { name: 'Developer Tools', icon: Code, description: 'Format JSON, convert binary, validate data' },
-    { name: 'Design Tools', icon: Palette, description: 'Pick colors, crop images, resize photos' },
+    { 
+      name: 'QR Code Tools', 
+      icon: Scan, 
+      description: 'Generate and scan QR codes',
+      href: '/tools/qr-code-generator',
+      color: 'from-emerald-500 to-teal-500'
+    },
+    { 
+      name: 'Image Tools', 
+      icon: ImageIcon, 
+      description: 'Resize, crop, and edit images',
+      href: '/tools/image-resizer',
+      color: 'from-blue-500 to-cyan-500'
+    },
+    { 
+      name: 'Text Tools', 
+      icon: Type, 
+      description: 'Count words, convert text, and more',
+      href: '/tools/word-counter',
+      color: 'from-rose-500 to-pink-500'
+    },
+    { 
+      name: 'Calculator Tools', 
+      icon: Calculator, 
+      description: 'Calculate percentages, convert numbers',
+      href: '/tools/percentage-calculator',
+      color: 'from-amber-500 to-orange-500'
+    },
+    { 
+      name: 'Developer Tools', 
+      icon: Code, 
+      description: 'Format JSON, convert binary, validate data',
+      href: '/tools/json-formatter',
+      color: 'from-violet-500 to-purple-500'
+    },
+    { 
+      name: 'Design Tools', 
+      icon: Palette, 
+      description: 'Pick colors, crop images, resize photos',
+      href: '/tools/color-picker',
+      color: 'from-purple-500 to-pink-500'
+    },
   ];
 
   return (
@@ -159,14 +199,13 @@ export default function Home() {
             <span>✨ 100% Free Online Tools — No Signup Required</span>
           </div>
 
-          {/* Main Heading - SEO Optimized */}
+          {/* Main Heading */}
           <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             <span className="text-slate-900">Free Online Tools –</span>
             <br />
             <span className="gradient-text">QR, Image, JSON, Text &amp; Calculators</span>
           </h1>
 
-          {/* Description - SEO Optimized */}
           <p className="mx-auto mt-6 max-w-3xl text-lg text-slate-600 sm:text-xl">
             <strong>100% free online tools</strong> for developers, students, office workers, and everyday tasks. 
             Generate <strong>QR codes</strong>, resize <strong>images</strong>, format <strong>JSON</strong>, 
@@ -187,32 +226,49 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* Stats */}
+          {/* Feature Stats - Now Clickable */}
           <div className="mt-12 flex flex-wrap justify-center gap-8">
             {features.map((feature) => (
-              <div key={feature.title} className="flex items-center gap-2 text-sm text-slate-600">
-                <feature.icon className="h-4 w-4 text-indigo-500" />
+              <Link 
+                key={feature.title} 
+                href={feature.href}
+                className="flex items-center gap-2 text-sm text-slate-600 hover:text-indigo-600 transition-colors group"
+              >
+                <feature.icon className="h-4 w-4 text-indigo-500 group-hover:scale-110 transition-transform" />
                 <span className="font-medium">{feature.title}</span>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Tool Categories Section - SEO Friendly */}
+      {/* Tool Categories Section - FULLY CLICKABLE */}
       <section className="py-16 px-4 bg-slate-50/50 border-y border-slate-200/50">
         <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-slate-900">Browse Tools by Category</h2>
+            <p className="text-slate-600">Click any category to explore related tools</p>
+          </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
             {toolCategories.map((category) => {
               const Icon = category.icon;
               return (
-                <div key={category.name} className="text-center p-4 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <div className="inline-flex rounded-lg bg-indigo-100 p-3">
-                    <Icon className="h-6 w-6 text-indigo-600" />
+                <Link
+                  key={category.name}
+                  href={category.href}
+                  className="group text-center p-4 rounded-xl bg-white shadow-sm hover:shadow-lg transition-all hover:-translate-y-1 border border-slate-200/50 hover:border-indigo-200"
+                >
+                  <div className={`inline-flex rounded-lg bg-gradient-to-r ${category.color} p-3 shadow-lg transition-transform group-hover:scale-110`}>
+                    <Icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="mt-2 text-sm font-semibold text-slate-900">{category.name}</h3>
+                  <h3 className="mt-2 text-sm font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    {category.name}
+                  </h3>
                   <p className="text-xs text-slate-500 mt-0.5">{category.description}</p>
-                </div>
+                  <span className="mt-2 inline-block text-xs font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Click to explore →
+                  </span>
+                </Link>
               );
             })}
           </div>
@@ -247,7 +303,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Feature Section */}
+      {/* Feature Cards Section - FULLY CLICKABLE */}
       <section className="py-20 px-4 bg-slate-50/50">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-12">
@@ -261,13 +317,22 @@ export default function Home() {
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             {features.map((feature) => (
-              <div key={feature.title} className="text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-shadow">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
-                  <feature.icon className="h-7 w-7 text-indigo-600" />
+              <Link
+                key={feature.title}
+                href={feature.href}
+                className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+              >
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
+                  <feature.icon className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900">{feature.title}</h3>
+                <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                  {feature.title}
+                </h3>
                 <p className="mt-2 text-sm text-slate-600">{feature.description}</p>
-              </div>
+                <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Learn more →
+                </span>
+              </Link>
             ))}
           </div>
         </div>
