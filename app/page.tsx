@@ -23,6 +23,16 @@ import {
 } from 'lucide-react';
 import ToolCard from '@/app/components/ToolCard';
 
+// Types
+interface Sparkle {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
+  delay: number;
+  duration: number;
+}
+
 // Sparkle Particle Component
 const SparkleParticle = ({ x, y, size, delay, duration }: { x: number; y: number; size: number; delay: number; duration: number }) => {
   const colors = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#f472b6', '#14b8a6'];
@@ -52,16 +62,6 @@ const SparkleParticle = ({ x, y, size, delay, duration }: { x: number; y: number
     </div>
   );
 };
-
-// Types
-interface Sparkle {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
-  delay: number;
-  duration: number;
-}
 
 export default function Home() {
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
@@ -325,64 +325,68 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">
+        {/* Background Effects */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl" />
           <div className="absolute bottom-0 left-0 -z-10 h-[400px] w-[400px] rounded-full bg-gradient-to-tr from-pink-500/10 to-orange-500/10 blur-3xl" />
         </div>
 
         <div className="mx-auto max-w-7xl text-center">
-          {/* Logo with Sparkles */}
-          <div 
-            ref={logoRef}
-            className="sparkle-container relative inline-block"
-            onMouseEnter={triggerSparkles}
-            onClick={triggerSparkles}
-            onTouchStart={triggerSparkles}
-          >
-            <div className="sparkle-logo relative h-24 w-24 overflow-hidden rounded-2xl shadow-2xl shadow-indigo-500/20 transition-all duration-500">
-              <Image
-                src="/logo.png"
-                alt="ToolNoveHub - Free Online Tools"
-                fill
-                className="object-contain"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-purple-500/10 to-pink-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            </div>
+          {/* Logo - CENTERED */}
+          <div className="flex justify-center">
+            <div 
+              ref={logoRef}
+              className="sparkle-container relative inline-block"
+              onMouseEnter={triggerSparkles}
+              onClick={triggerSparkles}
+              onTouchStart={triggerSparkles}
+            >
+              <div className="sparkle-logo relative h-24 w-24 overflow-hidden rounded-2xl shadow-2xl shadow-indigo-500/20 transition-all duration-500">
+                <Image
+                  src="/logo.png"
+                  alt="ToolNoveHub - Free Online Tools"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-purple-500/10 to-pink-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              </div>
 
-            {sparkles.map((p) => {
-              const tx = (Math.random() - 0.5) * 200;
-              const ty = (Math.random() - 0.5) * 200 - 50;
-              return (
-                <div
-                  key={p.id}
-                  className="absolute pointer-events-none"
-                  style={{
-                    left: p.x,
-                    top: p.y,
-                    width: p.size,
-                    height: p.size,
-                    animation: `sparkle-float ${p.duration}s ease-out ${p.delay}s forwards`,
-                    opacity: 0,
-                    '--tx': `${tx}px`,
-                    '--ty': `${ty}px`,
-                  } as React.CSSProperties}
-                >
-                  <div 
-                    className="w-full h-full rounded-full"
+              {/* Sparkles */}
+              {sparkles.map((p) => {
+                const tx = (Math.random() - 0.5) * 200;
+                const ty = (Math.random() - 0.5) * 200 - 50;
+                return (
+                  <div
+                    key={p.id}
+                    className="absolute pointer-events-none"
                     style={{
-                      background: `radial-gradient(circle, ${['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#f472b6', '#14b8a6'][Math.floor(Math.random() * 8)]} 0%, transparent 70%)`,
-                      boxShadow: `0 0 ${p.size * 3}px ${['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#f472b6', '#14b8a6'][Math.floor(Math.random() * 8)]}`,
-                      transform: 'scale(0)',
-                      animation: `sparkle-pop ${p.duration * 0.4}s ease-out ${p.delay}s forwards`,
-                    }}
-                  />
-                </div>
-              );
-            })}
+                      left: p.x,
+                      top: p.y,
+                      width: p.size,
+                      height: p.size,
+                      animation: `sparkle-float ${p.duration}s ease-out ${p.delay}s forwards`,
+                      opacity: 0,
+                      '--tx': `${tx}px`,
+                      '--ty': `${ty}px`,
+                    } as React.CSSProperties}
+                  >
+                    <div 
+                      className="w-full h-full rounded-full"
+                      style={{
+                        background: `radial-gradient(circle, ${['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#f472b6', '#14b8a6'][Math.floor(Math.random() * 8)]} 0%, transparent 70%)`,
+                        boxShadow: `0 0 ${p.size * 3}px ${['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#f472b6', '#14b8a6'][Math.floor(Math.random() * 8)]}`,
+                        transform: 'scale(0)',
+                        animation: `sparkle-pop ${p.duration * 0.4}s ease-out ${p.delay}s forwards`,
+                      }}
+                    />
+                  </div>
+                );
+              })}
 
-            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-slate-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100 whitespace-nowrap">
-              ✨ Click for magic!
+              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs text-slate-400 opacity-0 transition-opacity duration-300 group-hover:opacity-100 whitespace-nowrap">
+                ✨ Click for magic!
+              </div>
             </div>
           </div>
 
