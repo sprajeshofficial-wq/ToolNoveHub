@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Calculator, Plus, Minus, X, Divide, Equal, Backspace, RotateCcw } from 'lucide-react';
+import { Calculator, Plus, Minus, X, Divide, Equal, Delete, RotateCcw } from 'lucide-react';
 
 export default function SimpleCalculator() {
   const [display, setDisplay] = useState('0');
@@ -122,21 +122,28 @@ export default function SimpleCalculator() {
 
           {/* Buttons */}
           <div className="grid grid-cols-4 gap-2">
-            {buttons.map((btn, index) => (
-              <button
-                key={index}
-                onClick={btn.action}
-                className={`rounded-xl py-3 text-lg font-semibold transition-all active:scale-95 ${btn.className || 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}
-              >
-                {btn.label === '÷' && <Divide className="h-5 w-5 mx-auto" />}
-                {btn.label === '×' && <X className="h-5 w-5 mx-auto" />}
-                {btn.label === '-' && <Minus className="h-5 w-5 mx-auto" />}
-                {btn.label === '+' && <Plus className="h-5 w-5 mx-auto" />}
-                {btn.label === '=' && <Equal className="h-5 w-5 mx-auto" />}
-                {btn.label === '⌫' && <Backspace className="h-5 w-5 mx-auto" />}
-                {!['÷', '×', '-', '+', '=', '⌫'].includes(btn.label) && btn.label}
-              </button>
-            ))}
+            {buttons.map((btn, index) => {
+              // Determine what to display
+              let displayLabel = btn.label;
+              let icon = null;
+              
+              if (btn.label === '÷') icon = <Divide className="h-5 w-5 mx-auto" />;
+              else if (btn.label === '×') icon = <X className="h-5 w-5 mx-auto" />;
+              else if (btn.label === '-') icon = <Minus className="h-5 w-5 mx-auto" />;
+              else if (btn.label === '+') icon = <Plus className="h-5 w-5 mx-auto" />;
+              else if (btn.label === '=') icon = <Equal className="h-5 w-5 mx-auto" />;
+              else if (btn.label === '⌫') icon = <Delete className="h-5 w-5 mx-auto" />;
+              
+              return (
+                <button
+                  key={index}
+                  onClick={btn.action}
+                  className={`rounded-xl py-3 text-lg font-semibold transition-all active:scale-95 ${btn.className || 'bg-slate-100 hover:bg-slate-200 text-slate-700'}`}
+                >
+                  {icon || displayLabel}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
