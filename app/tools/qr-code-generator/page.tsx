@@ -1,382 +1,196 @@
-'use client';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+// Import the client component correctly
+import QRCodeGeneratorComponent from './QRCodeGenerator';
 
-import { useState } from 'react';
-import QRCode from 'qrcode';
-import { 
-  Download, 
-  Copy, 
-  RefreshCw, 
-  QrCode as QrCodeIcon, 
-  Wifi, 
-  Link2, 
-  Text,
-  Check,
-  Eye,
-  EyeOff
-} from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'QR Code Generator - Create Free QR Codes Online | ToolNoveHub',
+  description: 'Generate free QR codes for URLs, text, and Wi-Fi networks instantly. No signup required. 100% private, browser-based QR code generator with download options.',
+  keywords: 'qr code generator, free qr code, generate qr code, qr code for wifi, qr code maker',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/qr-code-generator',
+  },
+  openGraph: {
+    title: 'QR Code Generator - Create Free QR Codes Online | ToolNoveHub',
+    description: 'Generate free QR codes for URLs, text, and Wi-Fi networks instantly. 100% private, browser-based.',
+    url: 'https://toolnovehub.tools/tools/qr-code-generator',
+    type: 'website',
+    images: [
+      {
+        url: 'https://toolnovehub.tools/og-qr-code.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'QR Code Generator - Free Online Tool',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'QR Code Generator - Create Free QR Codes Online | ToolNoveHub',
+    description: 'Generate free QR codes for URLs, text, and Wi-Fi networks instantly.',
+    images: ['https://toolnovehub.tools/og-qr-code.jpg'],
+  },
+};
 
-export default function QRCodeGenerator() {
-  const [activeTab, setActiveTab] = useState<'text' | 'wifi'>('text');
-  
-  // Text/URL mode
-  const [text, setText] = useState('');
-  
-  // Wi-Fi mode
-  const [wifiSsid, setWifiSsid] = useState('');
-  const [wifiPassword, setWifiPassword] = useState('');
-  const [wifiSecurity, setWifiSecurity] = useState('WPA2');
-  const [wifiHidden, setWifiHidden] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  
-  const [qrCodeUrl, setQrCodeUrl] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [copied, setCopied] = useState(false);
-
-  // Generate QR Code based on active tab
-  const generateQR = async () => {
-    setLoading(true);
-    setError('');
-    setQrCodeUrl('');
-
-    try {
-      let qrData = '';
-      
-      if (activeTab === 'wifi') {
-        // Build Wi-Fi QR code string
-        if (!wifiSsid.trim()) {
-          setError('Please enter a Wi-Fi network name (SSID)');
-          setLoading(false);
-          return;
-        }
-        // Format: WIFI:T:WPA2;S:MyNetwork;P:MyPassword;H:true;;
-        qrData = `WIFI:T:${wifiSecurity};S:${wifiSsid};`;
-        if (wifiPassword) {
-          qrData += `P:${wifiPassword};`;
-        }
-        if (wifiHidden) {
-          qrData += 'H:true;';
-        }
-        qrData += ';';
-      } else {
-        if (!text.trim()) {
-          setError('Please enter text or URL');
-          setLoading(false);
-          return;
-        }
-        qrData = text;
-      }
-
-      const url = await QRCode.toDataURL(qrData, {
-        width: 300,
-        margin: 2,
-        color: {
-          dark: '#1e293b',
-          light: '#ffffff',
-        },
-      });
-      setQrCodeUrl(url);
-    } catch (err) {
-      setError('Failed to generate QR code. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Download QR Code
-  const downloadQR = () => {
-    if (!qrCodeUrl) return;
-    const link = document.createElement('a');
-    const filename = activeTab === 'wifi' 
-      ? `wifi-${wifiSsid || 'network'}-${Date.now()}.png`
-      : `qrcode-${Date.now()}.png`;
-    link.download = filename;
-    link.href = qrCodeUrl;
-    link.click();
-  };
-
-  // Copy QR Code to clipboard
-  const copyToClipboard = async () => {
-    if (!qrCodeUrl) return;
-    try {
-      const response = await fetch(qrCodeUrl);
-      const blob = await response.blob();
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          [blob.type]: blob
-        })
-      ]);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      alert('Failed to copy. Please download instead.');
-    }
-  };
-
-  // Generate Wi-Fi QR sample
-  const fillWifiSample = () => {
-    setWifiSsid('MyHomeWiFi');
-    setWifiPassword('SecurePassword123');
-    setWifiSecurity('WPA2');
-    setWifiHidden(false);
-  };
-
-  // Clear all fields
-  const clearAll = () => {
-    setText('');
-    setWifiSsid('');
-    setWifiPassword('');
-    setQrCodeUrl('');
-    setError('');
+export default function QRCodeGeneratorPage() {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'QR Code Generator',
+    description:
+      'Generate free QR codes for URLs, text, and Wi-Fi networks instantly. 100% private, browser-based.',
+    applicationCategory: 'Utility',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD',
+    },
   };
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
-      <div className="mx-auto max-w-3xl">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 p-3 shadow-lg shadow-emerald-500/25">
-            <QrCodeIcon className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">QR Code Generator</h1>
-          <p className="mt-2 text-slate-600">Generate QR codes for URLs, text, or Wi-Fi networks.</p>
-        </div>
+      <div className="mx-auto max-w-4xl">
+        {/* H1 */}
+        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">
+          Free QR Code Generator – Create QR Codes Instantly
+        </h1>
 
+        {/* Description */}
+        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">
+          Generate free QR codes for URLs, text, and Wi-Fi networks instantly.
+          No signup required. Works entirely in your browser — 100% private.
+        </p>
+
+        {/* Tool UI */}
         <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          
-          {/* Tabs */}
-          <div className="flex gap-2 mb-6 border-b border-slate-200/50 pb-4">
-            <button
-              onClick={() => { setActiveTab('text'); setQrCodeUrl(''); setError(''); }}
-              className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all ${
-                activeTab === 'text'
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/25'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              <Link2 className="h-4 w-4" />
-              Text / URL
-            </button>
-            <button
-              onClick={() => { setActiveTab('wifi'); setQrCodeUrl(''); setError(''); }}
-              className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-all ${
-                activeTab === 'wifi'
-                  ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/25'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              <Wifi className="h-4 w-4" />
-              Wi-Fi Network
-            </button>
-          </div>
-
-          {/* Input Section */}
-          <div className="space-y-4">
-            
-            {/* Text/URL Mode */}
-            {activeTab === 'text' && (
-              <div>
-                <label className="text-sm font-medium text-slate-700">Enter Text or URL</label>
-                <input
-                  type="text"
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  placeholder="https://example.com or any text"
-                  className="input-field mt-1"
-                  onKeyDown={(e) => e.key === 'Enter' && generateQR()}
-                />
-                {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-              </div>
-            )}
-
-            {/* Wi-Fi Mode */}
-            {activeTab === 'wifi' && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-slate-700">
-                      Network Name (SSID) <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={wifiSsid}
-                      onChange={(e) => setWifiSsid(e.target.value)}
-                      placeholder="MyHomeWiFi"
-                      className="input-field mt-1"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-700">Security Type</label>
-                    <select
-                      value={wifiSecurity}
-                      onChange={(e) => setWifiSecurity(e.target.value)}
-                      className="input-field mt-1"
-                    >
-                      <option value="WPA2">WPA2 (Most Common)</option>
-                      <option value="WPA3">WPA3</option>
-                      <option value="WPA">WPA</option>
-                      <option value="WEP">WEP</option>
-                      <option value="nopass">No Password (Open)</option>
-                    </select>
-                  </div>
-                </div>
-
-                {wifiSecurity !== 'nopass' && (
-                  <div>
-                    <label className="text-sm font-medium text-slate-700">Password</label>
-                    <div className="relative mt-1">
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        value={wifiPassword}
-                        onChange={(e) => setWifiPassword(e.target.value)}
-                        placeholder="Enter Wi-Fi password"
-                        className="input-field pr-12"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-3">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={wifiHidden}
-                      onChange={(e) => setWifiHidden(e.target.checked)}
-                      className="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
-                    />
-                    <span className="text-sm text-slate-600">Hidden network (SSID not broadcasted)</span>
-                  </label>
-                </div>
-
-                {error && <p className="text-sm text-red-500">{error}</p>}
-
-                {/* Sample Button */}
-                <button
-                  type="button"
-                  onClick={fillWifiSample}
-                  className="text-sm text-emerald-600 hover:text-emerald-700 underline transition-colors"
-                >
-                  📝 Fill with sample Wi-Fi data
-                </button>
-              </div>
-            )}
-
-            {/* Generate Button */}
-            <button
-              onClick={generateQR}
-              disabled={loading}
-              className="w-full btn-primary"
-            >
-              {loading ? (
-                <>
-                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <QrCodeIcon className="mr-2 h-4 w-4" />
-                  Generate QR Code
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* Result */}
-          {qrCodeUrl && (
-            <div className="mt-8 pt-8 border-t border-slate-200/50">
-              <div className="flex flex-col items-center">
-                {/* QR Code Type Label */}
-                <div className="mb-2 text-sm font-medium text-slate-500">
-                  {activeTab === 'wifi' ? (
-                    <span className="flex items-center gap-2">
-                      <Wifi className="h-4 w-4 text-emerald-600" />
-                      Wi-Fi QR Code — {wifiSsid}
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-2">
-                      <Link2 className="h-4 w-4 text-emerald-600" />
-                      QR Code
-                    </span>
-                  )}
-                </div>
-
-                {/* QR Code Image */}
-                <div className="relative rounded-2xl bg-white p-4 shadow-lg">
-                  <img src={qrCodeUrl} alt="QR Code" className="h-64 w-64" />
-                </div>
-
-                {/* Download & Copy Buttons */}
-                <div className="mt-6 flex gap-3 flex-wrap justify-center">
-                  <button
-                    onClick={downloadQR}
-                    className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25 transition-all hover:scale-105"
-                  >
-                    <Download className="h-4 w-4" />
-                    Download PNG
-                  </button>
-                  <button
-                    onClick={copyToClipboard}
-                    className="flex items-center gap-2 rounded-xl bg-slate-100 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200"
-                  >
-                    {copied ? (
-                      <>
-                        <Check className="h-4 w-4 text-emerald-600" />
-                        Copied!
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-4 w-4" />
-                        Copy Image
-                      </>
-                    )}
-                  </button>
-                  <button
-                    onClick={clearAll}
-                    className="flex items-center gap-2 rounded-xl bg-slate-100 px-5 py-2.5 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200"
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                    Clear
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Info Box */}
-          <div className="mt-6 rounded-2xl bg-indigo-50/50 p-4 border border-indigo-200/50">
-            <p className="text-sm text-slate-600">
-              <span className="font-semibold text-indigo-600">💡 Pro Tip:</span> 
-              {activeTab === 'wifi' ? (
-                <> Your Wi-Fi QR code lets guests connect instantly — no need to type passwords! 
-                <span className="block mt-1 text-xs text-slate-400">
-                  Compatible with iPhone (Camera app), Android (Camera app), and most QR code readers.
-                </span>
-                </>
-              ) : (
-                <> Your QR code is generated entirely in your browser. Nothing is sent to our servers — <span className="font-medium">100% private</span>.</>
-              )}
-            </p>
-          </div>
-
-          {/* Wi-Fi Instructions */}
-          {activeTab === 'wifi' && qrCodeUrl && (
-            <div className="mt-4 rounded-2xl bg-emerald-50/50 p-4 border border-emerald-200/50">
-              <h4 className="text-sm font-semibold text-emerald-700">📱 How to Connect</h4>
-              <ul className="mt-2 text-sm text-slate-600 space-y-1">
-                <li><span className="font-medium">iPhone:</span> Open Camera app → Point at QR code → Tap notification</li>
-                <li><span className="font-medium">Android:</span> Open Camera app → Point at QR code → Tap connect</li>
-                <li><span className="font-medium">Other:</span> Use any QR code reader app → Scan → Connect automatically</li>
-              </ul>
-            </div>
-          )}
+          <QRCodeGeneratorComponent />
         </div>
+
+        {/* SEO Content */}
+        <div className="mt-12 prose prose-slate max-w-none">
+          <h2>How to Use the QR Code Generator</h2>
+          <p>Creating QR codes with ToolNoveHub is simple and fast:</p>
+          <ol>
+            <li>
+              <strong>Choose your input type:</strong> Select &quot;Text / URL&quot; or &quot;Wi-Fi Network&quot; tab
+            </li>
+            <li>
+              <strong>Enter your data:</strong> For URLs, paste the link. For Wi-Fi, enter network details
+            </li>
+            <li>
+              <strong>Generate:</strong> Click the &quot;Generate QR Code&quot; button
+            </li>
+            <li>
+              <strong>Download or copy:</strong> Download the QR code as PNG or copy it to your clipboard
+            </li>
+          </ol>
+
+          <h2>What Can You Use QR Codes For?</h2>
+          <ul>
+            <li>
+              <strong>Wi-Fi networks:</strong> Share your Wi-Fi password without typing
+            </li>
+            <li>
+              <strong>URLs:</strong> Direct users to your website or landing page
+            </li>
+            <li>
+              <strong>Contact information:</strong> Share vCard or business details
+            </li>
+            <li>
+              <strong>Event links:</strong> RSVP or event registration pages
+            </li>
+          </ul>
+
+          <h2>Why Use This QR Code Generator?</h2>
+          <ul>
+            <li>
+              🔒 <strong>100% Private:</strong> All processing happens in your browser
+            </li>
+            <li>
+              📱 <strong>Wi-Fi Support:</strong> Generate QR codes for Wi-Fi networks
+            </li>
+            <li>
+              💰 <strong>Free:</strong> No signup, no hidden charges
+            </li>
+            <li>
+              📥 <strong>Download:</strong> Save as PNG for printing or sharing
+            </li>
+          </ul>
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">
+            Frequently Asked Questions About QR Code Generators
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Can I generate QR codes for Wi-Fi?
+              </h3>
+              <p className="text-slate-600">
+                Yes! Just switch to the &quot;Wi-Fi Network&quot; tab, enter your network name
+                and password, and generate. Works with WPA2, WPA3, WEP, and open networks.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Is this QR code generator free?
+              </h3>
+              <p className="text-slate-600">
+                Yes, completely free. No signup or payment required.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                How do I scan a QR code?
+              </h3>
+              <p className="text-slate-600">
+                Open your phone&apos;s camera app, point it at the QR code, and tap the
+                notification that appears. iPhone and Android both support this natively.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Related Tools */}
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Link
+              href="/tools/qr-code-scanner"
+              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
+            >
+              <span className="text-sm font-medium text-slate-900">QR Code Scanner</span>
+            </Link>
+            <Link
+              href="/tools/text-to-slug"
+              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
+            >
+              <span className="text-sm font-medium text-slate-900">Text to Slug</span>
+            </Link>
+            <Link
+              href="/tools/image-resizer"
+              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
+            >
+              <span className="text-sm font-medium text-slate-900">Image Resizer</span>
+            </Link>
+            <Link
+              href="/tools/percentage-calculator"
+              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
+            >
+              <span className="text-sm font-medium text-slate-900">Percentage Calculator</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Schema Markup */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
+        />
       </div>
     </div>
   );
