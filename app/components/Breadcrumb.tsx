@@ -1,41 +1,46 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ChevronRight, Home } from "lucide-react";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { ChevronRight, Home } from 'lucide-react';
 
-export default function Breadcrumb() {
+export default function Breadcrumbs() {
   const pathname = usePathname();
-  const pathSegments = pathname.split("/").filter(Boolean);
+  const segments = pathname.split('/').filter(Boolean);
 
-  if (pathSegments.length === 0) return null;
+  if (segments.length === 0) return null;
+
+  const breadcrumbs = segments.map((segment, index) => {
+    const href = '/' + segments.slice(0, index + 1).join('/');
+    const label = segment
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    return { href, label, isLast: index === segments.length - 1 };
+  });
 
   return (
-    <nav className="flex items-center space-x-2 text-sm text-gray-500 py-4" aria-label="Breadcrumb">
-      <Link href="/" className="hover:text-blue-600 transition-colors flex items-center">
-        <Home className="w-4 h-4" />
-      </Link>
-      {pathSegments.map((segment, index) => {
-        const href = "/" + pathSegments.slice(0, index + 1).join("/");
-        const isLast = index === pathSegments.length - 1;
-        const label = segment
-          .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
-
-        return (
-          <div key={href} className="flex items-center space-x-2">
-            <ChevronRight className="w-4 h-4" />
-            {isLast ? (
-              <span className="text-gray-900 font-medium">{label}</span>
+    <nav className="text-sm text-slate-500 mb-4" aria-label="Breadcrumb">
+      <ol className="flex items-center flex-wrap gap-1">
+        <li>
+          <Link href="/" className="flex items-center gap-1 hover:text-indigo-600 transition-colors">
+            <Home className="h-4 w-4" />
+            <span className="sr-only">Home</span>
+          </Link>
+        </li>
+        {breadcrumbs.map((item, index) => (
+          <li key={item.href} className="flex items-center gap-1">
+            <ChevronRight className="h-4 w-4 text-slate-300" />
+            {item.isLast ? (
+              <span className="font-medium text-slate-900">{item.label}</span>
             ) : (
-              <Link href={href} className="hover:text-blue-600 transition-colors">
-                {label}
+              <Link href={item.href} className="hover:text-indigo-600 transition-colors">
+                {item.label}
               </Link>
             )}
-          </div>
-        );
-      })}
+          </li>
+        ))}
+      </ol>
     </nav>
   );
 }
