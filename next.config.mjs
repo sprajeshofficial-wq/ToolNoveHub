@@ -20,7 +20,7 @@ const nextConfig = {
   
   // Experimental features for better performance
   experimental: {
-    optimizeCss: true,
+    // optimizeCss: true,  // ← COMMENTED OUT - Fixes Vercel build error
     scrollRestoration: true,
   },
   
