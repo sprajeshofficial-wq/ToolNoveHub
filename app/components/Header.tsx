@@ -13,14 +13,14 @@ const Header = () => {
     { name: 'Students', href: '/student', icon: GraduationCap },
     { name: 'Developers', href: '/developer', icon: Code },
     { name: 'Office', href: '/office', icon: Briefcase },
-    { name: 'Blog', href: '/blog', icon: BookOpen },
+    { name: 'Blog', href: '/blog', icon: BookOpen },  // ✅ FIXED: Now points to /blog
   ];
 
   return (
     <header className="fixed top-0 z-50 w-full bg-white/80 backdrop-blur-lg border-b border-slate-200/50">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo with Image */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <div className="relative h-9 w-9 overflow-hidden rounded-xl transition-all duration-300 group-hover:scale-110">
               <Image

@@ -11,12 +11,12 @@ const Footer = () => {
       { name: 'Word Counter', href: '/tools/word-counter' },
       { name: 'JSON Formatter', href: '/tools/json-formatter' },
     ],
-    Resources: [
+    Company: [
+      { name: 'About', href: '/about' },
       { name: 'Blog', href: '/blog' },
-      { name: 'Docs', href: '/docs' },
-      { name: 'Privacy', href: '/privacy' },
-      { name: 'Terms', href: '/terms' },
       { name: 'Contact', href: '/contact' },
+      { name: 'Terms', href: '/terms' },
+      { name: 'Privacy', href: '/privacy' },
     ],
   };
 
@@ -24,7 +24,7 @@ const Footer = () => {
     <footer className="border-t border-slate-200/50 bg-white/50 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-          {/* Brand - Updated with Logo */}
+          {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
               <div className="relative h-9 w-9 overflow-hidden rounded-xl">
@@ -72,15 +72,15 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Resource Links */}
+          {/* Company Links - FIXED */}
           <div>
-            <h3 className="text-sm font-semibold text-slate-900">Resources</h3>
+            <h3 className="text-sm font-semibold text-slate-900">Company</h3>
             <ul className="mt-4 space-y-2">
-              {footerLinks.Resources.map((link) => (
+              {footerLinks.Company.map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="text-sm text-slate-600 transition-colors hover:text-indigo-600">
                     {link.name}
-                  </Link>
+        </Link>
                 </li>
               ))}
             </ul>
