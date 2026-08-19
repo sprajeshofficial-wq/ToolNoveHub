@@ -1,6 +1,11 @@
 import Link from 'next/link';
 import { BookOpen, FileText, HelpCircle, UserCheck } from 'lucide-react';
 
+export const metadata = {
+  title: 'Documentation - ToolNoveHub',
+  description: 'Learn how to use ToolNoveHub tools effectively. Guides, FAQs, and privacy information.',
+};
+
 export default function DocsPage() {
   const docs = [
     {
@@ -32,6 +37,13 @@ export default function DocsPage() {
       color: 'from-rose-500 to-pink-500',
     },
   ];
+
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: 'Documentation',
+    description: 'Learn how to use ToolNoveHub tools effectively.',
+  };
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
@@ -71,6 +83,8 @@ export default function DocsPage() {
           </p>
         </div>
       </div>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
     </div>
   );
 }

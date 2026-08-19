@@ -2,6 +2,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
+export const metadata = {
+  title: 'Documentation - ToolNoveHub',
+  description: 'Learn how to use ToolNoveHub tools effectively.',
+};
+
 const docsData: Record<string, { title: string; content: string }> = {
   'getting-started': {
     title: 'Getting Started',
@@ -23,6 +28,9 @@ const docsData: Record<string, { title: string; content: string }> = {
         <li><a href="/tools/percentage-calculator">Percentage Calculator</a></li>
         <li><a href="/tools/word-counter">Word Counter</a></li>
         <li><a href="/tools/json-formatter">JSON Formatter</a></li>
+        <li><a href="/tools/text-to-slug">Text to Slug</a></li>
+        <li><a href="/tools/binary-converter">Binary Converter</a></li>
+        <li><a href="/tools/color-picker">Color Picker</a></li>
       </ul>
     `,
   },
@@ -31,18 +39,23 @@ const docsData: Record<string, { title: string; content: string }> = {
     content: `
       <h2>QR Code Generator</h2>
       <p>Generate QR codes for any text or URL. Use for Wi-Fi, contact information, links, and more.</p>
+      <p><a href="/tools/qr-code-generator">Try QR Code Generator →</a></p>
       
       <h2>Image Resizer</h2>
       <p>Resize images to any dimensions. Perfect for social media, websites, and printing.</p>
+      <p><a href="/tools/image-resizer">Try Image Resizer →</a></p>
       
       <h2>Percentage Calculator</h2>
       <p>Calculate percentages, increases, and decreases quickly and easily.</p>
+      <p><a href="/tools/percentage-calculator">Try Percentage Calculator →</a></p>
       
       <h2>Word Counter</h2>
       <p>Count words, characters, sentences, and paragraphs in any text.</p>
+      <p><a href="/tools/word-counter">Try Word Counter →</a></p>
       
       <h2>JSON Formatter</h2>
       <p>Format, validate, and beautify JSON data for better readability and debugging.</p>
+      <p><a href="/tools/json-formatter">Try JSON Formatter →</a></p>
     `,
   },
   'faq': {
@@ -84,12 +97,19 @@ const docsData: Record<string, { title: string; content: string }> = {
   },
 };
 
-export default function DocsPage({ params }: { params: { slug: string } }) {
+export default function DocsSubPage({ params }: { params: { slug: string } }) {
   const doc = docsData[params.slug];
 
   if (!doc) {
     notFound();
   }
+
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: doc.title,
+    description: 'Documentation for ToolNoveHub tools.',
+  };
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
@@ -108,6 +128,8 @@ export default function DocsPage({ params }: { params: { slug: string } }) {
             <div dangerouslySetInnerHTML={{ __html: doc.content }} />
           </div>
         </div>
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );
