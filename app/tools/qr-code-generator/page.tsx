@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-// Import the client component correctly
-import QRCodeGeneratorComponent from './QRCodeGenerator';
+import QRCodeGenerator from './QRCodeGenerator';
 
 export const metadata: Metadata = {
   title: 'QR Code Generator - Create Free QR Codes Online | ToolNoveHub',
@@ -52,23 +51,19 @@ export default function QRCodeGeneratorPage() {
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
       <div className="mx-auto max-w-4xl">
-        {/* H1 */}
         <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">
           Free QR Code Generator – Create QR Codes Instantly
         </h1>
 
-        {/* Description */}
         <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">
           Generate free QR codes for URLs, text, and Wi-Fi networks instantly.
           No signup required. Works entirely in your browser — 100% private.
         </p>
 
-        {/* Tool UI */}
         <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <QRCodeGeneratorComponent />
+          <QRCodeGenerator />
         </div>
 
-        {/* SEO Content */}
         <div className="mt-12 prose prose-slate max-w-none">
           <h2>How to Use the QR Code Generator</h2>
           <p>Creating QR codes with ToolNoveHub is simple and fast:</p>
@@ -105,22 +100,13 @@ export default function QRCodeGeneratorPage() {
 
           <h2>Why Use This QR Code Generator?</h2>
           <ul>
-            <li>
-              🔒 <strong>100% Private:</strong> All processing happens in your browser
-            </li>
-            <li>
-              📱 <strong>Wi-Fi Support:</strong> Generate QR codes for Wi-Fi networks
-            </li>
-            <li>
-              💰 <strong>Free:</strong> No signup, no hidden charges
-            </li>
-            <li>
-              📥 <strong>Download:</strong> Save as PNG for printing or sharing
-            </li>
+            <li>🔒 <strong>100% Private:</strong> All processing happens in your browser</li>
+            <li>📱 <strong>Wi-Fi Support:</strong> Generate QR codes for Wi-Fi networks</li>
+            <li>💰 <strong>Free:</strong> No signup, no hidden charges</li>
+            <li>📥 <strong>Download:</strong> Save as PNG for printing or sharing</li>
           </ul>
         </div>
 
-        {/* FAQ */}
         <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">
             Frequently Asked Questions About QR Code Generators
@@ -155,7 +141,6 @@ export default function QRCodeGeneratorPage() {
           </div>
         </div>
 
-        {/* Related Tools */}
         <div className="mt-8">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -186,7 +171,6 @@ export default function QRCodeGeneratorPage() {
           </div>
         </div>
 
-        {/* Schema Markup */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
