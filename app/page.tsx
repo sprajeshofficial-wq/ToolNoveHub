@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Mail, Clock, MapPin } from 'lucide-react';
-import ContactForm from './contact/ContactForm';
 
 export const metadata: Metadata = {
   title: 'Contact ToolNoveHub - Get in Touch',
