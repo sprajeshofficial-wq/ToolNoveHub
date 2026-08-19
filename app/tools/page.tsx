@@ -25,7 +25,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 
-// All tools data - REMOVED Character Counter
+// All tools data - 16 tools
 const ALL_TOOLS = [
   // ========== Developer Tools (6) ==========
   {
@@ -76,7 +76,7 @@ const ALL_TOOLS = [
     category: 'Developer Tools',
     color: 'from-rose-500 to-red-500',
   },
-  // ========== Text Tools (3) - REMOVED Character Counter ==========
+  // ========== Text Tools (3) ==========
   {
     name: 'Word Counter',
     description: 'Count words, characters, and sentences in any text.',
@@ -101,7 +101,7 @@ const ALL_TOOLS = [
     category: 'Text Tools',
     color: 'from-green-500 to-emerald-500',
   },
-  // ========== Calculator Tools (3) - REMOVED Character Counter ==========
+  // ========== Calculator Tools (4) ==========
   {
     name: 'Percentage Calculator',
     description: 'Calculate percentages quickly and easily.',
@@ -161,13 +161,16 @@ const ALL_TOOLS = [
   },
 ];
 
+// Popular tools (first 5)
 const POPULAR_TOOLS = ALL_TOOLS.slice(0, 5);
 
 export default function AllTools() {
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Filter tools based on search
   const filteredTools = useMemo(() => {
     if (!searchQuery.trim()) return ALL_TOOLS;
+    
     const query = searchQuery.toLowerCase().trim();
     return ALL_TOOLS.filter(tool => 
       tool.name.toLowerCase().includes(query) ||
@@ -176,6 +179,7 @@ export default function AllTools() {
     );
   }, [searchQuery]);
 
+  // Group filtered tools by category
   const groupedTools = filteredTools.reduce((acc, tool) => {
     if (!acc[tool.category]) {
       acc[tool.category] = [];
@@ -190,6 +194,7 @@ export default function AllTools() {
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
       <div className="mx-auto max-w-7xl">
+        {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 p-3 shadow-lg shadow-indigo-500/25">
             <Wrench className="h-8 w-8 text-white" />
@@ -222,6 +227,8 @@ export default function AllTools() {
               </button>
             )}
           </div>
+          
+          {/* Search Results Count */}
           {searchQuery && (
             <p className="mt-3 text-center text-sm text-slate-500">
               Found {filteredTools.length} tool{filteredTools.length !== 1 ? 's' : ''} matching &quot;{searchQuery}&quot;
@@ -229,7 +236,7 @@ export default function AllTools() {
           )}
         </div>
 
-        {/* Popular Tools */}
+        {/* Popular Tools - Only show when no search */}
         {!searchQuery && (
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
@@ -264,6 +271,7 @@ export default function AllTools() {
             ))}
           </div>
         ) : searchQuery ? (
+          // No results message
           <div className="text-center py-16">
             <div className="inline-flex items-center justify-center rounded-2xl bg-slate-100 p-4 mb-4">
               <Search className="h-12 w-12 text-slate-400" />
@@ -314,15 +322,22 @@ function ToolCard({
   return (
     <Link href={href} className="group">
       <div className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-500/10 border border-slate-200/50 h-full flex flex-col">
+        {/* Icon */}
         <div className={`mb-4 inline-flex rounded-xl bg-gradient-to-r ${color} p-3 shadow-lg`}>
           <Icon className="h-6 w-6 text-white" />
         </div>
+        
+        {/* Title */}
         <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
           {name}
         </h3>
+        
+        {/* Description */}
         <p className="mt-2 text-sm text-slate-600 flex-1 line-clamp-2">
           {description}
         </p>
+        
+        {/* Try Tool */}
         <div className="mt-4 flex items-center gap-1 text-sm font-medium text-indigo-600 group-hover:gap-2 transition-all">
           <span>Try Tool</span>
           <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
