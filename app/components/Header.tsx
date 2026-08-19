@@ -1,8 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
-import { Menu, X, Home, Wrench, GraduationCap, Briefcase, Code, BookOpen } from 'lucide-react';
+import { Menu, X, Wrench, GraduationCap, Briefcase, Code, BookOpen } from 'lucide-react';
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,10 +20,16 @@ const Header = () => {
     <header className="fixed top-0 z-50 w-full bg-white/80 backdrop-blur-lg border-b border-slate-200/50">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
+          {/* Logo with Image */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg shadow-indigo-500/25 transition-all duration-300 group-hover:scale-110 group-hover:shadow-indigo-500/40">
-              <span className="text-lg font-bold text-white">TN</span>
+            <div className="relative h-9 w-9 overflow-hidden rounded-xl transition-all duration-300 group-hover:scale-110">
+              <Image
+                src="/logo.png"
+                alt="ToolNoveHub"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
               ToolNoveHub

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Heart, Github, Twitter, Linkedin, Mail } from 'lucide-react';
 
 const Footer = () => {
@@ -23,11 +24,16 @@ const Footer = () => {
     <footer className="border-t border-slate-200/50 bg-white/50 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-          {/* Brand */}
+          {/* Brand - Updated with Logo */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500">
-                <span className="text-sm font-bold text-white">TN</span>
+              <div className="relative h-9 w-9 overflow-hidden rounded-xl">
+                <Image
+                  src="/logo.png"
+                  alt="ToolNoveHub"
+                  fill
+                  className="object-contain"
+                />
               </div>
               <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 ToolNoveHub

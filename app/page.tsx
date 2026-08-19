@@ -1,7 +1,8 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   QrCode, 
-  Image, 
+  Image as ImageIcon, 
   Percent, 
   AlignLeft, 
   Braces,
@@ -26,7 +27,7 @@ export default function Home() {
     {
       name: 'Image Resizer',
       description: 'Resize images in bulk with custom dimensions.',
-      icon: Image,
+      icon: ImageIcon,
       href: '/tools/image-resizer',
       color: 'from-blue-500 to-cyan-500',
     },
@@ -72,6 +73,19 @@ export default function Home() {
         </div>
 
         <div className="mx-auto max-w-7xl text-center">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <div className="relative h-24 w-24 overflow-hidden rounded-2xl shadow-2xl shadow-indigo-500/20 transition-all duration-500 hover:scale-110 hover:shadow-indigo-500/40">
+              <Image
+                src="/logo.png"
+                alt="ToolNoveHub"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+
           {/* Badge */}
           <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-1.5 text-sm text-indigo-600 border border-indigo-200/50">
             <Sparkles className="h-4 w-4" />
