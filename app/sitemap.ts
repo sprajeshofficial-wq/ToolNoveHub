@@ -2,7 +2,6 @@ import type { MetadataRoute } from 'next';
 
 const baseUrl = 'https://toolnovehub.tools';
 
-// All 16 tools
 const tools = [
   'qr-code-generator',
   'qr-code-scanner',
@@ -22,7 +21,6 @@ const tools = [
   'color-picker',
 ];
 
-// All 18 blog posts
 const blogPosts = [
   'how-to-create-qr-code-for-wifi',
   'qr-code-generator-ultimate-guide',
@@ -45,78 +43,63 @@ const blogPosts = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
-  // Static pages
-  const staticPages = [
+  return [
+    // Homepage
     {
-      url: '',
+      url: baseUrl,
+      changeFrequency: 'weekly',
       priority: 1.0,
-      changefreq: 'weekly' as const,
     },
-    {
-      url: '/tools',
-      priority: 0.9,
-      changefreq: 'weekly' as const,
-    },
-    {
-      url: '/about',
-      priority: 0.8,
-      changefreq: 'monthly' as const,
-    },
-    {
-      url: '/contact',
-      priority: 0.8,
-      changefreq: 'monthly' as const,
-    },
-    {
-      url: '/privacy',
-      priority: 0.7,
-      changefreq: 'monthly' as const,
-    },
-    {
-      url: '/terms',
-      priority: 0.7,
-      changefreq: 'monthly' as const,
-    },
-    {
-      url: '/blog',
-      priority: 0.8,
-      changefreq: 'weekly' as const,
-    },
-    {
-      url: '/docs',
-      priority: 0.7,
-      changefreq: 'monthly' as const,
-    },
-  ];
 
-  // All sitemap entries
-  const sitemapEntries = [
-    // Static pages
-    ...staticPages.map((page) => ({
-      url: `${baseUrl}${page.url}`,
-      lastModified: now,
-      changeFrequency: page.changefreq,
-      priority: page.priority,
-    })),
-    
+    // Main pages
+    {
+      url: `${baseUrl}/tools`,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/about`,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/contact`,
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      changeFrequency: 'yearly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      changeFrequency: 'yearly',
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/docs`,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+
     // Tool pages
     ...tools.map((tool) => ({
       url: `${baseUrl}/tools/${tool}`,
-      lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
-    
+
     // Blog posts
     ...blogPosts.map((post) => ({
       url: `${baseUrl}/blog/${post}`,
-      lastModified: now,
       changeFrequency: 'monthly' as const,
       priority: 0.7,
     })),
   ];
-
-  return sitemapEntries;
 }
