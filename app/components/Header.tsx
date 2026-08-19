@@ -1,62 +1,93 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useState } from "react";
-import { Menu, X, Home } from "lucide-react";
+import Link from 'next/link';
+import { useState } from 'react';
+import { Menu, X, Home, Wrench, GraduationCap, Briefcase, Code, BookOpen } from 'lucide-react';
 
-const navigation = [
-  { name: "Student Tools", href: "/tools/student" },
-  { name: "Developer Tools", href: "/tools/developer" },
-  { name: "Office Tools", href: "/tools/office" },
-];
-
-export default function Header() {
+const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const navItems = [
+    { name: 'All Tools', href: '/tools', icon: Wrench },
+    { name: 'Students', href: '/student', icon: GraduationCap },
+    { name: 'Developers', href: '/developer', icon: Code },
+    { name: 'Office', href: '/office', icon: Briefcase },
+    { name: 'Blog', href: '/blog', icon: BookOpen },
+  ];
+
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <nav className="container py-4">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold text-blue-600">ToolNoveHub</span>
+    <header className="fixed top-0 z-50 w-full bg-white/80 backdrop-blur-lg border-b border-slate-200/50">
+      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500 shadow-lg shadow-indigo-500/25 transition-all duration-300 group-hover:scale-110 group-hover:shadow-indigo-500/40">
+              <span className="text-lg font-bold text-white">TN</span>
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              ToolNoveHub
+            </span>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-blue-600 transition-colors font-medium"
+                className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-600"
               >
+                <item.icon className="h-4 w-4" />
                 {item.name}
               </Link>
             ))}
           </div>
 
+          {/* CTA Button */}
+          <div className="hidden md:block">
+            <Link
+              href="/tools"
+              className="rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-300 hover:scale-105 hover:shadow-indigo-500/40"
+            >
+              Get Started
+            </Link>
+          </div>
+
+          {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label="Toggle navigation"
+            className="rounded-lg p-2 text-slate-600 hover:bg-slate-100 md:hidden"
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
 
+        {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden pt-4 pb-2 border-t border-gray-100 mt-4 space-y-3">
-            {navigation.map((item) => (
+          <div className="md:hidden border-t border-slate-200/50 py-4">
+            {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="block text-gray-700 hover:text-blue-600 transition-colors font-medium py-2"
+                className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-slate-600 transition-all duration-300 hover:bg-indigo-50 hover:text-indigo-600"
                 onClick={() => setIsOpen(false)}
               >
+                <item.icon className="h-5 w-5" />
                 {item.name}
               </Link>
             ))}
+            <Link
+              href="/tools"
+              className="mt-2 flex w-full items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25"
+              onClick={() => setIsOpen(false)}
+            >
+              Get Started
+            </Link>
           </div>
         )}
       </nav>
     </header>
   );
-}
+};
+
+export default Header;

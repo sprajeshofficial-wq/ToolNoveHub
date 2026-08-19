@@ -1,68 +1,114 @@
-import Link from "next/link";
+import Link from 'next/link';
+import { Heart, Github, Twitter, Linkedin, Mail } from 'lucide-react';
 
-const footerLinks = [
-  {
-    title: "Tools",
-    links: [
-      { name: "QR Code Generator", href: "/tools/office/qr-code-generator" },
-      { name: "Image Resizer", href: "/tools/office/image-resizer" },
-      { name: "Percentage Calculator", href: "/tools/student/percentage-calculator" },
-      { name: "Word Counter", href: "/tools/student/word-counter" },
-      { name: "JSON Formatter", href: "/tools/developer/json-formatter" },
+const Footer = () => {
+  const footerLinks = {
+    Tools: [
+      { name: 'QR Code Generator', href: '/tools/qr-code-generator' },
+      { name: 'Image Resizer', href: '/tools/image-resizer' },
+      { name: 'Percentage Calculator', href: '/tools/percentage-calculator' },
+      { name: 'Word Counter', href: '/tools/word-counter' },
+      { name: 'JSON Formatter', href: '/tools/json-formatter' },
     ],
-  },
-  {
-    title: "Categories",
-    links: [
-      { name: "Student Tools", href: "/tools/student" },
-      { name: "Developer Tools", href: "/tools/developer" },
-      { name: "Office Tools", href: "/tools/office" },
+    Resources: [
+      { name: 'Blog', href: '/blog' },
+      { name: 'Docs', href: '/docs' },
+      { name: 'Privacy', href: '/privacy' },
+      { name: 'Terms', href: '/terms' },
+      { name: 'Contact', href: '/contact' },
     ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Terms of Service", href: "/terms" },
-      { name: "Contact", href: "/contact" },
-    ],
-  },
-];
+  };
 
-export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-gray-300 mt-auto">
-      <div className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-white font-semibold text-lg mb-4">ToolNoveHub</h3>
-            <p className="text-sm">
-              Free online tools for everyday use. Privacy-first, no account required.
-              Everything runs in your browser.
+    <footer className="border-t border-slate-200/50 bg-white/50 backdrop-blur-sm">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-r from-indigo-500 to-purple-500">
+                <span className="text-sm font-bold text-white">TN</span>
+              </div>
+              <span className="text-lg font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                ToolNoveHub
+              </span>
+            </Link>
+            <p className="mt-4 text-sm text-slate-600">
+              Free online tools for students, developers, and everyone else.
             </p>
-          </div>
-          {footerLinks.map((section) => (
-            <div key={section.title}>
-              <h4 className="text-white font-semibold mb-4">{section.title}</h4>
-              <ul className="space-y-2">
-                {section.links.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="text-sm hover:text-white transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            <div className="mt-4 flex gap-3">
+              <a href="#" className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
+                <Github className="h-4 w-4" />
+              </a>
+              <a href="#" className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
+                <Twitter className="h-4 w-4" />
+              </a>
+              <a href="#" className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
+                <Linkedin className="h-4 w-4" />
+              </a>
+              <a href="#" className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
+                <Mail className="h-4 w-4" />
+              </a>
             </div>
-          ))}
+          </div>
+
+          {/* Tool Links */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900">Tools</h3>
+            <ul className="mt-4 space-y-2">
+              {footerLinks.Tools.map((link) => (
+                <li key={link.name}>
+                  <Link href={link.href} className="text-sm text-slate-600 transition-colors hover:text-indigo-600">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Resource Links */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-900">Resources</h3>
+            <ul className="mt-4 space-y-2">
+              {footerLinks.Resources.map((link) => (
+                <li key={link.name}>
+                  <Link href={link.href} className="text-sm text-slate-600 transition-colors hover:text-indigo-600">
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Newsletter */}
+          <div className="col-span-2 md:col-span-1">
+            <h3 className="text-sm font-semibold text-slate-900">Stay Updated</h3>
+            <p className="mt-2 text-sm text-slate-600">
+              Get notified when we add new tools.
+            </p>
+            <form className="mt-4 flex gap-2">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+              />
+              <button className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105">
+                Subscribe
+              </button>
+            </form>
+          </div>
         </div>
-        <div className="border-t border-gray-800 mt-8 pt-8 text-sm text-center">
-          <p>&copy; {new Date().getFullYear()} ToolNoveHub. All rights reserved.</p>
+
+        {/* Bottom Bar */}
+        <div className="mt-8 border-t border-slate-200/50 pt-8 text-center text-sm text-slate-600">
+          <p className="flex items-center justify-center gap-1">
+            Made with <Heart className="h-4 w-4 text-red-500 animate-pulse" /> by ToolNoveHub
+          </p>
+          <p className="mt-1">© {new Date().getFullYear()} ToolNoveHub. All rights reserved.</p>
         </div>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

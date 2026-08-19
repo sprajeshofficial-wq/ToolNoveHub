@@ -1,33 +1,23 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-
-// Import CSS
 import "./globals.css";
+import Header from "@/app/components/Header";
+import Footer from "@/app/components/Footer";
 
-// Import components
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import { generateStructuredData } from "./utils/seo";
-import { Suspense } from "react";
-
-// Optimize font loading
 const inter = Inter({ 
   subsets: ["latin"],
   display: 'swap',
-  preload: true,
-  weight: ['400', '500', '600', '700'],
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
-  title: "ToolNoveHub - Free Online Tools",
-  description: "Free online tools for students, developers, and office work.",
-  metadataBase: new URL("https://toolnovehub.tools"),
-  alternates: {
-    canonical: "https://toolnovehub.tools",
-  },
+  title: "ToolNoveHub - Free Online Tools for Everyone",
+  description: "Free online tools for students, developers, office workers, and everyday tasks. QR Codes, Image Resizer, Percentage Calculator, and more.",
+  keywords: "online tools, free tools, QR code generator, image resizer, percentage calculator, word counter, JSON formatter",
+  authors: [{ name: "ToolNoveHub" }],
   openGraph: {
     title: "ToolNoveHub - Free Online Tools",
-    description: "Free online tools for everyday use.",
+    description: "Powerful, simple online tools for everyday tasks.",
     url: "https://toolnovehub.tools",
     siteName: "ToolNoveHub",
     type: "website",
@@ -36,17 +26,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} flex flex-col min-h-screen antialiased bg-gray-50`}>
+      <body className={`${inter.variable} font-sans antialiased`}>
         <Header />
-        <main className="flex-grow">
-          <Suspense fallback={<div className="min-h-screen bg-gray-50" />}>
-            {children}
-          </Suspense>
+        <main className="pt-16">
+          {children}
         </main>
         <Footer />
       </body>

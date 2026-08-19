@@ -1,233 +1,166 @@
-import Link from "next/link";
-import { QrCode, Image, Calculator, FileText, Code } from "lucide-react";
+import Link from 'next/link';
+import { 
+  QrCode, 
+  Image, 
+  Percent, 
+  AlignLeft, 
+  Braces,
+  ArrowRight,
+  Zap,
+  Shield,
+  Clock,
+  Smartphone,
+  Sparkles
+} from 'lucide-react';
+import ToolCard from '@/app/components/ToolCard';
 
 export default function Home() {
   const tools = [
     {
-      name: "QR Code Generator",
-      description: "Create custom QR codes for URLs, text, Wi-Fi, email, and phone numbers.",
-      category: "Office",
+      name: 'QR Code Generator',
+      description: 'Generate QR codes instantly for any URL or text.',
       icon: QrCode,
-      href: "/tools/office/qr-code-generator",
+      href: '/tools/qr-code-generator',
+      color: 'from-emerald-500 to-teal-500',
     },
     {
-      name: "Image Resizer",
-      description: "Resize JPG, PNG, and WebP images with aspect ratio lock and format selection.",
-      category: "Office",
+      name: 'Image Resizer',
+      description: 'Resize images in bulk with custom dimensions.',
       icon: Image,
-      href: "/tools/office/image-resizer",
+      href: '/tools/image-resizer',
+      color: 'from-blue-500 to-cyan-500',
     },
     {
-      name: "Percentage Calculator",
-      description: "Calculate percentages, increases, decreases, and differences with step-by-step formulas.",
-      category: "Student",
-      icon: Calculator,
-      href: "/tools/student/percentage-calculator",
+      name: 'Percentage Calculator',
+      description: 'Calculate percentages quickly and easily.',
+      icon: Percent,
+      href: '/tools/percentage-calculator',
+      color: 'from-amber-500 to-orange-500',
     },
     {
-      name: "Word Counter",
-      description: "Count words, characters, sentences, and paragraphs with real-time reading time.",
-      category: "Student",
-      icon: FileText,
-      href: "/tools/student/word-counter",
+      name: 'Word Counter',
+      description: 'Count words, characters, and sentences in any text.',
+      icon: AlignLeft,
+      href: '/tools/word-counter',
+      color: 'from-rose-500 to-pink-500',
     },
     {
-      name: "JSON Formatter",
-      description: "Format, validate, pretty-print, and minify JSON with clear error messages.",
-      category: "Developer",
-      icon: Code,
-      href: "/tools/developer/json-formatter",
+      name: 'JSON Formatter',
+      description: 'Format, validate, and beautify JSON data.',
+      icon: Braces,
+      href: '/tools/json-formatter',
+      color: 'from-violet-500 to-purple-500',
     },
   ];
 
+  const features = [
+    { icon: Zap, title: 'Free to Use', description: 'All tools are completely free with no hidden charges.' },
+    { icon: Shield, title: 'No Account', description: 'Start using tools immediately without signing up.' },
+    { icon: Clock, title: 'Fast Processing', description: 'All tools are optimized for speed and efficiency.' },
+    { icon: Smartphone, title: 'Mobile Friendly', description: 'Use tools on any device, anywhere.' },
+  ];
+
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
-      
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="container mx-auto px-4 py-16 md:py-24 text-center">
-          <div className="mx-auto max-w-4xl space-y-6 md:space-y-8">
-            
-            {/* Tagline */}
-            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-xs font-semibold border border-blue-200">
-              ✨ Free tools for developers, students & professionals
-            </div>
+    <main className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-32 pb-20 px-4">
+        {/* Background Effects */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl" />
+          <div className="absolute bottom-0 left-0 -z-10 h-[400px] w-[400px] rounded-full bg-gradient-to-tr from-pink-500/10 to-orange-500/10 blur-3xl" />
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        </div>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gray-900">
-              Free Online Tools for{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Everyday Use
-              </span>
-            </h1>
-            
-            <p className="mx-auto max-w-2xl text-lg md:text-xl text-gray-600 px-4">
-              <span className="font-semibold text-blue-600">
-                Practical tools that keep your data on your device.
-              </span>
-              <br />
-              <span className="text-sm sm:text-base text-gray-500">
-                QR Codes • Image Resizer • Percentage Calculator • Word Counter • JSON Formatter
-              </span>
-            </p>
-
-            {/* Privacy Promise Badge */}
-            <p className="mx-auto max-w-2xl text-md font-semibold text-green-600 bg-green-50 px-4 py-2 rounded-full inline-block">
-              🔒 Browser-based processing — your files stay on your device.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md mx-auto sm:max-w-none px-4 sm:px-0">
-              <a href="#tools" className="w-full sm:w-auto min-w-[200px] rounded-full bg-blue-600 px-6 sm:px-8 py-3 text-base font-semibold text-white shadow-lg shadow-blue-600/30 transition hover:bg-blue-700 hover:scale-105 text-center">
-                Explore Tools
-              </a>
-            </div>
+        <div className="mx-auto max-w-7xl text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-1.5 text-sm text-indigo-600 border border-indigo-200/50">
+            <Sparkles className="h-4 w-4" />
+            <span>✨ 100% Free Online Tools</span>
           </div>
-        </section>
 
-        {/* Stats Banner */}
-        <section className="container mx-auto px-4 pb-12">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 py-8 md:py-10 px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center max-w-3xl mx-auto">
-              <div>
-                <p className="text-3xl font-bold text-blue-600">5</p>
-                <p className="text-sm text-gray-600">Powerful Tools</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-blue-600">100%</p>
-                <p className="text-sm text-gray-600">Browser-Based</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-blue-600">0</p>
-                <p className="text-sm text-gray-600">Server Uploads</p>
-              </div>
-            </div>
+          {/* Heading */}
+          <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+            <span className="text-slate-900">Get things done</span>
+            <br />
+            <span className="gradient-text">faster &amp; easier.</span>
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 sm:text-xl">
+            Powerful, simple online tools for students, developers, office workers, and everyday tasks.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="mt-8 flex flex-wrap justify-center gap-4">
+            <Link href="/tools" className="btn-primary">
+              Browse All Tools
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+            <Link href="/tools/qr-code-generator" className="btn-secondary bg-white text-slate-900 hover:bg-slate-50 shadow-lg">
+              Try a Popular Tool
+            </Link>
           </div>
-        </section>
 
-        {/* Tools Section */}
-        <section id="tools" className="container mx-auto px-4 pb-16">
-          <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
-            Popular Tools
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tools.map((tool) => (
-              <Link key={tool.name} href={tool.href} className="block group">
-                <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow hover:border-blue-300 h-full">
-                  <div className="flex items-start space-x-4">
-                    <div className="flex-shrink-0 p-3 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
-                      <tool.icon className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                          {tool.name}
-                        </h3>
-                        <span className="text-xs font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-full">
-                          {tool.category}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600 mt-1">{tool.description}</p>
-                      <span className="inline-block mt-3 text-sm font-medium text-blue-600 group-hover:underline">
-                        Open Tool →
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+          {/* Stats */}
+          <div className="mt-12 flex flex-wrap justify-center gap-8">
+            {features.map((feature) => (
+              <div key={feature.title} className="flex items-center gap-2 text-sm text-slate-600">
+                <feature.icon className="h-4 w-4 text-indigo-500" />
+                <span className="font-medium">{feature.title}</span>
+              </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Why Choose Section */}
-        <section className="container mx-auto px-4 pb-16">
-          <div className="bg-blue-50 rounded-xl p-8 text-center border border-blue-100">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-3">
-              Why Choose ToolNoveHub?
+      {/* Tools Grid Section */}
+      <section className="py-20 px-4 bg-slate-50/50">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900">
+              Popular <span className="gradient-text">Tools</span>
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              <div>
-                <div className="text-3xl mb-2">🔒</div>
-                <h3 className="font-semibold">Privacy First</h3>
-                <p className="text-sm text-gray-600">Everything processed locally in your browser</p>
-              </div>
-              <div>
-                <div className="text-3xl mb-2">⚡</div>
-                <h3 className="font-semibold">Fast & Light</h3>
-                <p className="text-sm text-gray-600">Optimized for speed and Core Web Vitals</p>
-              </div>
-              <div>
-                <div className="text-3xl mb-2">📱</div>
-                <h3 className="font-semibold">Mobile Friendly</h3>
-                <p className="text-sm text-gray-600">Works perfectly on all devices</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Privacy Badge */}
-        <section className="container mx-auto px-4 pb-16">
-          <div className="text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-medium border border-green-200">
-              🔒 100% Private. No server uploads. Your data stays on your device.
-            </div>
-          </div>
-        </section>
-      </main>
-      
-      {/* Footer */}
-      <footer className="border-t bg-white py-12">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Column 1: Brand */}
-            <div className="col-span-1 md:col-span-1">
-              <div className="flex items-center gap-2 text-xl font-bold text-blue-600 mb-4">
-                <span>ToolNoveHub</span>
-              </div>
-              <p className="text-sm text-gray-600 max-w-xs">
-                Free online tools for everyday use. Privacy-first, no account required.
-                Everything runs in your browser.
-              </p>
-            </div>
-
-            {/* Column 2: Tools */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Tools</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/tools/office/qr-code-generator" className="text-gray-600 hover:text-blue-600 transition">QR Code Generator</Link></li>
-                <li><Link href="/tools/office/image-resizer" className="text-gray-600 hover:text-blue-600 transition">Image Resizer</Link></li>
-                <li><Link href="/tools/student/percentage-calculator" className="text-gray-600 hover:text-blue-600 transition">Percentage Calculator</Link></li>
-                <li><Link href="/tools/student/word-counter" className="text-gray-600 hover:text-blue-600 transition">Word Counter</Link></li>
-                <li><Link href="/tools/developer/json-formatter" className="text-gray-600 hover:text-blue-600 transition">JSON Formatter</Link></li>
-              </ul>
-            </div>
-
-            {/* Column 3: Categories */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Categories</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/tools/student" className="text-gray-600 hover:text-blue-600 transition">Student Tools</Link></li>
-                <li><Link href="/tools/developer" className="text-gray-600 hover:text-blue-600 transition">Developer Tools</Link></li>
-                <li><Link href="/tools/office" className="text-gray-600 hover:text-blue-600 transition">Office Tools</Link></li>
-              </ul>
-            </div>
-
-            {/* Column 4: Legal */}
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-4">Legal</h3>
-              <ul className="space-y-2 text-sm">
-                <li><Link href="/privacy" className="text-gray-600 hover:text-blue-600 transition">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="text-gray-600 hover:text-blue-600 transition">Terms of Service</Link></li>
-                <li><Link href="/contact" className="text-gray-600 hover:text-blue-600 transition">Contact</Link></li>
-              </ul>
-            </div>
+            <p className="mt-3 text-lg text-slate-600">
+              Free online tools for students, developers, office workers, and everyday tasks.
+            </p>
           </div>
 
-          <div className="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; {new Date().getFullYear()} ToolNoveHub. All rights reserved.</p>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            {tools.map((tool) => (
+              <ToolCard key={tool.name} {...tool} />
+            ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link href="/tools" className="btn-primary">
+              View All Tools
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
         </div>
-      </footer>
-    </div>
+      </section>
+
+      {/* Feature Section */}
+      <section className="py-20 px-4">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900">
+              Why Choose <span className="gradient-text">ToolNoveHub</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {features.map((feature) => (
+              <div key={feature.title} className="text-center">
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
+                  <feature.icon className="h-6 w-6 text-indigo-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900">{feature.title}</h3>
+                <p className="mt-2 text-sm text-slate-600">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
