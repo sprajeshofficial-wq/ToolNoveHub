@@ -1,191 +1,80 @@
-'use client';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import BinaryConverter from './BinaryConverter';
 
-import { useState } from 'react';
-import { Binary, Copy, Check, ArrowRight, RefreshCw } from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'Free Binary Converter - Text to Binary & Binary to Text | ToolNoveHub',
+  description: 'Free online binary converter. Convert text to binary and binary to text instantly. Perfect for developers, students, and computer science enthusiasts.',
+  keywords: 'binary converter, text to binary, binary to text, binary translator, binary to ascii',
+  alternates: { canonical: 'https://toolnovehub.tools/tools/binary-converter' },
+  openGraph: {
+    title: 'Free Binary Converter - Text to Binary & Binary to Text | ToolNoveHub',
+    description: 'Free online binary converter. Convert text to binary and binary to text instantly.',
+    url: 'https://toolnovehub.tools/tools/binary-converter',
+    type: 'website',
+    images: [{ url: 'https://toolnovehub.tools/og-binary-converter.jpg', width: 1200, height: 630, alt: 'Binary Converter - Free Online Tool' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free Binary Converter - Text to Binary & Binary to Text | ToolNoveHub',
+    description: 'Free online binary converter. Convert text to binary and binary to text instantly.',
+    images: ['https://toolnovehub.tools/og-binary-converter.jpg'],
+  },
+};
 
-export default function BinaryConverter() {
-  const [text, setText] = useState('');
-  const [binary, setBinary] = useState('');
-  const [mode, setMode] = useState<'text-to-binary' | 'binary-to-text'>('text-to-binary');
-  const [copied, setCopied] = useState(false);
-
-  const convertTextToBinary = () => {
-    if (!text.trim()) return;
-    const result = text
-      .split('')
-      .map(char => char.charCodeAt(0).toString(2).padStart(8, '0'))
-      .join(' ');
-    setBinary(result);
-  };
-
-  const convertBinaryToText = () => {
-    if (!binary.trim()) return;
-    try {
-      const result = binary
-        .split(' ')
-        .map(bin => String.fromCharCode(parseInt(bin, 2)))
-        .join('');
-      setText(result);
-    } catch {
-      setText('Invalid binary format');
-    }
-  };
-
-  const handleConvert = () => {
-    if (mode === 'text-to-binary') {
-      convertTextToBinary();
-    } else {
-      convertBinaryToText();
-    }
-  };
-
-  const copyToClipboard = async () => {
-    const data = mode === 'text-to-binary' ? binary : text;
-    if (!data) return;
-    await navigator.clipboard.writeText(data);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const clearAll = () => {
-    setText('');
-    setBinary('');
-  };
-
-  const swapMode = () => {
-    setMode(mode === 'text-to-binary' ? 'binary-to-text' : 'text-to-binary');
-    clearAll();
+export default function BinaryConverterPage() {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Binary Converter',
+    description: 'Convert text to binary and binary to text instantly. Perfect for developers, students, and computer science enthusiasts.',
+    applicationCategory: 'Utility',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   };
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-rose-50/30">
-      <div className="mx-auto max-w-2xl">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-rose-500 to-red-500 p-3 shadow-lg shadow-rose-500/25">
-            <Binary className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">Binary Converter</h1>
-          <p className="mt-2 text-slate-600">Convert text to binary and binary to text.</p>
+      <div className="mx-auto max-w-4xl">
+        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free Binary Converter – Text to Binary &amp; Binary to Text</h1>
+        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online binary converter. Convert text to binary and binary to text instantly. Perfect for developers, students, and computer science enthusiasts.</p>
+
+        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <BinaryConverter />
         </div>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl space-y-6">
-          {/* Mode Toggle */}
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setMode('text-to-binary')}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                  mode === 'text-to-binary'
-                    ? 'bg-rose-600 text-white shadow-lg shadow-rose-500/25'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                Text → Binary
-              </button>
-              <button
-                onClick={() => setMode('binary-to-text')}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                  mode === 'binary-to-text'
-                    ? 'bg-rose-600 text-white shadow-lg shadow-rose-500/25'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                Binary → Text
-              </button>
-            </div>
-            <button
-              onClick={swapMode}
-              className="rounded-full bg-slate-100 p-2 text-slate-600 transition-all hover:bg-slate-200"
-              title="Swap Mode"
-            >
-              <RefreshCw className="h-5 w-5" />
-            </button>
-          </div>
+        <div className="mt-12 prose prose-slate max-w-none">
+          <h2>How to Use the Binary Converter</h2>
+          <ol>
+            <li><strong>Choose mode:</strong> Select &quot;Text → Binary&quot; or &quot;Binary → Text&quot;</li>
+            <li><strong>Enter your data:</strong> Type text or binary (space-separated)</li>
+            <li><strong>Convert:</strong> Click &quot;Convert&quot; to see the result</li>
+            <li><strong>Copy:</strong> Copy the converted result</li>
+          </ol>
+          <h2>Understanding Binary</h2>
+          <p>Binary is a base-2 number system using only 0s and 1s. Computers use binary to represent all data.</p>
+        </div>
 
-          {/* Input */}
-          <div>
-            <label className="text-sm font-medium text-slate-700">
-              {mode === 'text-to-binary' ? 'Enter Text' : 'Enter Binary (space separated)'}
-            </label>
-            {mode === 'text-to-binary' ? (
-              <input
-                type="text"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Hello World"
-                className="input-field mt-1"
-                onKeyDown={(e) => e.key === 'Enter' && handleConvert()}
-              />
-            ) : (
-              <input
-                type="text"
-                value={binary}
-                onChange={(e) => setBinary(e.target.value)}
-                placeholder="01001000 01100101 01101100 01101100 01101111"
-                className="input-field mt-1 font-mono"
-                onKeyDown={(e) => e.key === 'Enter' && handleConvert()}
-              />
-            )}
-          </div>
-
-          {/* Convert Button */}
-          <button onClick={handleConvert} className="w-full btn-primary">
-            <ArrowRight className="mr-2 h-4 w-4" />
-            Convert
-          </button>
-
-          {/* Output */}
-          {(mode === 'text-to-binary' ? binary : text) && (
-            <div className="rounded-2xl bg-slate-50 p-4 border border-slate-200/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">
-                    {mode === 'text-to-binary' ? 'Binary Output' : 'Text Output'}
-                  </p>
-                  <p className="text-lg font-mono text-slate-900 break-all mt-1">
-                    {mode === 'text-to-binary' ? binary : text}
-                  </p>
-                </div>
-                <button
-                  onClick={copyToClipboard}
-                  className="flex items-center gap-2 rounded-lg bg-rose-100 px-4 py-2 text-sm font-medium text-rose-600 transition-all hover:bg-rose-200"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-4 w-4" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      Copy
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Clear */}
-          <button onClick={clearAll} className="w-full rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200">
-            Clear All
-          </button>
-
-          {/* Example */}
-          <div className="rounded-xl bg-slate-50 p-4 border border-slate-200/50">
-            <p className="text-sm text-slate-500">Examples:</p>
-            <div className="grid grid-cols-2 gap-2 mt-2 text-sm">
-              <div className="p-2 rounded-lg bg-white border border-slate-200/50">
-                <p className="text-slate-500">"A"</p>
-                <p className="font-mono text-slate-900">01000001</p>
-              </div>
-              <div className="p-2 rounded-lg bg-white border border-slate-200/50">
-                <p className="text-slate-500">"Hello"</p>
-                <p className="font-mono text-slate-900 text-xs">01001000 01100101 01101100 01101100 01101111</p>
-              </div>
-            </div>
+        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About Binary Converter</h2>
+          <div className="space-y-4">
+            <div><h3 className="font-semibold text-slate-900">Why convert text to binary?</h3><p className="text-slate-600">Binary conversion helps understand how computers store and process data. It's also useful for educational purposes and low-level programming.</p></div>
+            <div><h3 className="font-semibold text-slate-900">What is ASCII?</h3><p className="text-slate-600">ASCII is a character encoding standard that assigns numbers to characters. This tool uses ASCII values to convert between text and binary.</p></div>
           </div>
         </div>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Link href="/tools/json-formatter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">JSON Formatter</span></Link>
+            <Link href="/tools/calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Calculator</span></Link>
+            <Link href="/tools/word-counter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Word Counter</span></Link>
+            <Link href="/tools/qr-code-generator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">QR Code Generator</span></Link>
+          </div>
+        </div>
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );

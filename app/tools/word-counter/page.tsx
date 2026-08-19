@@ -1,77 +1,84 @@
-'use client';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import WordCounter from './WordCounter';
 
-import { useState, useMemo } from 'react';
-import { AlignLeft, Type, Hash, Text, FileText } from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'Free Word Counter - Count Words Online | ToolNoveHub',
+  description: 'Free online word counter. Count words, characters, sentences, and paragraphs. Perfect for content writing, SEO, and academic work. No signup required.',
+  keywords: 'word counter, count words, character counter, word count, free word counter',
+  alternates: { canonical: 'https://toolnovehub.tools/tools/word-counter' },
+  openGraph: {
+    title: 'Free Word Counter - Count Words Online | ToolNoveHub',
+    description: 'Free online word counter. Count words, characters, sentences, and paragraphs.',
+    url: 'https://toolnovehub.tools/tools/word-counter',
+    type: 'website',
+    images: [{ url: 'https://toolnovehub.tools/og-word-counter.jpg', width: 1200, height: 630, alt: 'Word Counter - Free Online Tool' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free Word Counter - Count Words Online | ToolNoveHub',
+    description: 'Free online word counter. Count words, characters, sentences, and paragraphs.',
+    images: ['https://toolnovehub.tools/og-word-counter.jpg'],
+  },
+};
 
-export default function WordCounter() {
-  const [text, setText] = useState('');
-
-  const stats = useMemo(() => {
-    const wordCount = text.trim() ? text.trim().split(/\s+/).length : 0;
-    const charCount = text.length;
-    const charCountNoSpaces = text.replace(/\s/g, '').length;
-    const sentenceCount = text.split(/[.!?]+/).filter(s => s.trim()).length;
-    const paragraphCount = text.split(/\n\s*\n/).filter(p => p.trim()).length;
-    const readingTime = Math.ceil(wordCount / 200);
-
-    return {
-      wordCount,
-      charCount,
-      charCountNoSpaces,
-      sentenceCount,
-      paragraphCount,
-      readingTime,
-    };
-  }, [text]);
-
-  const statsItems = [
-    { label: 'Words', value: stats.wordCount, icon: AlignLeft, color: 'from-blue-500 to-cyan-500' },
-    { label: 'Characters', value: stats.charCount, icon: Type, color: 'from-emerald-500 to-teal-500' },
-    { label: 'Characters (no spaces)', value: stats.charCountNoSpaces, icon: Hash, color: 'from-amber-500 to-orange-500' },
-    { label: 'Sentences', value: stats.sentenceCount, icon: Text, color: 'from-rose-500 to-pink-500' },
-    { label: 'Paragraphs', value: stats.paragraphCount, icon: FileText, color: 'from-violet-500 to-purple-500' },
-    { label: 'Reading Time', value: stats.readingTime + ' min', icon: Type, color: 'from-indigo-500 to-purple-500' },
-  ];
+export default function WordCounterPage() {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Word Counter',
+    description: 'Count words, characters, sentences, and paragraphs. Perfect for content writing, SEO, and academic work.',
+    applicationCategory: 'Utility',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  };
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-rose-50/30">
       <div className="mx-auto max-w-4xl">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 p-3 shadow-lg shadow-rose-500/25">
-            <AlignLeft className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">Word Counter</h1>
-          <p className="mt-2 text-slate-600">Count words, characters, and sentences in any text.</p>
-        </div>
+        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free Word Counter – Count Words, Characters, and More</h1>
+        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online word counter. Count words, characters, sentences, and paragraphs. Perfect for content writing, SEO, and academic work.</p>
 
         <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Paste your text here..."
-            className="textarea-field min-h-[200px]"
-          />
+          <WordCounter />
+        </div>
 
-          {/* Stats Grid */}
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
-            {statsItems.map((item) => (
-              <div key={item.label} className="rounded-xl bg-slate-50/80 p-4 text-center border border-slate-200/50">
-                <div className={`inline-flex rounded-lg bg-gradient-to-r ${item.color} p-2 shadow-lg`}>
-                  <item.icon className="h-4 w-4 text-white" />
-                </div>
-                <p className="mt-2 text-2xl font-bold text-slate-900">{item.value}</p>
-                <p className="text-xs text-slate-500">{item.label}</p>
-              </div>
-            ))}
+        <div className="mt-12 prose prose-slate max-w-none">
+          <h2>How to Use the Word Counter</h2>
+          <ol>
+            <li><strong>Paste or type:</strong> Enter your text in the text area</li>
+            <li><strong>Get results instantly:</strong> View word count, character count, and more</li>
+            <li><strong>Analyze:</strong> See sentences, paragraphs, and reading time</li>
+          </ol>
+          <h2>Why Word Counting Matters</h2>
+          <ul>
+            <li><strong>Content writing:</strong> Meet word count requirements</li>
+            <li><strong>SEO:</strong> Optimize content length for search engines</li>
+            <li><strong>Academic:</strong> Stay within essay and paper limits</li>
+            <li><strong>Social media:</strong> Check character limits</li>
+          </ul>
+        </div>
+
+        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About Word Counters</h2>
+          <div className="space-y-4">
+            <div><h3 className="font-semibold text-slate-900">What is the difference between words and characters?</h3><p className="text-slate-600">Words are the number of complete words in your text. Characters count every letter, space, and punctuation mark.</p></div>
+            <div><h3 className="font-semibold text-slate-900">Does this word counter count spaces?</h3><p className="text-slate-600">Yes, we show both character count with spaces and without spaces.</p></div>
           </div>
         </div>
 
-        <div className="mt-6 rounded-2xl bg-rose-50/50 p-4 border border-rose-200/50">
-          <p className="text-sm text-slate-600">
-            <span className="font-semibold text-rose-600">🔒 Privacy:</span> Your text is processed entirely 
-            in your browser. Nothing is sent to our servers — <span className="font-medium">100% private</span>.
-          </p>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Link href="/tools/text-to-slug" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text to Slug</span></Link>
+            <Link href="/tools/text-to-ascii" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text to ASCII</span></Link>
+            <Link href="/tools/text-repeater" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text Repeater</span></Link>
+            <Link href="/tools/percentage-calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Percentage Calculator</span></Link>
+          </div>
         </div>
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );

@@ -1,136 +1,85 @@
-'use client';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import JSONValidator from './JSONValidator';
 
-import { useState } from 'react';
-import { Braces, Check, X, Copy, AlertCircle, CheckCircle } from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'Free JSON Validator - Validate JSON Online | ToolNoveHub',
+  description: 'Free online JSON validator. Validate JSON data and find syntax errors instantly. Perfect for API development and debugging. No signup, 100% private.',
+  keywords: 'json validator, validate json, json checker, json syntax validator, json verifier',
+  alternates: { canonical: 'https://toolnovehub.tools/tools/json-validator' },
+  openGraph: {
+    title: 'Free JSON Validator - Validate JSON Online | ToolNoveHub',
+    description: 'Free online JSON validator. Validate JSON data and find syntax errors instantly.',
+    url: 'https://toolnovehub.tools/tools/json-validator',
+    type: 'website',
+    images: [{ url: 'https://toolnovehub.tools/og-json-validator.jpg', width: 1200, height: 630, alt: 'JSON Validator - Free Online Tool' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free JSON Validator - Validate JSON Online | ToolNoveHub',
+    description: 'Free online JSON validator. Validate JSON data and find syntax errors instantly.',
+    images: ['https://toolnovehub.tools/og-json-validator.jpg'],
+  },
+};
 
-export default function JSONValidator() {
-  const [input, setInput] = useState('');
-  const [isValid, setIsValid] = useState<boolean | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [copied, setCopied] = useState(false);
-
-  const validateJSON = () => {
-    if (!input.trim()) {
-      setIsValid(null);
-      setErrorMessage('Please enter JSON to validate');
-      return;
-    }
-
-    try {
-      JSON.parse(input);
-      setIsValid(true);
-      setErrorMessage('');
-    } catch (err) {
-      setIsValid(false);
-      setErrorMessage((err as Error).message);
-    }
-  };
-
-  const formatJSON = () => {
-    if (!input.trim()) return;
-    try {
-      const parsed = JSON.parse(input);
-      const formatted = JSON.stringify(parsed, null, 2);
-      setInput(formatted);
-      setIsValid(true);
-      setErrorMessage('');
-    } catch (err) {
-      setIsValid(false);
-      setErrorMessage((err as Error).message);
-    }
-  };
-
-  const copyToClipboard = async () => {
-    if (!input) return;
-    await navigator.clipboard.writeText(input);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const clearAll = () => {
-    setInput('');
-    setIsValid(null);
-    setErrorMessage('');
+export default function JSONValidatorPage() {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'JSON Validator',
+    description: 'Validate JSON data and find syntax errors instantly. Perfect for API development and debugging.',
+    applicationCategory: 'Utility',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   };
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
-      <div className="mx-auto max-w-3xl">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 p-3 shadow-lg shadow-indigo-500/25">
-            <Braces className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">JSON Validator</h1>
-          <p className="mt-2 text-slate-600">Validate JSON data and find syntax errors instantly.</p>
+      <div className="mx-auto max-w-4xl">
+        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free JSON Validator – Validate JSON Data Instantly</h1>
+        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online JSON validator. Validate JSON data and find syntax errors instantly. Perfect for API development and debugging.</p>
+
+        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <JSONValidator />
         </div>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl space-y-6">
-          {/* Input */}
-          <div>
-            <label className="text-sm font-medium text-slate-700">Enter JSON to Validate</label>
-            <textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder='{"name": "ToolNoveHub", "type": "online tools"}'
-              className="textarea-field font-mono text-sm"
-              rows={8}
-            />
-          </div>
+        <div className="mt-12 prose prose-slate max-w-none">
+          <h2>How to Use the JSON Validator</h2>
+          <ol>
+            <li><strong>Paste your JSON:</strong> Enter JSON data in the text area</li>
+            <li><strong>Validate:</strong> Click the &quot;Validate&quot; button</li>
+            <li><strong>View results:</strong> See if your JSON is valid or find error details</li>
+            <li><strong>Format:</strong> Click &quot;Format&quot; to beautify valid JSON</li>
+          </ol>
+          <h2>Common JSON Syntax Errors</h2>
+          <ul>
+            <li>Trailing commas after last item</li>
+            <li>Missing quotes around keys</li>
+            <li>Single quotes instead of double quotes</li>
+            <li>Comma placement errors</li>
+          </ul>
+        </div>
 
-          {/* Buttons */}
-          <div className="flex flex-wrap gap-3">
-            <button onClick={validateJSON} className="btn-primary">
-              <Check className="mr-2 h-4 w-4" />
-              Validate
-            </button>
-            <button onClick={formatJSON} className="rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200">
-              Format
-            </button>
-            <button onClick={copyToClipboard} className="rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200">
-              <Copy className="mr-2 h-4 w-4 inline" />
-              Copy
-            </button>
-            <button onClick={clearAll} className="rounded-full bg-red-50 px-6 py-3 text-sm font-semibold text-red-600 transition-all hover:bg-red-100">
-              Clear
-            </button>
-          </div>
-
-          {/* Result */}
-          {isValid !== null && (
-            <div className={`rounded-2xl p-4 border ${isValid ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
-              <div className="flex items-center gap-3">
-                {isValid ? (
-                  <CheckCircle className="h-6 w-6 text-emerald-500" />
-                ) : (
-                  <AlertCircle className="h-6 w-6 text-red-500" />
-                )}
-                <div>
-                  <p className={`font-semibold ${isValid ? 'text-emerald-700' : 'text-red-700'}`}>
-                    {isValid ? '✅ Valid JSON' : '❌ Invalid JSON'}
-                  </p>
-                  {errorMessage && (
-                    <p className="text-sm text-red-600 font-mono mt-1">{errorMessage}</p>
-                  )}
-                  {isValid && (
-                    <p className="text-sm text-emerald-600 mt-1">Your JSON is valid and properly formatted.</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Example */}
-          <div className="rounded-xl bg-slate-50 p-4 border border-slate-200/50">
-            <p className="text-sm font-medium text-slate-700">Example JSON:</p>
-            <pre className="mt-1 text-xs text-slate-500 bg-white p-3 rounded-lg border border-slate-200/50 overflow-x-auto">
-{`{
-  "name": "ToolNoveHub",
-  "type": "online tools",
-  "features": ["free", "private", "fast"]
-}`}
-            </pre>
+        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About JSON Validator</h2>
+          <div className="space-y-4">
+            <div><h3 className="font-semibold text-slate-900">What does a JSON validator do?</h3><p className="text-slate-600">A JSON validator checks if your JSON data is properly formatted and follows JSON syntax rules. It tells you if there are errors and where they are.</p></div>
+            <div><h3 className="font-semibold text-slate-900">Why is valid JSON important?</h3><p className="text-slate-600">Invalid JSON can break APIs, cause data processing errors, and lead to application failures. Validating JSON helps catch these issues early.</p></div>
           </div>
         </div>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Link href="/tools/json-formatter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">JSON Formatter</span></Link>
+            <Link href="/tools/text-to-slug" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text to Slug</span></Link>
+            <Link href="/tools/binary-converter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Binary Converter</span></Link>
+            <Link href="/tools/color-picker" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Color Picker</span></Link>
+          </div>
+        </div>
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );

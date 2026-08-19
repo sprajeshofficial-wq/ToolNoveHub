@@ -1,354 +1,84 @@
-'use client';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import ColorPicker from './ColorPicker';
 
-import { useState } from 'react';
-import { 
-  Palette, 
-  Copy, 
-  Check, 
-  RefreshCw, 
-  Download, 
-  Plus, 
-  Trash2, 
-  Hexagon,
-  Eye,
-  Droplet
-} from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'Free Color Picker - Pick Colors & Convert HEX to RGB | ToolNoveHub',
+  description: 'Free online color picker. Pick colors visually, convert between HEX, RGB, and HSL. Generate random palettes and export colors. Perfect for designers and developers.',
+  keywords: 'color picker, hex to rgb, color palette generator, color converter, design tool',
+  alternates: { canonical: 'https://toolnovehub.tools/tools/color-picker' },
+  openGraph: {
+    title: 'Free Color Picker - Pick Colors & Convert HEX to RGB | ToolNoveHub',
+    description: 'Free online color picker. Pick colors visually, convert between HEX, RGB, and HSL.',
+    url: 'https://toolnovehub.tools/tools/color-picker',
+    type: 'website',
+    images: [{ url: 'https://toolnovehub.tools/og-color-picker.jpg', width: 1200, height: 630, alt: 'Color Picker - Free Online Tool' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free Color Picker - Pick Colors & Convert HEX to RGB | ToolNoveHub',
+    description: 'Free online color picker. Pick colors visually, convert between HEX, RGB, and HSL.',
+    images: ['https://toolnovehub.tools/og-color-picker.jpg'],
+  },
+};
 
-interface ColorHistory {
-  hex: string;
-  timestamp: number;
-}
-
-export default function ColorPicker() {
-  const [color, setColor] = useState('#F54927');
-  const [copied, setCopied] = useState(false);
-  const [copiedValue, setCopiedValue] = useState('');
-  const [colorHistory, setColorHistory] = useState<ColorHistory[]>([
-    { hex: '#F54927', timestamp: Date.now() },
-    { hex: '#6366F1', timestamp: Date.now() - 1000 },
-    { hex: '#10B981', timestamp: Date.now() - 2000 },
-    { hex: '#F59E0B', timestamp: Date.now() - 3000 },
-    { hex: '#EC4899', timestamp: Date.now() - 4000 },
-  ]);
-  const [showPalette, setShowPalette] = useState(false);
-
-  // Hex to RGB conversion
-  const hexToRgb = (hex: string) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : { r: 0, g: 0, b: 0 };
+export default function ColorPickerPage() {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Color Picker',
+    description: 'Pick colors visually, convert between HEX, RGB, and HSL. Generate random palettes and export colors.',
+    applicationCategory: 'Utility',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   };
-
-  // Hex to HSL conversion
-  const hexToHsl = (hex: string) => {
-    const { r, g, b } = hexToRgb(hex);
-    const max = Math.max(r, g, b) / 255;
-    const min = Math.min(r, g, b) / 255;
-    let h = 0, s = 0, l = (max + min) / 2;
-    if (max !== min) {
-      const d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      switch (max) {
-        case r / 255: h = ((g - b) / 255 / d) % 6; break;
-        case g / 255: h = (b - r) / 255 / d + 2; break;
-        case b / 255: h = (r - g) / 255 / d + 4; break;
-      }
-      h = Math.round(h * 60);
-      if (h < 0) h += 360;
-    }
-    return { h, s: Math.round(s * 100), l: Math.round(l * 100) };
-  };
-
-  const rgb = hexToRgb(color);
-  const hsl = hexToHsl(color);
-
-  // Generate random color
-  const randomColor = () => {
-    const randomHex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0').toUpperCase();
-    setColor(randomHex);
-    addToHistory(randomHex);
-  };
-
-  // Generate random palette (5 colors)
-  const generatePalette = () => {
-    const palette: string[] = [];
-    for (let i = 0; i < 5; i++) {
-      const randomHex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0').toUpperCase();
-      palette.push(randomHex);
-    }
-    return palette;
-  };
-
-  const [paletteColors, setPaletteColors] = useState<string[]>(generatePalette());
-
-  const regeneratePalette = () => {
-    setPaletteColors(generatePalette());
-  };
-
-  // Add color to history
-  const addToHistory = (hex: string) => {
-    setColorHistory(prev => {
-      const filtered = prev.filter(c => c.hex !== hex);
-      const newHistory = [{ hex, timestamp: Date.now() }, ...filtered];
-      return newHistory.slice(0, 12); // Keep only last 12 colors
-    });
-  };
-
-  // Copy to clipboard
-  const copyToClipboard = async (text: string, label: string) => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setCopiedValue(label);
-    setTimeout(() => {
-      setCopied(false);
-      setCopiedValue('');
-    }, 2000);
-  };
-
-  const isCopied = (label: string) => copied && copiedValue === label;
-
-  // Export colors as CSS variables or JSON
-  const exportColors = () => {
-    const allColors = [color, ...paletteColors, ...colorHistory.map(c => c.hex)];
-    const uniqueColors = [...new Set(allColors)];
-    
-    const cssVars = uniqueColors.map((c, i) => `--color-${i + 1}: ${c};`).join('\n');
-    const json = JSON.stringify(uniqueColors, null, 2);
-    
-    // Create download
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `colors-${Date.now()}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  // Remove color from history
-  const removeFromHistory = (hex: string) => {
-    setColorHistory(prev => prev.filter(c => c.hex !== hex));
-  };
-
-  const presetColors = [
-    '#F54927', '#6366F1', '#10B981', '#F59E0B', '#EC4899',
-    '#3B82F6', '#8B5CF6', '#14B8A6', '#F97316', '#22D3EE',
-    '#F472B6', '#34D399', '#60A5FA', '#A78BFA', '#FB923C'
-  ];
-
-  const isColorInHistory = (hex: string) => colorHistory.some(c => c.hex === hex);
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-purple-50/30">
-      <div className="mx-auto max-w-2xl">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-purple-500 to-pink-500 p-3 shadow-lg shadow-purple-500/25">
-            <Palette className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">Color Picker</h1>
-          <p className="mt-2 text-slate-600">Pick, generate palettes, and export colors.</p>
+      <div className="mx-auto max-w-4xl">
+        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free Color Picker – Pick Colors &amp; Convert Formats</h1>
+        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online color picker. Pick colors visually, convert between HEX, RGB, and HSL. Generate random palettes and export colors.</p>
+
+        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <ColorPicker />
         </div>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl space-y-6">
-          {/* Color Preview & Picker */}
-          <div className="flex items-center gap-6">
-            {/* Color Preview Box with values */}
-            <div className="flex-shrink-0">
-              <div
-                className="h-24 w-24 rounded-2xl shadow-lg border-2 border-slate-200/50 transition-all duration-300"
-                style={{ backgroundColor: color }}
-              />
-              <div className="mt-2 text-center">
-                <p className="text-xs font-mono text-slate-500">{color}</p>
-                <p className="text-xs text-slate-400">{rgb.r}, {rgb.g}, {rgb.b}</p>
-                <p className="text-xs text-slate-400">{hsl.h}°, {hsl.s}%, {hsl.l}%</p>
-              </div>
-            </div>
-            
-            {/* Color Inputs */}
-            <div className="flex-1 space-y-3">
-              <div>
-                <label className="text-xs font-medium text-slate-500">HEX</label>
-                <input
-                  type="text"
-                  value={color}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setColor(val);
-                    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-                      addToHistory(val);
-                    }
-                  }}
-                  className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-mono focus:border-indigo-500 focus:outline-none"
-                />
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setColor(val);
-                    addToHistory(val);
-                  }}
-                  className="flex-1 h-10 rounded-lg cursor-pointer border border-slate-200/50"
-                />
-                <button
-                  onClick={randomColor}
-                  className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium transition-all flex items-center gap-2 whitespace-nowrap"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  Random
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="mt-12 prose prose-slate max-w-none">
+          <h2>How to Use the Color Picker</h2>
+          <ol>
+            <li><strong>Pick a color:</strong> Use the color input or click preset colors</li>
+            <li><strong>View conversions:</strong> See HEX, RGB, and HSL values</li>
+            <li><strong>Generate palettes:</strong> Click &quot;Generate&quot; for random color palettes</li>
+            <li><strong>Export:</strong> Export colors as JSON for your project</li>
+          </ol>
+          <h2>Color Formats Explained</h2>
+          <ul>
+            <li><strong>HEX:</strong> #FF5733 (used in web design and CSS)</li>
+            <li><strong>RGB:</strong> rgb(255, 87, 51) (used in digital design)</li>
+            <li><strong>HSL:</strong> hsl(10, 100%, 60%) (intuitive color model)</li>
+          </ul>
+        </div>
 
-          {/* Copy Buttons */}
-          <div className="flex flex-wrap gap-2">
-            {[
-              { label: 'HEX', value: color },
-              { label: 'RGB', value: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` },
-              { label: 'HSL', value: `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)` },
-            ].map((item) => (
-              <button
-                key={item.label}
-                onClick={() => copyToClipboard(item.value, item.label)}
-                className={`flex-1 min-w-[80px] rounded-lg px-3 py-2 text-sm font-medium transition-all flex items-center justify-center gap-1 ${
-                  isCopied(item.label)
-                    ? 'bg-emerald-100 text-emerald-700'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                }`}
-              >
-                {isCopied(item.label) ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-                {item.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Random Palette */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Hexagon className="h-4 w-4 text-indigo-500" />
-                <p className="text-sm font-medium text-slate-700">Random Palette</p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={regeneratePalette}
-                  className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-all flex items-center gap-1"
-                >
-                  <RefreshCw className="h-3 w-3" />
-                  Generate
-                </button>
-                <button
-                  onClick={exportColors}
-                  className="px-3 py-1.5 rounded-lg bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-xs font-medium transition-all flex items-center gap-1"
-                >
-                  <Download className="h-3 w-3" />
-                  Export
-                </button>
-              </div>
-            </div>
-            <div className="grid grid-cols-5 gap-2">
-              {paletteColors.map((c, i) => (
-                <button
-                  key={i}
-                  onClick={() => {
-                    setColor(c);
-                    addToHistory(c);
-                  }}
-                  className="group relative h-12 rounded-lg border-2 border-slate-200/50 transition-all hover:scale-105 hover:shadow-lg"
-                  style={{ backgroundColor: c }}
-                >
-                  <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/40 rounded-lg text-white text-xs font-mono transition-opacity">
-                    {c}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Preset Colors */}
-          <div>
-            <p className="text-sm font-medium text-slate-700 mb-3">Preset Colors</p>
-            <div className="grid grid-cols-8 gap-2 sm:grid-cols-10">
-              {presetColors.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => {
-                    setColor(c);
-                    addToHistory(c);
-                  }}
-                  className={`h-8 w-full rounded-lg border-2 transition-all hover:scale-110 hover:shadow-lg ${
-                    color === c ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-slate-200/50'
-                  }`}
-                  style={{ backgroundColor: c }}
-                  title={c}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Color History */}
-          {colorHistory.length > 0 && (
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-sm font-medium text-slate-700">Color History</p>
-                <button
-                  onClick={() => setColorHistory([])}
-                  className="text-xs text-red-500 hover:text-red-600 transition-colors"
-                >
-                  Clear All
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {colorHistory.map((item) => (
-                  <div key={item.hex} className="group relative">
-                    <button
-                      onClick={() => {
-                        setColor(item.hex);
-                      }}
-                      className="h-8 w-8 rounded-lg border-2 border-slate-200/50 transition-all hover:scale-110 hover:shadow-lg"
-                      style={{ backgroundColor: item.hex }}
-                      title={item.hex}
-                    />
-                    <button
-                      onClick={() => removeFromHistory(item.hex)}
-                      className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 bg-red-500 text-white rounded-full p-0.5 transition-opacity"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Color Info Grid */}
-          <div className="grid grid-cols-3 gap-3 text-center text-xs text-slate-500 pt-2 border-t border-slate-200/50">
-            <div>
-              <p className="font-medium text-slate-700">Red</p>
-              <p className="font-mono">{rgb.r}</p>
-            </div>
-            <div>
-              <p className="font-medium text-slate-700">Green</p>
-              <p className="font-mono">{rgb.g}</p>
-            </div>
-            <div>
-              <p className="font-medium text-slate-700">Blue</p>
-              <p className="font-mono">{rgb.b}</p>
-            </div>
+        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About Color Picker</h2>
+          <div className="space-y-4">
+            <div><h3 className="font-semibold text-slate-900">How do I pick a color?</h3><p className="text-slate-600">Use the color input to pick any color visually, or click preset colors. You can also enter a HEX value directly.</p></div>
+            <div><h3 className="font-semibold text-slate-900">What is the difference between HEX and RGB?</h3><p className="text-slate-600">HEX uses hexadecimal values (#FF5733). RGB uses decimal values (255, 87, 51). They represent the same colors in different formats.</p></div>
           </div>
         </div>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Link href="/tools/image-resizer" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Image Resizer</span></Link>
+            <Link href="/tools/image-cropper" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Image Cropper</span></Link>
+            <Link href="/tools/json-formatter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">JSON Formatter</span></Link>
+            <Link href="/tools/qr-code-generator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">QR Code Generator</span></Link>
+          </div>
+        </div>
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );

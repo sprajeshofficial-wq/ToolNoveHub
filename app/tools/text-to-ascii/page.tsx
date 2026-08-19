@@ -1,152 +1,84 @@
-'use client';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import TextToASCII from './TextToASCII';
 
-import { useState } from 'react';
-import { TextQuote, Copy, Check, RefreshCw } from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'Free Text to ASCII Art Converter - Create ASCII Art Online | ToolNoveHub',
+  description: 'Free online text to ASCII art converter. Convert any text to beautiful ASCII art. Perfect for social media, emails, and creative projects.',
+  keywords: 'text to ascii, ascii art generator, text to ascii art, ascii converter, ascii creator',
+  alternates: { canonical: 'https://toolnovehub.tools/tools/text-to-ascii' },
+  openGraph: {
+    title: 'Free Text to ASCII Art Converter - Create ASCII Art Online | ToolNoveHub',
+    description: 'Free online text to ASCII art converter. Convert any text to beautiful ASCII art.',
+    url: 'https://toolnovehub.tools/tools/text-to-ascii',
+    type: 'website',
+    images: [{ url: 'https://toolnovehub.tools/og-text-to-ascii.jpg', width: 1200, height: 630, alt: 'Text to ASCII Art - Free Online Tool' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free Text to ASCII Art Converter - Create ASCII Art Online | ToolNoveHub',
+    description: 'Free online text to ASCII art converter. Convert any text to beautiful ASCII art.',
+    images: ['https://toolnovehub.tools/og-text-to-ascii.jpg'],
+  },
+};
 
-export default function TextToASCII() {
-  const [text, setText] = useState('');
-  const [asciiArt, setAsciiArt] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [style, setStyle] = useState<'standard' | 'big' | 'small'>('standard');
-
-  // Font styles mapping
-  const fonts: Record<string, Record<string, string>> = {
-    standard: {
-      a: '  ███  ', b: ' ████  ', c: '  ████ ', d: ' ████  ', e: '███████',
-    },
-    big: {
-      a: '   ███   \n  █████  \n ██  ██  \n ███████ \n ██  ██  ',
-      b: ' ██████  \n ██  ██  \n ██████  \n ██  ██  \n ██████  ',
-      c: '  █████  \n ██      \n ██      \n ██      \n  █████  ',
-      d: ' ██████  \n ██  ██  \n ██  ██  \n ██  ██  \n ██████  ',
-      e: ' ███████ \n ██      \n ██████  \n ██      \n ███████ ',
-    },
-    small: {
-      a: ' ███ \n██ ██\n█████\n██ ██',
-      b: '████ \n█  ██\n████ \n█  ██\n████ ',
-      c: ' ████\n█   \n█   \n█   \n ████',
-      d: '████ \n█  ██\n█  ██\n█  ██\n████ ',
-      e: '██████\n█     \n████  \n█     \n██████',
-    }
-  };
-
-  const generateASCII = () => {
-    if (!text.trim()) return;
-    
-    // Simple ASCII art generation
-    const chars = text.toLowerCase().split('');
-    const font = fonts[style];
-    
-    let result = '';
-    if (style === 'standard') {
-      result = chars.map(char => font[char] || char).join('  ');
-    } else {
-      // For big/small, stack letters vertically
-      const lines = chars.map(char => (font[char] || char).split('\n'));
-      const maxLines = Math.max(...lines.map(l => l.length));
-      for (let i = 0; i < maxLines; i++) {
-        result += lines.map(l => l[i] || ' '.repeat(l[0]?.length || 1)).join('  ') + '\n';
-      }
-    }
-    setAsciiArt(result);
-  };
-
-  const copyToClipboard = async () => {
-    if (!asciiArt) return;
-    await navigator.clipboard.writeText(asciiArt);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const clearAll = () => {
-    setText('');
-    setAsciiArt('');
+export default function TextToASCIIPage() {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Text to ASCII Art Converter',
+    description: 'Convert any text to beautiful ASCII art. Perfect for social media, emails, and creative projects.',
+    applicationCategory: 'Utility',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   };
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-gray-50/30">
-      <div className="mx-auto max-w-2xl">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-gray-500 to-slate-500 p-3 shadow-lg shadow-gray-500/25">
-            <TextQuote className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">Text to ASCII</h1>
-          <p className="mt-2 text-slate-600">Convert text to ASCII art.</p>
+      <div className="mx-auto max-w-4xl">
+        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free Text to ASCII Art Converter – Create Beautiful ASCII Art</h1>
+        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online text to ASCII art converter. Convert any text to beautiful ASCII art. Perfect for social media, emails, and creative projects.</p>
+
+        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <TextToASCII />
         </div>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl space-y-6">
-          {/* Style Selector */}
-          <div>
-            <label className="text-sm font-medium text-slate-700">Font Style</label>
-            <div className="flex gap-2 mt-1">
-              {['standard', 'big', 'small'].map((s) => (
-                <button
-                  key={s}
-                  onClick={() => setStyle(s as typeof style)}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                    style === s
-                      ? 'bg-slate-600 text-white shadow-lg shadow-slate-500/25'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  }`}
-                >
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Input */}
-          <div>
-            <label className="text-sm font-medium text-slate-700">Enter Text</label>
-            <input
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Type something..."
-              className="input-field mt-1"
-              onKeyDown={(e) => e.key === 'Enter' && generateASCII()}
-            />
-          </div>
-
-          {/* Generate Button */}
-          <button onClick={generateASCII} className="w-full btn-primary">
-            <RefreshCw className="mr-2 h-4 w-4" />
-            Generate ASCII Art
-          </button>
-
-          {/* Output */}
-          {asciiArt && (
-            <div className="rounded-2xl bg-slate-900 p-4 border border-slate-800">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-sm text-slate-400">ASCII Art</p>
-                <button
-                  onClick={copyToClipboard}
-                  className="flex items-center gap-2 rounded-lg bg-slate-700 px-3 py-1.5 text-sm font-medium text-slate-200 transition-all hover:bg-slate-600"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-4 w-4" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      Copy
-                    </>
-                  )}
-                </button>
-              </div>
-              <pre className="font-mono text-sm text-green-400 whitespace-pre-wrap overflow-x-auto">
-                {asciiArt}
-              </pre>
-            </div>
-          )}
-
-          {/* Clear */}
-          <button onClick={clearAll} className="w-full rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200">
-            Clear All
-          </button>
+        <div className="mt-12 prose prose-slate max-w-none">
+          <h2>How to Use the Text to ASCII Converter</h2>
+          <ol>
+            <li><strong>Enter your text:</strong> Type the text you want to convert</li>
+            <li><strong>Choose style:</strong> Select Standard, Big, or Small font</li>
+            <li><strong>Generate:</strong> Click &quot;Generate ASCII Art&quot;</li>
+            <li><strong>Copy:</strong> Copy the ASCII art for use in your project</li>
+          </ol>
+          <h2>Where to Use ASCII Art</h2>
+          <ul>
+            <li><strong>Email signatures:</strong> Make your emails stand out</li>
+            <li><strong>Social media:</strong> Add creative flair to bios and posts</li>
+            <li><strong>Creative projects:</strong> Use in art and design projects</li>
+          </ul>
         </div>
+
+        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About ASCII Art</h2>
+          <div className="space-y-4">
+            <div><h3 className="font-semibold text-slate-900">What is ASCII art?</h3><p className="text-slate-600">ASCII art is a graphic design technique that uses printable characters from the ASCII standard to create images and text art.</p></div>
+            <div><h3 className="font-semibold text-slate-900">Is this tool free?</h3><p className="text-slate-600">Yes, completely free. No signup or payment required.</p></div>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Link href="/tools/word-counter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Word Counter</span></Link>
+            <Link href="/tools/text-to-slug" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text to Slug</span></Link>
+            <Link href="/tools/text-repeater" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text Repeater</span></Link>
+            <Link href="/tools/percentage-calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Percentage Calculator</span></Link>
+          </div>
+        </div>
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );

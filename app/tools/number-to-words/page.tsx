@@ -1,164 +1,83 @@
-'use client';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import NumberToWords from './NumberToWords';
 
-import { useState } from 'react';
-import { Hash, Copy, Check, Type } from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'Free Number to Words Converter - Convert Numbers to Text | ToolNoveHub',
+  description: 'Free online number to words converter. Convert any number to words instantly. Perfect for checks, invoices, and legal documents. No signup required.',
+  keywords: 'number to words, convert number to text, number to word converter, number to english',
+  alternates: { canonical: 'https://toolnovehub.tools/tools/number-to-words' },
+  openGraph: {
+    title: 'Free Number to Words Converter - Convert Numbers to Text | ToolNoveHub',
+    description: 'Free online number to words converter. Convert any number to words instantly.',
+    url: 'https://toolnovehub.tools/tools/number-to-words',
+    type: 'website',
+    images: [{ url: 'https://toolnovehub.tools/og-number-to-words.jpg', width: 1200, height: 630, alt: 'Number to Words Converter - Free Online Tool' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free Number to Words Converter - Convert Numbers to Text | ToolNoveHub',
+    description: 'Free online number to words converter. Convert any number to words instantly.',
+    images: ['https://toolnovehub.tools/og-number-to-words.jpg'],
+  },
+};
 
-export default function NumberToWords() {
-  const [number, setNumber] = useState('');
-  const [words, setWords] = useState('');
-  const [copied, setCopied] = useState(false);
-
-  const convertToWords = () => {
-    const num = parseInt(number);
-    if (isNaN(num) || num < 0 || num > 999999999) {
-      setWords('Please enter a valid number between 0 and 999,999,999');
-      return;
-    }
-
-    const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
-    const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-    const teens = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-
-    const convertHundreds = (n: number): string => {
-      if (n === 0) return '';
-      const h = Math.floor(n / 100);
-      const remainder = n % 100;
-      let result = '';
-      if (h > 0) result += ones[h] + ' hundred';
-      if (remainder > 0) {
-        if (result) result += ' ';
-        if (remainder < 10) result += ones[remainder];
-        else if (remainder < 20) result += teens[remainder - 10];
-        else {
-          const tensDigit = Math.floor(remainder / 10);
-          const onesDigit = remainder % 10;
-          result += tens[tensDigit];
-          if (onesDigit > 0) result += '-' + ones[onesDigit];
-        }
-      }
-      return result;
-    };
-
-    if (num === 0) {
-      setWords('zero');
-      return;
-    }
-
-    const millions = Math.floor(num / 1000000);
-    const thousands = Math.floor((num % 1000000) / 1000);
-    const hundreds = num % 1000;
-
-    let result = '';
-    if (millions > 0) {
-      result += convertHundreds(millions) + ' million';
-      if (thousands > 0 || hundreds > 0) result += ' ';
-    }
-    if (thousands > 0) {
-      result += convertHundreds(thousands) + ' thousand';
-      if (hundreds > 0) result += ' ';
-    }
-    if (hundreds > 0) result += convertHundreds(hundreds);
-
-    setWords(result);
-  };
-
-  const copyToClipboard = async () => {
-    if (!words) return;
-    await navigator.clipboard.writeText(words);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const clearAll = () => {
-    setNumber('');
-    setWords('');
+export default function NumberToWordsPage() {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Number to Words Converter',
+    description: 'Convert any number to words instantly. Perfect for checks, invoices, and legal documents.',
+    applicationCategory: 'Utility',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   };
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
-      <div className="mx-auto max-w-2xl">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-amber-500 to-yellow-500 p-3 shadow-lg shadow-amber-500/25">
-            <Hash className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">Number to Words</h1>
-          <p className="mt-2 text-slate-600">Convert numbers to words (123 → one hundred twenty-three).</p>
+      <div className="mx-auto max-w-4xl">
+        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free Number to Words Converter – Convert Numbers Instantly</h1>
+        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online number to words converter. Convert any number to words instantly. Perfect for checks, invoices, and legal documents.</p>
+
+        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <NumberToWords />
         </div>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl space-y-6">
-          <div>
-            <label className="text-sm font-medium text-slate-700">Enter Number</label>
-            <input
-              type="number"
-              value={number}
-              onChange={(e) => setNumber(e.target.value)}
-              placeholder="Enter a number (0 - 999,999,999)"
-              className="input-field mt-1"
-              min={0}
-              max={999999999}
-              onKeyDown={(e) => e.key === 'Enter' && convertToWords()}
-            />
-            <p className="mt-1 text-xs text-slate-400">Supports numbers from 0 to 999,999,999</p>
-          </div>
+        <div className="mt-12 prose prose-slate max-w-none">
+          <h2>How to Use the Number to Words Converter</h2>
+          <ol>
+            <li><strong>Enter a number:</strong> Type any number between 0 and 999,999,999</li>
+            <li><strong>Convert:</strong> Click &quot;Convert to Words&quot; or press Enter</li>
+            <li><strong>Copy:</strong> Copy the result for use in documents</li>
+          </ol>
+          <h2>When to Convert Numbers to Words</h2>
+          <ul>
+            <li><strong>Writing checks:</strong> Prevent fraud with written amounts</li>
+            <li><strong>Legal documents:</strong> Avoid ambiguity in contracts</li>
+            <li><strong>Invoices:</strong> Professional presentation</li>
+          </ul>
+        </div>
 
-          <div className="flex flex-wrap gap-3">
-            <button onClick={convertToWords} className="btn-primary">
-              <Type className="mr-2 h-4 w-4" />
-              Convert to Words
-            </button>
-            <button onClick={clearAll} className="rounded-full bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200">
-              Clear
-            </button>
-          </div>
-
-          {words && (
-            <div className="rounded-2xl bg-amber-50/50 p-4 border border-amber-200/50">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">In Words</p>
-                  <p className="text-lg font-medium text-slate-900 capitalize">{words}</p>
-                </div>
-                <button
-                  onClick={copyToClipboard}
-                  className="flex items-center gap-2 rounded-lg bg-amber-100 px-4 py-2 text-sm font-medium text-amber-700 transition-all hover:bg-amber-200"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="h-4 w-4" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      Copy
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-          )}
-
-          <div className="rounded-xl bg-slate-50 p-4 border border-slate-200/50">
-            <div className="grid grid-cols-2 gap-2 text-center text-sm">
-              <div className="p-2 rounded-lg bg-white">
-                <p className="text-slate-500">123</p>
-                <p className="font-semibold text-slate-900">one hundred twenty-three</p>
-              </div>
-              <div className="p-2 rounded-lg bg-white">
-                <p className="text-slate-500">1000</p>
-                <p className="font-semibold text-slate-900">one thousand</p>
-              </div>
-              <div className="p-2 rounded-lg bg-white">
-                <p className="text-slate-500">1000000</p>
-                <p className="font-semibold text-slate-900">one million</p>
-              </div>
-              <div className="p-2 rounded-lg bg-white">
-                <p className="text-slate-500">0</p>
-                <p className="font-semibold text-slate-900">zero</p>
-              </div>
-            </div>
+        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About Number to Words</h2>
+          <div className="space-y-4">
+            <div><h3 className="font-semibold text-slate-900">Why convert numbers to words?</h3><p className="text-slate-600">Converting numbers to words helps prevent fraud on checks, makes legal documents clearer, and improves readability in formal writing.</p></div>
+            <div><h3 className="font-semibold text-slate-900">What numbers are supported?</h3><p className="text-slate-600">This tool supports numbers from 0 to 999,999,999.</p></div>
           </div>
         </div>
+
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Link href="/tools/percentage-calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Percentage Calculator</span></Link>
+            <Link href="/tools/calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Calculator</span></Link>
+            <Link href="/tools/file-size-converter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">File Size Converter</span></Link>
+            <Link href="/tools/word-counter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Word Counter</span></Link>
+          </div>
+        </div>
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );

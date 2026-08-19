@@ -1,134 +1,85 @@
-'use client';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import PercentageCalculator from './PercentageCalculator';
 
-import { useState } from 'react';
-import { Percent, Calculator } from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'Free Percentage Calculator - Calculate Percentages Online | ToolNoveHub',
+  description: 'Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more. No signup, 100% private, browser-based.',
+  keywords: 'percentage calculator, calculate percentage, percent calculator, percentage increase, percentage decrease',
+  alternates: { canonical: 'https://toolnovehub.tools/tools/percentage-calculator' },
+  openGraph: {
+    title: 'Free Percentage Calculator - Calculate Percentages Online | ToolNoveHub',
+    description: 'Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more.',
+    url: 'https://toolnovehub.tools/tools/percentage-calculator',
+    type: 'website',
+    images: [{ url: 'https://toolnovehub.tools/og-percentage-calculator.jpg', width: 1200, height: 630, alt: 'Percentage Calculator - Free Online Tool' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Free Percentage Calculator - Calculate Percentages Online | ToolNoveHub',
+    description: 'Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more.',
+    images: ['https://toolnovehub.tools/og-percentage-calculator.jpg'],
+  },
+};
 
-export default function PercentageCalculator() {
-  const [value, setValue] = useState('');
-  const [percentage, setPercentage] = useState('');
-  const [result, setResult] = useState<number | null>(null);
-  const [calculationType, setCalculationType] = useState<'of' | 'increase' | 'decrease'>('of');
-
-  const calculate = () => {
-    const num = parseFloat(value);
-    const percent = parseFloat(percentage);
-
-    if (isNaN(num) || isNaN(percent)) return;
-
-    let finalResult = 0;
-    switch (calculationType) {
-      case 'of':
-        finalResult = (percent / 100) * num;
-        break;
-      case 'increase':
-        finalResult = num + (num * (percent / 100));
-        break;
-      case 'decrease':
-        finalResult = num - (num * (percent / 100));
-        break;
-    }
-    setResult(Math.round(finalResult * 100) / 100);
-  };
-
-  const getResultLabel = () => {
-    switch (calculationType) {
-      case 'of': return `= ${result} (${percentage}% of ${value})`;
-      case 'increase': return `= ${result} (${value} + ${percentage}%)`;
-      case 'decrease': return `= ${result} (${value} - ${percentage}%)`;
-    }
+export default function PercentageCalculatorPage() {
+  const schemaData = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: 'Percentage Calculator',
+    description: 'Calculate percentages, percentage increase/decrease, and more. 100% private, browser-based.',
+    applicationCategory: 'Utility',
+    operatingSystem: 'All',
+    browserRequirements: 'Requires JavaScript',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   };
 
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
-      <div className="mx-auto max-w-2xl">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 p-3 shadow-lg shadow-amber-500/25">
-            <Percent className="h-8 w-8 text-white" />
-          </div>
-          <h1 className="mt-4 text-3xl font-bold text-slate-900">Percentage Calculator</h1>
-          <p className="mt-2 text-slate-600">Calculate percentages quickly and easily.</p>
-        </div>
+      <div className="mx-auto max-w-4xl">
+        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free Percentage Calculator – Calculate Percentages Instantly</h1>
+        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more. Perfect for tips, discounts, taxes, and grades.</p>
 
         <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <div className="space-y-6">
-            {/* Calculation Type */}
-            <div>
-              <label className="text-sm font-medium text-slate-700">Calculation Type</label>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {[
-                  { value: 'of', label: '% of a number' },
-                  { value: 'increase', label: '% increase' },
-                  { value: 'decrease', label: '% decrease' },
-                ].map((type) => (
-                  <button
-                    key={type.value}
-                    onClick={() => setCalculationType(type.value as typeof calculationType)}
-                    className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                      calculationType === type.value
-                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                    }`}
-                  >
-                    {type.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+          <PercentageCalculator />
+        </div>
 
-            {/* Inputs */}
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="text-sm font-medium text-slate-700">
-                  {calculationType === 'of' ? 'Number' : 'Original Value'}
-                </label>
-                <input
-                  type="number"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                  placeholder="Enter number"
-                  className="input-field mt-1"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-slate-700">Percentage</label>
-                <input
-                  type="number"
-                  value={percentage}
-                  onChange={(e) => setPercentage(e.target.value)}
-                  placeholder="Enter percentage"
-                  className="input-field mt-1"
-                />
-              </div>
-            </div>
+        <div className="mt-12 prose prose-slate max-w-none">
+          <h2>How to Use the Percentage Calculator</h2>
+          <ol>
+            <li><strong>Choose calculation type:</strong> Select &quot;% of a number&quot;, &quot;% increase&quot;, or &quot;% decrease&quot;</li>
+            <li><strong>Enter your numbers:</strong> Input the number and percentage</li>
+            <li><strong>Calculate:</strong> Click the &quot;Calculate&quot; button</li>
+            <li><strong>Get results:</strong> View the result instantly</li>
+          </ol>
+          <h2>Common Percentage Calculations</h2>
+          <ul>
+            <li><strong>Tips:</strong> 20% of $50 = $10 (total $60)</li>
+            <li><strong>Discounts:</strong> 25% off $100 = $25 off (total $75)</li>
+            <li><strong>Tax:</strong> 8% tax on $100 = $8 (total $108)</li>
+            <li><strong>Grade:</strong> 85 out of 100 = 85%</li>
+          </ul>
+        </div>
 
-            <button
-              onClick={calculate}
-              className="w-full btn-primary"
-            >
-              <Calculator className="mr-2 h-4 w-4" />
-              Calculate
-            </button>
-
-            {/* Result */}
-            {result !== null && (
-              <div className="rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 p-6 border border-indigo-200/50">
-                <p className="text-sm text-slate-600">Result</p>
-                <p className="text-2xl font-bold text-indigo-600">
-                  {result.toLocaleString()}
-                </p>
-                <p className="mt-1 text-sm text-slate-500">{getResultLabel()}</p>
-              </div>
-            )}
+        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About Percentage Calculators</h2>
+          <div className="space-y-4">
+            <div><h3 className="font-semibold text-slate-900">How do I calculate a percentage of a number?</h3><p className="text-slate-600">Use the &quot;% of a number&quot; mode. Enter the number and percentage, and the tool will calculate the result.</p></div>
+            <div><h3 className="font-semibold text-slate-900">What is percentage increase?</h3><p className="text-slate-600">Percentage increase shows how much a value has grown relative to the original. For example, 100 increased by 20% = 120.</p></div>
           </div>
         </div>
 
-        <div className="mt-6 rounded-2xl bg-amber-50/50 p-4 border border-amber-200/50">
-          <p className="text-sm text-slate-600">
-            <span className="font-semibold text-amber-600">📝 Examples:</span> {calculationType === 'of' && 'What is 20% of 200? (40)'}
-            {calculationType === 'increase' && 'What is 200 + 10%? (220)'}
-            {calculationType === 'decrease' && 'What is 200 - 10%? (180)'}
-          </p>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Link href="/tools/calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Calculator</span></Link>
+            <Link href="/tools/number-to-words" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Number to Words</span></Link>
+            <Link href="/tools/file-size-converter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">File Size Converter</span></Link>
+            <Link href="/tools/qr-code-generator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">QR Code Generator</span></Link>
+          </div>
         </div>
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );
