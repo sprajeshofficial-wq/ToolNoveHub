@@ -1,6 +1,5 @@
 'use client';
 
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   Mail,
@@ -11,12 +10,6 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-
-const metadata: Metadata = {
-  title: 'Contact ToolNoveHub - Get in Touch',
-  description:
-    'Contact ToolNoveHub for questions, feedback, bug reports, tool suggestions, and other inquiries.',
-};
 
 type FormData = {
   name: string;
@@ -42,43 +35,41 @@ export default function ContactPage() {
   ) => {
     e.preventDefault();
 
+    // Validate form
+    if (!formData.name || !formData.email || !formData.message) {
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 3000);
+      return;
+    }
+
     setIsSubmitting(true);
     setStatus('idle');
 
     try {
-      /*
-       * NOTE:
-       * This currently only validates the form on the client.
-       * You will need /api/contact later to actually send emails.
-       */
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      // Open email client with pre-filled data
+      const subject = encodeURIComponent(
+        `Contact from ${formData.name} via ToolNoveHub`
+      );
+      const body = encodeURIComponent(
+        `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}\n\n---\nSent from ToolNoveHub Contact Form`
+      );
+      
+      // Open default email client
+      window.location.href = `mailto:support@toolnovehub.tools?subject=${subject}&body=${body}`;
 
       setStatus('success');
-
       setFormData({
         name: '',
         email: '',
         message: '',
       });
+      setTimeout(() => setStatus('idle'), 5000);
     } catch {
       setStatus('error');
+      setTimeout(() => setStatus('idle'), 3000);
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'ContactPage',
-    name: 'Contact ToolNoveHub',
-    description:
-      'Contact ToolNoveHub for questions, feedback, bug reports, and suggestions.',
-    url: 'https://toolnovehub.tools/contact',
-    isPartOf: {
-      '@type': 'WebSite',
-      name: 'ToolNoveHub',
-      url: 'https://toolnovehub.tools/',
-    },
   };
 
   return (
@@ -182,13 +173,47 @@ export default function ContactPage() {
                 className="space-y-6"
               >
 
+                {/* Success Message */}
+                {status === 'success' && (
+                  <div
+                    role="status"
+                    className="flex items-center gap-2 rounded-lg bg-emerald-50 p-4 text-sm text-emerald-700 border border-emerald-200"
+                  >
+                    <CheckCircle
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    />
+
+                    <span>
+                      Email client opened! Please send the message to complete.
+                    </span>
+                  </div>
+                )}
+
+                {/* Error Message */}
+                {status === 'error' && (
+                  <div
+                    role="alert"
+                    className="flex items-center gap-2 rounded-lg bg-red-50 p-4 text-sm text-red-700 border border-red-200"
+                  >
+                    <AlertCircle
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    />
+
+                    <span>
+                      Please fill in all fields before sending.
+                    </span>
+                  </div>
+                )}
+
                 {/* Name */}
                 <div>
                   <label
                     htmlFor="name"
                     className="text-sm font-medium text-slate-700"
                   >
-                    Your Name
+                    Your Name <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -218,7 +243,7 @@ export default function ContactPage() {
                     htmlFor="email"
                     className="text-sm font-medium text-slate-700"
                   >
-                    Email Address
+                    Email Address <span className="text-red-500">*</span>
                   </label>
 
                   <input
@@ -247,7 +272,7 @@ export default function ContactPage() {
                     htmlFor="message"
                     className="text-sm font-medium text-slate-700"
                   >
-                    Message
+                    Message <span className="text-red-500">*</span>
                   </label>
 
                   <textarea
@@ -270,41 +295,6 @@ export default function ContactPage() {
                   />
                 </div>
 
-                {/* Success Message */}
-                {status === 'success' && (
-                  <div
-                    role="status"
-                    className="flex items-center gap-2 rounded-lg bg-emerald-50 p-4 text-sm text-emerald-700"
-                  >
-                    <CheckCircle
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                    />
-
-                    <span>
-                      Your message has been submitted successfully.
-                    </span>
-                  </div>
-                )}
-
-                {/* Error Message */}
-                {status === 'error' && (
-                  <div
-                    role="alert"
-                    className="flex items-center gap-2 rounded-lg bg-red-50 p-4 text-sm text-red-700"
-                  >
-                    <AlertCircle
-                      className="h-5 w-5"
-                      aria-hidden="true"
-                    />
-
-                    <span>
-                      Something went wrong. Please try again or email us
-                      directly.
-                    </span>
-                  </div>
-                )}
-
                 {/* Submit */}
                 <button
                   type="submit"
@@ -312,14 +302,14 @@ export default function ContactPage() {
                   className="btn-primary flex w-full items-center justify-center disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {isSubmitting ? (
-                    'Sending...'
+                    'Opening Email...'
                   ) : (
                     <>
                       <Send
                         className="mr-2 h-4 w-4"
                         aria-hidden="true"
                       />
-                      Send Message
+                      Send via Email
                     </>
                   )}
                 </button>
@@ -337,6 +327,11 @@ export default function ContactPage() {
                   Privacy Policy
                 </Link>{' '}
                 for more information.
+              </p>
+
+              <p className="mt-2 text-xs text-slate-400">
+                📧 This will open your email client. We'll respond within 24 hours at{' '}
+                <strong>support@toolnovehub.tools</strong>
               </p>
 
             </div>
@@ -382,14 +377,6 @@ export default function ContactPage() {
         </div>
 
       </div>
-
-      {/* Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(schemaData),
-        }}
-      />
     </main>
   );
 }
