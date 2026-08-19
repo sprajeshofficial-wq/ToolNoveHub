@@ -37,9 +37,30 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-slate-900">5. Changes to Terms</h2>
+            <h2 className="text-xl font-bold text-slate-900">5. Intellectual Property</h2>
+            <p className="mt-2 text-slate-600">
+              All content on this site, including tools, code, and design, is property of ToolNoveHub.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-900">6. Limitation of Liability</h2>
+            <p className="mt-2 text-slate-600">
+              We provide tools "as is" without warranties. Use at your own risk.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-900">7. Changes to Terms</h2>
             <p className="mt-2 text-slate-600">
               We may update these terms occasionally. We'll notify you via the website when we do.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-slate-900">8. Contact Us</h2>
+            <p className="mt-2 text-slate-600">
+              Questions? <a href="/contact" className="text-indigo-600 hover:underline">Contact us</a>.
             </p>
           </section>
 

@@ -43,6 +43,13 @@ export default function PrivacyPage() {
             </p>
           </section>
 
+          <section>
+            <h2 className="text-xl font-bold text-slate-900">6. Contact Us</h2>
+            <p className="mt-2 text-slate-600">
+              If you have questions about this policy, <a href="/contact" className="text-indigo-600 hover:underline">contact us</a>.
+            </p>
+          </section>
+
           <div className="pt-4 border-t border-slate-200/50">
             <p className="text-sm text-slate-500">
               Last updated: {new Date().toLocaleDateString()}

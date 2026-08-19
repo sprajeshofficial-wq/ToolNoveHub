@@ -2,8 +2,8 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Calendar, Clock, BookOpen } from 'lucide-react';
 
-// Sample blog posts data (in a real app, this would come from a CMS or database)
-const blogPostsData = {
+// Blog posts data
+const blogPostsData: Record<string, { title: string; date: string; readTime: string; category: string; content: string }> = {
   '10-free-online-tools-every-developer-needs': {
     title: '10 Free Online Tools Every Developer Needs in 2025',
     date: 'August 18, 2026',
@@ -28,6 +28,8 @@ const blogPostsData = {
       <p>Format, validate, and beautify JSON data. Debug APIs and work with data more efficiently.</p>
       
       <p>All these tools are 100% free, work in your browser, and respect your privacy. No data is ever sent to servers.</p>
+      
+      <p><a href="/tools">Browse all tools →</a></p>
     `,
   },
   'how-to-create-qr-code-for-wifi': {
@@ -42,11 +44,13 @@ const blogPostsData = {
       <p>Note down your network name (SSID) and password. Make sure you have the security type (WPA2, WPA3, etc.).</p>
       
       <h2>Step 2: Use the QR Code Generator</h2>
-      <p>Go to the QR Code Generator tool and enter your Wi-Fi details in this format:</p>
+      <p>Go to the <a href="/tools/qr-code-generator">QR Code Generator</a> tool and enter your Wi-Fi details in this format:</p>
       <pre>WIFI:T:WPA2;S:MyNetworkName;P:MyPassword;;</pre>
       
       <h2>Step 3: Scan and Connect</h2>
       <p>Your guests can now scan the QR code with their phone's camera and connect instantly. No more typing long passwords!</p>
+      
+      <p><a href="/tools/qr-code-generator">Try the QR Code Generator →</a></p>
     `,
   },
   'best-image-resizer-tools-for-social-media': {
@@ -69,13 +73,62 @@ const blogPostsData = {
       <h2>Facebook</h2>
       <p>Profile: 170x170px, Cover: 820x312px, Post: 1200x630px</p>
       
-      <p>All these sizes can be easily achieved with a free online image resizer. No software download needed.</p>
+      <p>All these sizes can be easily achieved with a <a href="/tools/image-resizer">free online image resizer</a>. No software download needed.</p>
+    `,
+  },
+  'percentage-calculator-daily-life': {
+    title: 'Percentage Calculator: 5 Ways to Use It in Daily Life',
+    date: 'August 10, 2026',
+    readTime: '4 min read',
+    category: 'Life Hacks',
+    content: `
+      <p>Percentage calculators aren't just for math class. Here are 5 ways you can use them in your daily life.</p>
+      
+      <h2>1. Calculating Tips</h2>
+      <p>Quickly figure out how much to tip at restaurants. Just enter your bill amount and the percentage you want to tip.</p>
+      
+      <h2>2. Shopping Discounts</h2>
+      <p>Calculate how much you'll save during sales. Enter the original price and discount percentage to see your savings.</p>
+      
+      <h2>3. Tax Calculations</h2>
+      <p>Figure out how much tax you'll pay on purchases. Enter the price and tax rate.</p>
+      
+      <h2>4. Grade Calculations</h2>
+      <p>Students can calculate their grades or percentage scores easily.</p>
+      
+      <h2>5. Investment Returns</h2>
+      <p>Quickly calculate percentage returns on investments or savings.</p>
+      
+      <p><a href="/tools/percentage-calculator">Try the Percentage Calculator →</a></p>
+    `,
+  },
+  'json-formatter-why-developers-need': {
+    title: 'JSON Formatter: Why Every Developer Needs One',
+    date: 'August 8, 2026',
+    readTime: '4 min read',
+    category: 'Developer',
+    content: `
+      <p>JSON is everywhere in modern development. Here's why you need a good JSON formatter and validator.</p>
+      
+      <h2>1. Debugging Made Easy</h2>
+      <p>Formatting JSON makes it readable, so you can quickly spot errors or missing fields.</p>
+      
+      <h2>2. API Development</h2>
+      <p>When working with APIs, you'll often need to format, validate, or minify JSON data.</p>
+      
+      <h2>3. Configuration Files</h2>
+      <p>Many tools and frameworks use JSON for configuration. Proper formatting helps avoid syntax errors.</p>
+      
+      <h2>4. Data Export/Import</h2>
+      <p>When moving data between systems, properly formatted JSON ensures compatibility.</p>
+      
+      <p><a href="/tools/json-formatter">Try the JSON Formatter →</a></p>
     `,
   },
 };
 
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPostsData[params.slug as keyof typeof blogPostsData];
+  const post = blogPostsData[params.slug];
 
   if (!post) {
     notFound();
@@ -118,9 +171,13 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
               <div className="flex items-center gap-3">
                 <BookOpen className="h-5 w-5 text-indigo-600" />
                 <p className="text-sm text-slate-600">
-                  <span className="font-semibold">Want more?</span> Check out our other free tools at{' '}
+                  <span className="font-semibold">Explore more tools:</span>{' '}
                   <Link href="/" className="text-indigo-600 hover:underline">
                     ToolNoveHub
+                  </Link>
+                  {' • '}
+                  <Link href="/tools" className="text-indigo-600 hover:underline">
+                    All Tools
                   </Link>
                 </p>
               </div>
