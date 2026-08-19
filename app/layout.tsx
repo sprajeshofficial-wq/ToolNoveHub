@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
+import Script from "next/script";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -11,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://toolnovehub.tools'),  // ✅ FIXED: Added this
+  metadataBase: new URL('https://toolnovehub.tools'),
   title: "ToolNoveHub - Free Online Tools",
   description: "Free online tools for students, developers, office workers, and everyday tasks. QR Codes, Image Resizer, Percentage Calculator, and more.",
   keywords: "online tools, free tools, QR code generator, image resizer, percentage calculator, word counter, JSON formatter",
@@ -51,13 +52,26 @@ export const metadata: Metadata = {
     description: "Powerful, simple online tools for everyday tasks.",
     images: ["/logo.png"],
   },
+  
+  verification: {
+    google: "YOUR_GOOGLE_VERIFICATION_CODE",
+  },
 };
+
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+    dataLayer: any[];
+  }
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const GA_MEASUREMENT_ID = 'G-F3HNEJW9QE';
+
   return (
     <html lang="en">
       <head>
@@ -65,6 +79,26 @@ export default function RootLayout({
         <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
         <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#6366f1" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        
+        {/* Google Analytics Script */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <Header />
