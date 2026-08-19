@@ -18,15 +18,14 @@ const nextConfig = {
   // Optimize build
   optimizeFonts: true,
   
-  // Experimental features for better performance
+  // Experimental features
   experimental: {
-    // optimizeCss: true,  // ← COMMENTED OUT - Fixes Vercel build error
+    // optimizeCss: true,
     scrollRestoration: true,
   },
   
   // Webpack optimizations
   webpack: (config, { isServer }) => {
-    // Optimize bundle size
     if (!isServer) {
       config.optimization = {
         ...config.optimization,
@@ -53,6 +52,41 @@ const nextConfig = {
       };
     }
     return config;
+  },
+
+  // CSP Headers
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: `
+              default-src 'self';
+              script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://va.vercel-scripts.com;
+              style-src 'self' 'unsafe-inline';
+              img-src 'self' data: https:;
+              font-src 'self' data:;
+              connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://va.vercel-scripts.com;
+              worker-src 'self' blob:;
+            `.replace(/\s{2,}/g, ' ').trim(),
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block',
+          },
+        ],
+      },
+    ];
   },
 };
 
