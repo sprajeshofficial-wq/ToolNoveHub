@@ -11,16 +11,45 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "ToolNoveHub - Free Online Tools for Everyone",
+  metadataBase: new URL('https://toolnovehub.tools'),  // ✅ FIXED: Added this
+  title: "ToolNoveHub - Free Online Tools",
   description: "Free online tools for students, developers, office workers, and everyday tasks. QR Codes, Image Resizer, Percentage Calculator, and more.",
   keywords: "online tools, free tools, QR code generator, image resizer, percentage calculator, word counter, JSON formatter",
   authors: [{ name: "ToolNoveHub" }],
+  
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: ['/favicon.ico'],
+  },
+  
   openGraph: {
     title: "ToolNoveHub - Free Online Tools",
     description: "Powerful, simple online tools for everyday tasks.",
     url: "https://toolnovehub.tools",
     siteName: "ToolNoveHub",
     type: "website",
+    images: [
+      {
+        url: "/logo.png",
+        width: 512,
+        height: 512,
+        alt: "ToolNoveHub Logo",
+      },
+    ],
+  },
+  
+  twitter: {
+    card: "summary_large_image",
+    title: "ToolNoveHub - Free Online Tools",
+    description: "Powerful, simple online tools for everyday tasks.",
+    images: ["/logo.png"],
   },
 };
 
@@ -31,6 +60,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
+        <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+      </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         <Header />
         <main className="pt-16">

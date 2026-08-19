@@ -65,11 +65,10 @@ export default function Home() {
     <main className="min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">
-        {/* Background Effects */}
+        {/* Background Effects - REMOVED grid.svg */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl" />
           <div className="absolute bottom-0 left-0 -z-10 h-[400px] w-[400px] rounded-full bg-gradient-to-tr from-pink-500/10 to-orange-500/10 blur-3xl" />
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
         </div>
 
         <div className="mx-auto max-w-7xl text-center">
