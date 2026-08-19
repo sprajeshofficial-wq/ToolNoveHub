@@ -43,63 +43,64 @@ const blogPosts = [
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [
-    // Homepage
+  const staticPages = [
     {
       url: baseUrl,
-      changeFrequency: 'weekly',
       priority: 1.0,
+      changeFrequency: 'weekly' as const,
     },
-
-    // Main pages
     {
       url: `${baseUrl}/tools`,
-      changeFrequency: 'weekly',
       priority: 0.9,
+      changeFrequency: 'weekly' as const,
     },
     {
       url: `${baseUrl}/about`,
-      changeFrequency: 'monthly',
       priority: 0.8,
+      changeFrequency: 'monthly' as const,
     },
     {
       url: `${baseUrl}/contact`,
-      changeFrequency: 'monthly',
       priority: 0.8,
+      changeFrequency: 'monthly' as const,
     },
     {
       url: `${baseUrl}/privacy`,
-      changeFrequency: 'yearly',
-      priority: 0.5,
+      priority: 0.7,
+      changeFrequency: 'monthly' as const,
     },
     {
       url: `${baseUrl}/terms`,
-      changeFrequency: 'yearly',
-      priority: 0.5,
+      priority: 0.7,
+      changeFrequency: 'monthly' as const,
     },
     {
       url: `${baseUrl}/blog`,
-      changeFrequency: 'weekly',
       priority: 0.8,
+      changeFrequency: 'weekly' as const,
     },
     {
       url: `${baseUrl}/docs`,
-      changeFrequency: 'monthly',
       priority: 0.7,
+      changeFrequency: 'monthly' as const,
     },
+  ];
 
-    // Tool pages
-    ...tools.map((tool) => ({
-      url: `${baseUrl}/tools/${tool}`,
-      changeFrequency: 'monthly' as const,
-      priority: 0.8,
-    })),
+  const toolPages = tools.map((tool) => ({
+    url: `${baseUrl}/tools/${tool}`,
+    priority: 0.8,
+    changeFrequency: 'monthly' as const,
+  }));
 
-    // Blog posts
-    ...blogPosts.map((post) => ({
-      url: `${baseUrl}/blog/${post}`,
-      changeFrequency: 'monthly' as const,
-      priority: 0.7,
-    })),
+  const blogPages = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post}`,
+    priority: 0.7,
+    changeFrequency: 'monthly' as const,
+  }));
+
+  return [
+    ...staticPages,
+    ...toolPages,
+    ...blogPages,
   ];
 }

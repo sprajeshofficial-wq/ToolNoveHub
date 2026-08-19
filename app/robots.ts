@@ -1,16 +1,14 @@
 import type { MetadataRoute } from 'next';
 
+const baseUrl = 'https://toolnovehub.tools';
+
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [
-      {
-        userAgent: '*',
-        allow: '/',
-      },
-    ],
-
-    sitemap: 'https://toolnovehub.tools/sitemap.xml',
-
-    host: 'https://toolnovehub.tools',
+    rules: {
+      userAgent: '*',
+      allow: '/',
+    },
+    sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
 }
