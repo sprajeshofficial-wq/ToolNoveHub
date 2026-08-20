@@ -7,17 +7,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // All static pages
   const staticPages = [
-    '',
-    '/tools',
-    '/about',
-    '/contact',
-    '/privacy',
-    '/terms',
-    '/blog',
-    '/docs',
-    '/developer',
-    '/office',
-    '/student',
+    { url: '', priority: 1.0, changefreq: 'weekly' as const },
+    { url: '/tools', priority: 0.9, changefreq: 'weekly' as const },
+    { url: '/about', priority: 0.8, changefreq: 'monthly' as const },
+    { url: '/contact', priority: 0.8, changefreq: 'monthly' as const },
+    { url: '/privacy', priority: 0.7, changefreq: 'monthly' as const },
+    { url: '/terms', priority: 0.7, changefreq: 'monthly' as const },
+    { url: '/blog', priority: 0.8, changefreq: 'weekly' as const },
+    { url: '/docs', priority: 0.7, changefreq: 'monthly' as const },
+    { url: '/developer', priority: 0.7, changefreq: 'monthly' as const },
+    { url: '/office', priority: 0.7, changefreq: 'monthly' as const },
+    { url: '/student', priority: 0.7, changefreq: 'monthly' as const },
   ];
 
   // All 16 tools
@@ -65,23 +65,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const allUrls = [
     // Static pages
     ...staticPages.map((page) => ({
-      url: `${baseUrl}${page}`,
+      url: `${baseUrl}${page.url}`,
       lastModified: now,
-      changeFrequency: page === '' || page === '/tools' || page === '/blog' ? 'weekly' : 'monthly',
-      priority: page === '' ? 1.0 : 0.8,
+      changeFrequency: page.changefreq,
+      priority: page.priority,
     })),
     // Tools
     ...tools.map((tool) => ({
       url: `${baseUrl}/tools/${tool}`,
       lastModified: now,
-      changeFrequency: 'monthly',
+      changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
     // Blog posts
     ...blogPosts.map((post) => ({
       url: `${baseUrl}/blog/${post}`,
       lastModified: now,
-      changeFrequency: 'monthly',
+      changeFrequency: 'monthly' as const,
       priority: 0.7,
     })),
   ];
