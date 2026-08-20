@@ -55,10 +55,10 @@ const nextConfig = {
     return config;
   },
 
-  // ========== REDIRECTS FOR OLD BLOG URLS ==========
+  // ========== REDIRECTS FOR OLD/404 URLs ==========
   async redirects() {
     return [
-      // Redirect old/discovered blog URLs to existing posts
+      // === BLOG REDIRECTS ===
       {
         source: '/blog/how-to-calculate-discounts',
         destination: '/blog/percentage-calculator-daily-life',
@@ -97,6 +97,43 @@ const nextConfig = {
       {
         source: '/blog/top-5-tools-for-students',
         destination: '/blog/10-free-online-tools-every-developer-needs',
+        permanent: true,
+      },
+
+      // === TOOL REDIRECTS ===
+      {
+        source: '/tools/base64-encoder',
+        destination: '/tools/binary-converter',
+        permanent: true,
+      },
+      {
+        source: '/tools/color-palette',
+        destination: '/tools/color-picker',
+        permanent: true,
+      },
+      {
+        source: '/tools/design',
+        destination: '/tools',
+        permanent: true,
+      },
+      {
+        source: '/tools/developer',
+        destination: '/tools',
+        permanent: true,
+      },
+      {
+        source: '/tools/jpg-to-pdf',
+        destination: '/tools/image-resizer',
+        permanent: true,
+      },
+      {
+        source: '/tools/pdf-compressor',
+        destination: '/tools/file-size-converter',
+        permanent: true,
+      },
+      {
+        source: '/tools/pdf-merger',
+        destination: '/tools/file-size-converter',
         permanent: true,
       },
     ];
