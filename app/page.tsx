@@ -414,7 +414,7 @@ export default function Home() {
 
           {/* CTA Buttons */}
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link href="/tools" className="btn-primary">
+            <Link href="/tools" className="btn-primary">  // ← CORRECT (goes to all tools)
               Browse All Free Tools
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -493,7 +493,7 @@ export default function Home() {
 
           <div className="mt-12 text-center">
             <Link href="/tools" className="btn-primary">
-              View All {tools.length}+ Free Tools
+              View All 16 Free Tools
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </div>
