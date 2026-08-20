@@ -1,114 +1,34 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import '../globals.css';
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
-import Script from "next/script";
-import { Analytics } from "@vercel/analytics/react";
+import Link from 'next/link';
+import { GraduationCap, Percent, AlignLeft, Calculator, Type, Hash } from 'lucide-react';
 
-const inter = Inter({ 
-  subsets: ["latin"],
-  display: 'swap',
-  variable: '--font-inter',
-});
-
-export const metadata: Metadata = {
-  metadataBase: new URL('https://toolnovehub.tools'),
-  title: "ToolNoveHub - Free Online Tools",
-  description: "Free online tools for students, developers, office workers, and everyday tasks. QR Codes, Image Resizer, Percentage Calculator, and more.",
-  keywords: "online tools, free tools, QR code generator, image resizer, percentage calculator, word counter, JSON formatter",
-  authors: [{ name: "ToolNoveHub" }],
-  
-  icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
-    shortcut: ['/favicon.ico'],
-  },
-  
-  openGraph: {
-    title: "ToolNoveHub - Free Online Tools",
-    description: "Powerful, simple online tools for everyday tasks.",
-    url: "https://toolnovehub.tools",
-    siteName: "ToolNoveHub",
-    type: "website",
-    images: [
-      {
-        url: "/logo.png",
-        width: 512,
-        height: 512,
-        alt: "ToolNoveHub Logo",
-      },
-    ],
-  },
-  
-  twitter: {
-    card: "summary_large_image",
-    title: "ToolNoveHub - Free Online Tools",
-    description: "Powerful, simple online tools for everyday tasks.",
-    images: ["/logo.png"],
-  },
-};
-
-declare global {
-  interface Window {
-    gtag: (...args: any[]) => void;
-    dataLayer: any[];
-  }
-}
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const GA_MEASUREMENT_ID = 'G-F3HNEJW9QE';
+export default function StudentPage() {
+  const tools = [
+    { name: 'Percentage Calculator', href: '/tools/percentage-calculator', icon: Percent },
+    { name: 'Word Counter', href: '/tools/word-counter', icon: AlignLeft },
+    { name: 'Simple Calculator', href: '/tools/calculator', icon: Calculator },
+    { name: 'Number to Words', href: '/tools/number-to-words', icon: Type },
+    { name: 'Character Counter', href: '/tools/character-counter', icon: Hash },
+  ];
 
   return (
-    <html lang="en">
-      <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />
-        <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
-        <link rel="manifest" href="/site.webmanifest" />
-        <meta name="theme-color" content="#6366f1" />
-        {/* FIXED: Removed deprecated apple-mobile-web-app-capable */}
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-      </head>
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {/* Vercel Analytics - Not blocked by ad blockers */}
-        <Analytics />
-
-        {/* Google Analytics - May be blocked by ad blockers */}
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_MEASUREMENT_ID}', {
-              page_path: window.location.pathname,
-              send_page_view: true
-            });
-          `}
-        </Script>
-
-        <Header />
-        <main className="pt-16">
-          {children}
-        </main>
-        <Footer />
-      </body>
-    </html>
+    <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
+      <div className="mx-auto max-w-4xl">
+        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Student Tools</h1>
+        <p className="text-center text-slate-600 mb-12">Helpful tools for students of all levels.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {tools.map((tool) => {
+            const Icon = tool.icon;
+            return (
+              <Link key={tool.name} href={tool.href} className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 flex items-center gap-3 hover:border-amber-200">
+                <div className="rounded-lg bg-amber-100 p-2">
+                  <Icon className="h-5 w-5 text-amber-600" />
+                </div>
+                <span className="font-medium text-slate-900">{tool.name}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 }
