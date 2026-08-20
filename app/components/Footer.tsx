@@ -10,12 +10,17 @@ const Footer = () => {
       { name: 'Percentage Calculator', href: '/tools/percentage-calculator' },
       { name: 'Word Counter', href: '/tools/word-counter' },
       { name: 'JSON Formatter', href: '/tools/json-formatter' },
+      { name: 'Color Picker', href: '/tools/color-picker' },
+      { name: 'Binary Converter', href: '/tools/binary-converter' },
+      { name: 'Calculator', href: '/tools/calculator' },
     ],
     Company: [
       { name: 'About', href: '/about' },
       { name: 'Blog', href: '/blog' },
+      { name: 'Contact', href: '/contact' },
       { name: 'Terms', href: '/terms' },
       { name: 'Privacy', href: '/privacy' },
+      { name: 'Docs', href: '/docs' },
     ],
   };
 
@@ -42,16 +47,32 @@ const Footer = () => {
               Free online tools for students, developers, and everyone else.
             </p>
             <div className="mt-4 flex gap-3">
-              <a href="#" className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
+              <a
+                href="#"
+                className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600"
+                aria-label="GitHub"
+              >
                 <Github className="h-4 w-4" />
               </a>
-              <a href="#" className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
+              <a
+                href="#"
+                className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600"
+                aria-label="Twitter"
+              >
                 <Twitter className="h-4 w-4" />
               </a>
-              <a href="#" className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
+              <a
+                href="#"
+                className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600"
+                aria-label="LinkedIn"
+              >
                 <Linkedin className="h-4 w-4" />
               </a>
-              <a href="#" className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600">
+              <a
+                href="mailto:support@toolnovehub.tools"
+                className="rounded-lg bg-slate-100 p-2 text-slate-600 transition-colors hover:bg-indigo-100 hover:text-indigo-600"
+                aria-label="Email"
+              >
                 <Mail className="h-4 w-4" />
               </a>
             </div>
@@ -63,7 +84,10 @@ const Footer = () => {
             <ul className="mt-4 space-y-2">
               {footerLinks.Tools.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-sm text-slate-600 transition-colors hover:text-indigo-600">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-slate-600 transition-colors hover:text-indigo-600"
+                  >
                     {link.name}
                   </Link>
                 </li>
@@ -71,15 +95,18 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Company Links - FIXED */}
+          {/* Company Links */}
           <div>
             <h3 className="text-sm font-semibold text-slate-900">Company</h3>
             <ul className="mt-4 space-y-2">
               {footerLinks.Company.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-sm text-slate-600 transition-colors hover:text-indigo-600">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-slate-600 transition-colors hover:text-indigo-600"
+                  >
                     {link.name}
-        </Link>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -91,25 +118,38 @@ const Footer = () => {
             <p className="mt-2 text-sm text-slate-600">
               Get notified when we add new tools.
             </p>
-            <form className="mt-4 flex gap-2">
+            <form
+              onSubmit={(e) => e.preventDefault()}
+              className="mt-4 flex gap-2"
+            >
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none"
+                className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                aria-label="Email address"
               />
-              <button className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105">
+              <button
+                type="submit"
+                className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105"
+              >
                 Subscribe
               </button>
             </form>
+            <p className="mt-2 text-xs text-slate-400">
+              No spam. Unsubscribe anytime.
+            </p>
           </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="mt-8 border-t border-slate-200/50 pt-8 text-center text-sm text-slate-600">
           <p className="flex items-center justify-center gap-1">
-            Made with <Heart className="h-4 w-4 text-red-500 animate-pulse" /> by ToolNoveHub
+            Made with <Heart className="h-4 w-4 text-red-500 animate-pulse" /> by{' '}
+            <span className="font-medium text-slate-900">ToolNoveHub</span>
           </p>
-          <p className="mt-1">© {new Date().getFullYear()} ToolNoveHub. All rights reserved.</p>
+          <p className="mt-1">
+            &copy; {new Date().getFullYear()} ToolNoveHub. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
