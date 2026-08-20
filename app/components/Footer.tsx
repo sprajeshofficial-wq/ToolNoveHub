@@ -34,6 +34,7 @@ const Footer = () => {
     if (email) {
       window.location.href = `mailto:support@toolnovehub.tools?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter%20list.%20My%20email%20is%20${encodeURIComponent(email)}`;
       setEmail('');
+      alert('📧 Thank you! Please check your email client to complete the subscription.');
     }
   };
 
@@ -131,7 +132,7 @@ const Footer = () => {
             <p className="mt-2 text-sm text-slate-600">
               Get notified when we add new tools.
             </p>
-            <div className="mt-4 flex gap-2">
+            <form onSubmit={handleSubscribe} className="mt-4 flex flex-col sm:flex-row gap-2">
               <input
                 type="email"
                 placeholder="Enter your email"
@@ -139,19 +140,15 @@ const Footer = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 aria-label="Email address"
+                required
               />
               <button
-                onClick={() => {
-                  if (email) {
-                    window.location.href = `mailto:support@toolnovehub.tools?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter%20list.%20My%20email%20is%20${encodeURIComponent(email)}`;
-                    setEmail('');
-                  }
-                }}
-                className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105"
+                type="submit"
+                className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105 whitespace-nowrap"
               >
                 Subscribe
               </button>
-            </div>
+            </form>
             <p className="mt-2 text-xs text-slate-400">
               No spam. Unsubscribe anytime.
             </p>
