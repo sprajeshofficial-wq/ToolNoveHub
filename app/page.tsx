@@ -65,6 +65,7 @@ const SparkleParticle = ({ x, y, size, delay, duration }: { x: number; y: number
 
 export default function Home() {
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
+  const [email, setEmail] = useState('');
   const logoRef = useRef<HTMLDivElement>(null);
   const sparkleIdRef = useRef(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -294,6 +295,16 @@ export default function Home() {
     },
   ];
 
+  // Newsletter subscription handler
+  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (email) {
+      window.location.href = `mailto:support@toolnovehub.tools?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter%20list.%20My%20email%20is%20${encodeURIComponent(email)}`;
+      setEmail('');
+      alert('📧 Thank you! Please check your email client to complete the subscription.');
+    }
+  };
+
   return (
     <main className="min-h-screen">
       <style jsx global>{`
@@ -325,7 +336,6 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-32 pb-20 px-4">
-        {/* Background Effects */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-0 right-0 -z-10 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-indigo-500/10 to-purple-500/10 blur-3xl" />
           <div className="absolute bottom-0 left-0 -z-10 h-[400px] w-[400px] rounded-full bg-gradient-to-tr from-pink-500/10 to-orange-500/10 blur-3xl" />
@@ -352,7 +362,6 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-purple-500/10 to-pink-500/0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               </div>
 
-              {/* Sparkles */}
               {sparkles.map((p) => {
                 const tx = (Math.random() - 0.5) * 200;
                 const ty = (Math.random() - 0.5) * 200 - 50;
@@ -413,14 +422,20 @@ export default function Home() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link href="/tools" className="btn-primary">  // ← CORRECT (goes to all tools)
-              Browse All Free Tools
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-            <Link href="/tools/qr-code-generator" className="btn-secondary bg-white text-slate-900 hover:bg-slate-50 shadow-lg border border-slate-200">
-              Try QR Code Generator
-            </Link>
+<div className="mt-8 flex flex-wrap justify-center gap-4">
+  <button
+    onClick={() => window.location.href = '/tools'}
+    className="btn-primary"
+  >
+    Browse All Free Tools
+    <ArrowRight className="ml-2 h-4 w-4" />
+  </button>
+  <button
+    onClick={() => window.location.href = '/tools/qr-code-generator'}
+    className="btn-secondary bg-white text-slate-900 hover:bg-slate-50 shadow-lg border border-slate-200"
+  >
+    Try QR Code Generator
+  </button>
           </div>
 
           {/* Feature Stats */}
@@ -500,156 +515,98 @@ export default function Home() {
         </div>
       </section>
 
-     {/* Feature Cards - Alternative with onClick */}
-<section className="py-20 px-4 bg-slate-50/50">
-  <div className="mx-auto max-w-7xl">
-    <div className="text-center mb-12">
-      <h2 className="text-3xl font-bold text-slate-900">
-        Why Choose <span className="gradient-text">ToolNoveHub</span>
-      </h2>
-      <p className="mt-3 text-lg text-slate-600 max-w-2xl mx-auto">
-        Simple, fast, private tools designed for everyday tasks.
-      </p>
-    </div>
+      {/* Feature Cards */}
+      <section className="py-20 px-4 bg-slate-50/50">
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-slate-900">
+              Why Choose <span className="gradient-text">ToolNoveHub</span>
+            </h2>
+            <p className="mt-3 text-lg text-slate-600 max-w-2xl mx-auto">
+              Simple, fast, private tools designed for everyday tasks.
+            </p>
+          </div>
 
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-      {/* 100% Free */}
-      <div
-        onClick={() => window.location.href = '/tools'}
-        className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
-      >
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
-          <Zap className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
-        </div>
-        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-          100% Free
-        </h3>
-        <p className="mt-2 text-sm text-slate-600">
-          All tools are completely free with no hidden charges, subscriptions, or paywalls.
-        </p>
-        <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
-          Browse all tools →
-        </span>
-      </div>
-
-      {/* Privacy First */}
-      <div
-        onClick={() => window.location.href = '/privacy'}
-        className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
-      >
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
-          <Shield className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
-        </div>
-        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-          Privacy First
-        </h3>
-        <p className="mt-2 text-sm text-slate-600">
-          Everything processes in your browser. No data is ever uploaded to any server.
-        </p>
-        <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
-          Learn more →
-        </span>
-      </div>
-
-      {/* Fast & Reliable */}
-      <div
-        onClick={() => window.location.href = '/tools'}
-        className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
-      >
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
-          <Clock className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
-        </div>
-        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-          Fast & Reliable
-        </h3>
-        <p className="mt-2 text-sm text-slate-600">
-          Optimized for speed with instant results. No waiting, no loading delays.
-        </p>
-        <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
-          Try a tool →
-        </span>
-      </div>
-
-      {/* Works Everywhere */}
-      <div
-        onClick={() => window.location.href = '/tools'}
-        className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
-      >
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
-          <Smartphone className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
-        </div>
-        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-          Works Everywhere
-        </h3>
-        <p className="mt-2 text-sm text-slate-600">
-          Use on any device — desktop, tablet, or phone. No app download needed.
-        </p>
-        <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
-          Explore →
-        </span>
-      </div>
-    </div>
-  </div>
-</section>
-
-{/* Newsletter Section */}
-<section className="py-16 px-4 bg-slate-50/50 border-y border-slate-200/50">
-  <div className="mx-auto max-w-2xl text-center">
-    <h2 className="text-3xl font-bold text-slate-900">
-      Stay <span className="gradient-text">Updated</span>
-    </h2>
-    <p className="mt-3 text-lg text-slate-600">
-      Get notified when we add new tools.
-    </p>
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        const email = (e.target as HTMLFormElement).email.value;
-        if (email) {
-          window.location.href = `mailto:support@toolnovehub.tools?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter%20list.%20My%20email%20is%20${encodeURIComponent(email)}`;
-          (e.target as HTMLFormElement).reset();
-          alert('📧 Thank you! Please check your email client to complete the subscription.');
-        }
-      }}
-      className="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-    >
-      <input
-        type="email"
-        name="email"
-        placeholder="Enter your email"
-        className="flex-1 rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-        required
-      />
-      <button
-        type="submit"
-        className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105 whitespace-nowrap"
-      >
-        Subscribe
-      </button>
-    </form>
-    <p className="mt-3 text-xs text-slate-400">
-      No spam. Unsubscribe anytime. We'll email you about new tools.
-    </p>
-  </div>
-</section>
-
-      {/* CTA Section */}
-      <section className="py-16 px-4 bg-gradient-to-r from-indigo-600 to-purple-600">
-        <div className="mx-auto max-w-4xl text-center text-white">
-          <h2 className="text-3xl font-bold">Ready to Get Things Done?</h2>
-          <p className="mt-4 text-lg text-white/80 max-w-2xl mx-auto">
-            Join thousands of users who rely on ToolNoveHub for free, fast, and private online tools.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link href="/tools" className="rounded-full bg-white px-8 py-3 font-semibold text-indigo-600 shadow-lg transition-all hover:scale-105 hover:shadow-xl">
-              Browse All Tools
-            </Link>
-            <Link href="/" className="rounded-full bg-white/20 px-8 py-3 font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/30 hover:scale-105">
-              Learn More
-            </Link>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                onClick={() => window.location.href = feature.href}
+                className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
+              >
+                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
+                  <feature.icon className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
+                </div>
+                <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-sm text-slate-600">{feature.description}</p>
+                <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                  Learn more →
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* Newsletter Section */}
+      <section className="py-16 px-4 bg-white border-y border-slate-200/50">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold text-slate-900">
+            Stay <span className="gradient-text">Updated</span>
+          </h2>
+          <p className="mt-3 text-lg text-slate-600">
+            Get notified when we add new tools.
+          </p>
+          <form
+            onSubmit={handleSubscribe}
+            className="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+          >
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="flex-1 rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              required
+            />
+            <button
+              type="submit"
+              className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105 whitespace-nowrap"
+            >
+              Subscribe
+            </button>
+          </form>
+          <p className="mt-3 text-xs text-slate-400">
+            No spam. Unsubscribe anytime. We'll email you about new tools.
+          </p>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+<section className="py-16 px-4 bg-gradient-to-r from-indigo-600 to-purple-600">
+  <div className="mx-auto max-w-4xl text-center text-white">
+    <h2 className="text-3xl font-bold">Ready to Get Things Done?</h2>
+    <p className="mt-4 text-lg text-white/80 max-w-2xl mx-auto">
+      Join thousands of users who rely on ToolNoveHub for free, fast, and private online tools.
+    </p>
+    <div className="mt-8 flex flex-wrap justify-center gap-4">
+      <button
+        onClick={() => window.location.href = '/tools'}
+        className="rounded-full bg-white px-8 py-3 font-semibold text-indigo-600 shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+      >
+        Browse All Tools
+      </button>
+      <button
+        onClick={() => window.location.href = '/about'}
+        className="rounded-full bg-white/20 px-8 py-3 font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/30 hover:scale-105"
+      >
+        Learn More
+      </button>
+    </div>
+  </div>
+</section>
     </main>
   );
 }
