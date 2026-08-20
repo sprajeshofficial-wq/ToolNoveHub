@@ -54,18 +54,10 @@ export const metadata: Metadata = {
     images: ["/logo.png"],
   },
   
-  // ✅ Google Search Console Verification
   verification: {
     google: "r7k1VSL4u3yoNvLHtX2qXYQweNMemcjCC46FI6DpJBs",
   },
 };
-
-declare global {
-  interface Window {
-    gtag: (...args: any[]) => void;
-    dataLayer: any[];
-  }
-}
 
 export default function RootLayout({
   children,
@@ -104,7 +96,7 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* Vercel Analytics - Not blocked by ad blockers */}
+        {/* Vercel Analytics */}
         <Analytics />
 
         <Header />
