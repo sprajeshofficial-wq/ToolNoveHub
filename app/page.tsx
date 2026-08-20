@@ -592,6 +592,47 @@ export default function Home() {
   </div>
 </section>
 
+{/* Newsletter Section */}
+<section className="py-16 px-4 bg-slate-50/50 border-y border-slate-200/50">
+  <div className="mx-auto max-w-2xl text-center">
+    <h2 className="text-3xl font-bold text-slate-900">
+      Stay <span className="gradient-text">Updated</span>
+    </h2>
+    <p className="mt-3 text-lg text-slate-600">
+      Get notified when we add new tools.
+    </p>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const email = (e.target as HTMLFormElement).email.value;
+        if (email) {
+          window.location.href = `mailto:support@toolnovehub.tools?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter%20list.%20My%20email%20is%20${encodeURIComponent(email)}`;
+          (e.target as HTMLFormElement).reset();
+          alert('📧 Thank you! Please check your email client to complete the subscription.');
+        }
+      }}
+      className="mt-6 flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+    >
+      <input
+        type="email"
+        name="email"
+        placeholder="Enter your email"
+        className="flex-1 rounded-lg border border-slate-200 px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+        required
+      />
+      <button
+        type="submit"
+        className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105 whitespace-nowrap"
+      >
+        Subscribe
+      </button>
+    </form>
+    <p className="mt-3 text-xs text-slate-400">
+      No spam. Unsubscribe anytime. We'll email you about new tools.
+    </p>
+  </div>
+</section>
+
       {/* CTA Section */}
       <section className="py-16 px-4 bg-gradient-to-r from-indigo-600 to-purple-600">
         <div className="mx-auto max-w-4xl text-center text-white">
