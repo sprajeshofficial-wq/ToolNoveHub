@@ -500,40 +500,40 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Feature Cards */}
-      <section className="py-20 px-4 bg-slate-50/50">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-slate-900">
-              Why Choose <span className="gradient-text">ToolNoveHub</span>
-            </h2>
-            <p className="mt-3 text-lg text-slate-600 max-w-2xl mx-auto">
-              Thousands of users trust ToolNoveHub for their daily tasks. Here's why.
-            </p>
-          </div>
+     {/* Feature Cards */}
+<section className="py-20 px-4 bg-slate-50/50">
+  <div className="mx-auto max-w-7xl">
+    <div className="text-center mb-12">
+      <h2 className="text-3xl font-bold text-slate-900">
+        Why Choose <span className="gradient-text">ToolNoveHub</span>
+      </h2>
+      <p className="mt-3 text-lg text-slate-600 max-w-2xl mx-auto">
+        Simple, fast, private tools designed for everyday tasks.
+      </p>
+    </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {features.map((feature) => (
-              <Link
-                key={feature.title}
-                href={feature.href}
-                className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
-              >
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
-                  <feature.icon className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
-                </div>
-                <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                  {feature.title}
-                </h3>
-                <p className="mt-2 text-sm text-slate-600">{feature.description}</p>
-                <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                  Learn more →
-                </span>
-              </Link>
-            ))}
+    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+      {features.map((feature) => (
+        <Link
+          key={feature.title}
+          href={feature.href}
+          className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
+        >
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
+            <feature.icon className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
           </div>
-        </div>
-      </section>
+          <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+            {feature.title}
+          </h3>
+          <p className="mt-2 text-sm text-slate-600">{feature.description}</p>
+          <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+            Learn more →
+          </span>
+        </Link>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* CTA Section */}
       <section className="py-16 px-4 bg-gradient-to-r from-indigo-600 to-purple-600">
