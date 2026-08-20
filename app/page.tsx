@@ -500,7 +500,7 @@ export default function Home() {
         </div>
       </section>
 
-     {/* Feature Cards */}
+     {/* Feature Cards - Alternative with onClick */}
 <section className="py-20 px-4 bg-slate-50/50">
   <div className="mx-auto max-w-7xl">
     <div className="text-center mb-12">
@@ -513,24 +513,81 @@ export default function Home() {
     </div>
 
     <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-      {features.map((feature) => (
-        <Link
-          key={feature.title}
-          href={feature.href}
-          className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
-        >
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
-            <feature.icon className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
-          </div>
-          <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
-            {feature.title}
-          </h3>
-          <p className="mt-2 text-sm text-slate-600">{feature.description}</p>
-          <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
-            Learn more →
-          </span>
-        </Link>
-      ))}
+      {/* 100% Free */}
+      <div
+        onClick={() => window.location.href = '/tools'}
+        className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
+      >
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
+          <Zap className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
+        </div>
+        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+          100% Free
+        </h3>
+        <p className="mt-2 text-sm text-slate-600">
+          All tools are completely free with no hidden charges, subscriptions, or paywalls.
+        </p>
+        <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+          Browse all tools →
+        </span>
+      </div>
+
+      {/* Privacy First */}
+      <div
+        onClick={() => window.location.href = '/privacy'}
+        className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
+      >
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
+          <Shield className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
+        </div>
+        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+          Privacy First
+        </h3>
+        <p className="mt-2 text-sm text-slate-600">
+          Everything processes in your browser. No data is ever uploaded to any server.
+        </p>
+        <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+          Learn more →
+        </span>
+      </div>
+
+      {/* Fast & Reliable */}
+      <div
+        onClick={() => window.location.href = '/tools'}
+        className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
+      >
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
+          <Clock className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
+        </div>
+        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+          Fast & Reliable
+        </h3>
+        <p className="mt-2 text-sm text-slate-600">
+          Optimized for speed with instant results. No waiting, no loading delays.
+        </p>
+        <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+          Try a tool →
+        </span>
+      </div>
+
+      {/* Works Everywhere */}
+      <div
+        onClick={() => window.location.href = '/tools'}
+        className="group text-center p-6 rounded-2xl bg-white shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
+      >
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-indigo-500/10 to-purple-500/10 group-hover:from-indigo-500/20 group-hover:to-purple-500/20 transition-colors">
+          <Smartphone className="h-7 w-7 text-indigo-600 group-hover:scale-110 transition-transform" />
+        </div>
+        <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+          Works Everywhere
+        </h3>
+        <p className="mt-2 text-sm text-slate-600">
+          Use on any device — desktop, tablet, or phone. No app download needed.
+        </p>
+        <span className="mt-3 inline-block text-sm font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">
+          Explore →
+        </span>
+      </div>
     </div>
   </div>
 </section>
