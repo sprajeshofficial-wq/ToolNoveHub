@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- ===== HOMEPAGE ===== -->
+  <!-- Homepage -->
   <url>
     <loc>https://toolnovehub.tools/</loc>
     <lastmod>2026-08-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- ===== MAIN PAGES ===== -->
+  
+  <!-- Main Pages -->
   <url>
     <loc>https://toolnovehub.tools/tools</loc>
     <lastmod>2026-08-20</lastmod>
@@ -70,7 +70,7 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- ===== ALL 16 TOOLS ===== -->
+  <!-- All 16 Tools -->
   <url>
     <loc>https://toolnovehub.tools/tools/qr-code-generator</loc>
     <lastmod>2026-08-20</lastmod>
@@ -168,7 +168,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- ===== ALL 18 BLOG POSTS ===== -->
+  <!-- All 18 Blog Posts -->
   <url>
     <loc>https://toolnovehub.tools/blog/how-to-create-qr-code-for-wifi</loc>
     <lastmod>2026-08-20</lastmod>
