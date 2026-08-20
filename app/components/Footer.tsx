@@ -1,8 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, Github, Twitter, Linkedin, Mail } from 'lucide-react';
+import { useState } from 'react';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+
   const footerLinks = {
     Tools: [
       { name: 'QR Code Generator', href: '/tools/qr-code-generator' },
@@ -22,6 +27,14 @@ const Footer = () => {
       { name: 'Privacy', href: '/privacy' },
       { name: 'Docs', href: '/docs' },
     ],
+  };
+
+  const handleSubscribe = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (email) {
+      window.location.href = `mailto:support@toolnovehub.tools?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter%20list.%20My%20email%20is%20${encodeURIComponent(email)}`;
+      setEmail('');
+    }
   };
 
   return (
@@ -118,23 +131,27 @@ const Footer = () => {
             <p className="mt-2 text-sm text-slate-600">
               Get notified when we add new tools.
             </p>
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="mt-4 flex gap-2"
-            >
+            <div className="mt-4 flex gap-2">
               <input
                 type="email"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 rounded-lg border border-slate-200 px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                 aria-label="Email address"
               />
               <button
-                type="submit"
+                onClick={() => {
+                  if (email) {
+                    window.location.href = `mailto:support@toolnovehub.tools?subject=Newsletter%20Subscription&body=Please%20add%20me%20to%20your%20newsletter%20list.%20My%20email%20is%20${encodeURIComponent(email)}`;
+                    setEmail('');
+                  }
+                }}
                 className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105"
               >
                 Subscribe
               </button>
-            </form>
+            </div>
             <p className="mt-2 text-xs text-slate-400">
               No spam. Unsubscribe anytime.
             </p>
