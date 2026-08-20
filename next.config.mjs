@@ -55,10 +55,10 @@ const nextConfig = {
     return config;
   },
 
-  // ========== REDIRECTS FOR OLD/404 URLs ==========
+  // ========== ALL REDIRECTS FOR OLD/404 URLs ==========
   async redirects() {
     return [
-      // === BLOG REDIRECTS ===
+      // === BLOG REDIRECTS (8) ===
       {
         source: '/blog/how-to-calculate-discounts',
         destination: '/blog/percentage-calculator-daily-life',
@@ -100,7 +100,7 @@ const nextConfig = {
         permanent: true,
       },
 
-      // === TOOL REDIRECTS ===
+      // === TOOL REDIRECTS (11) ===
       {
         source: '/tools/base64-encoder',
         destination: '/tools/binary-converter',
@@ -134,6 +134,26 @@ const nextConfig = {
       {
         source: '/tools/pdf-merger',
         destination: '/tools/file-size-converter',
+        permanent: true,
+      },
+      {
+        source: '/tools/scientific-calculator',
+        destination: '/tools/calculator',
+        permanent: true,
+      },
+      {
+        source: '/tools/student',
+        destination: '/tools',
+        permanent: true,
+      },
+      {
+        source: '/tools/url-encoder',
+        destination: '/tools/binary-converter',
+        permanent: true,
+      },
+      {
+        source: '/tools/word-to-pdf',
+        destination: '/tools/image-resizer',
         permanent: true,
       },
     ];
