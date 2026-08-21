@@ -23,10 +23,11 @@ import {
   X,
   Sparkles,
   RefreshCw,
-  Key
+  Key,
+  Layers
 } from 'lucide-react';
 
-// All tools data - 17 tools (added Password Generator)
+// All tools data - 18 tools (added Unit Converter)
 const ALL_TOOLS = [
   // Developer Tools (6)
   {
@@ -102,7 +103,7 @@ const ALL_TOOLS = [
     category: 'Text Tools',
     color: 'from-green-500 to-emerald-500',
   },
-  // Calculator Tools (4)
+  // Calculator Tools (5 - added Unit Converter)
   {
     name: 'Percentage Calculator',
     description: 'Calculate percentages quickly and easily.',
@@ -135,6 +136,14 @@ const ALL_TOOLS = [
     category: 'Calculator Tools',
     color: 'from-amber-500 to-yellow-500',
   },
+  {
+    name: 'Unit Converter',
+    description: 'Convert length, weight, temperature, area, volume, and speed instantly.',
+    icon: Layers,
+    href: '/tools/unit-converter',
+    category: 'Calculator Tools',
+    color: 'from-cyan-500 to-blue-500',
+  },
   // Design Tools (3)
   {
     name: 'Image Resizer',
@@ -160,7 +169,7 @@ const ALL_TOOLS = [
     category: 'Design Tools',
     color: 'from-purple-500 to-pink-500',
   },
-  // Security Tools (1) - NEW
+  // Security Tools (1)
   {
     name: 'Password Generator',
     description: 'Generate strong, secure passwords instantly. Customize length and character types.',
@@ -169,9 +178,8 @@ const ALL_TOOLS = [
     category: 'Security Tools',
     color: 'from-amber-500 to-orange-500',
   },
-  // In the ALL_TOOLS array, add this:
-{
-  name: 'Unit Converter',
+  {
+  name: 'Unit Converter',  // ← NEW TOOL
   description: 'Convert length, weight, temperature, area, volume, and speed instantly.',
   icon: Layers,
   href: '/tools/unit-converter',
