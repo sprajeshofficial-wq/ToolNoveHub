@@ -57,11 +57,6 @@ export default function PasswordGenerator() {
   const strength = getPasswordStrength();
   const StrengthIcon = strength.icon;
 
-  // Generate password on first load
-  useState(() => {
-    generatePassword();
-  }, []);
-
   return (
     <div className="space-y-6">
       {/* Password Display */}
