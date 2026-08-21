@@ -22,12 +22,13 @@ import {
   FileText,
   X,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  Key
 } from 'lucide-react';
 
-// All tools data - 16 tools
+// All tools data - 17 tools (added Password Generator)
 const ALL_TOOLS = [
-  // ========== Developer Tools (6) ==========
+  // Developer Tools (6)
   {
     name: 'QR Code Generator',
     description: 'Generate QR codes instantly for any URL or text.',
@@ -35,6 +36,14 @@ const ALL_TOOLS = [
     href: '/tools/qr-code-generator',
     category: 'Developer Tools',
     color: 'from-emerald-500 to-teal-500',
+  },
+  {
+    name: 'QR Code Scanner',
+    description: 'Scan QR codes using your camera.',
+    icon: Scan,
+    href: '/tools/qr-code-scanner',
+    category: 'Developer Tools',
+    color: 'from-teal-500 to-cyan-500',
   },
   {
     name: 'JSON Formatter',
@@ -53,22 +62,6 @@ const ALL_TOOLS = [
     color: 'from-indigo-500 to-purple-500',
   },
   {
-    name: 'Text to Slug Converter',
-    description: 'Convert any text to a clean URL-friendly slug.',
-    icon: Type,
-    href: '/tools/text-to-slug',
-    category: 'Developer Tools',
-    color: 'from-indigo-500 to-blue-500',
-  },
-  {
-    name: 'QR Code Scanner',
-    description: 'Scan QR codes using your camera.',
-    icon: Scan,
-    href: '/tools/qr-code-scanner',
-    category: 'Developer Tools',
-    color: 'from-teal-500 to-cyan-500',
-  },
-  {
     name: 'Binary Converter',
     description: 'Convert text to binary and binary to text.',
     icon: Binary,
@@ -76,7 +69,15 @@ const ALL_TOOLS = [
     category: 'Developer Tools',
     color: 'from-rose-500 to-red-500',
   },
-  // ========== Text Tools (3) ==========
+  {
+    name: 'Text to Slug Converter',
+    description: 'Convert any text to a clean URL-friendly slug.',
+    icon: Type,
+    href: '/tools/text-to-slug',
+    category: 'Developer Tools',
+    color: 'from-indigo-500 to-blue-500',
+  },
+  // Text Tools (3)
   {
     name: 'Word Counter',
     description: 'Count words, characters, and sentences in any text.',
@@ -101,7 +102,7 @@ const ALL_TOOLS = [
     category: 'Text Tools',
     color: 'from-green-500 to-emerald-500',
   },
-  // ========== Calculator Tools (4) ==========
+  // Calculator Tools (4)
   {
     name: 'Percentage Calculator',
     description: 'Calculate percentages quickly and easily.',
@@ -111,7 +112,7 @@ const ALL_TOOLS = [
     color: 'from-amber-500 to-orange-500',
   },
   {
-    name: 'Simple Calculator',
+    name: 'Calculator',
     description: 'Basic calculator for quick arithmetic.',
     icon: Calculator,
     href: '/tools/calculator',
@@ -134,7 +135,7 @@ const ALL_TOOLS = [
     category: 'Calculator Tools',
     color: 'from-amber-500 to-yellow-500',
   },
-  // ========== Design Tools (3) ==========
+  // Design Tools (3)
   {
     name: 'Image Resizer',
     description: 'Resize images in bulk with custom dimensions.',
@@ -142,14 +143,6 @@ const ALL_TOOLS = [
     href: '/tools/image-resizer',
     category: 'Design Tools',
     color: 'from-blue-500 to-cyan-500',
-  },
-  {
-    name: 'Color Picker',
-    description: 'Pick and convert colors between HEX, RGB, and HSL.',
-    icon: Palette,
-    href: '/tools/color-picker',
-    category: 'Design Tools',
-    color: 'from-purple-500 to-pink-500',
   },
   {
     name: 'Image Cropper',
@@ -160,25 +153,31 @@ const ALL_TOOLS = [
     color: 'from-sky-500 to-blue-500',
   },
   {
-  name: 'Password Generator',
-  description: 'Generate strong, secure passwords instantly. Customize length and character types.',
-  icon: Key,
-  href: '/tools/password-generator',
-  category: 'Security Tools',
-  color: 'from-amber-500 to-orange-500',
-},
+    name: 'Color Picker',
+    description: 'Pick and convert colors between HEX, RGB, and HSL.',
+    icon: Palette,
+    href: '/tools/color-picker',
+    category: 'Design Tools',
+    color: 'from-purple-500 to-pink-500',
+  },
+  // Security Tools (1) - NEW
+  {
+    name: 'Password Generator',
+    description: 'Generate strong, secure passwords instantly. Customize length and character types.',
+    icon: Key,
+    href: '/tools/password-generator',
+    category: 'Security Tools',
+    color: 'from-amber-500 to-orange-500',
+  },
 ];
 
-// Popular tools (first 5)
-const POPULAR_TOOLS = ALL_TOOLS.slice(0, 5);
+const POPULAR_TOOLS = ALL_TOOLS.slice(0, 6);
 
 export default function AllTools() {
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter tools based on search
   const filteredTools = useMemo(() => {
     if (!searchQuery.trim()) return ALL_TOOLS;
-    
     const query = searchQuery.toLowerCase().trim();
     return ALL_TOOLS.filter(tool => 
       tool.name.toLowerCase().includes(query) ||
@@ -187,7 +186,6 @@ export default function AllTools() {
     );
   }, [searchQuery]);
 
-  // Group filtered tools by category
   const groupedTools = filteredTools.reduce((acc, tool) => {
     if (!acc[tool.category]) {
       acc[tool.category] = [];
@@ -211,6 +209,12 @@ export default function AllTools() {
           <p className="mt-2 text-slate-600">
             {ALL_TOOLS.length} free online tools available. Find what you need.
           </p>
+          <button
+            onClick={() => window.location.href = '/'}
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-100 transition-colors"
+          >
+            ← Back to Home
+          </button>
         </div>
 
         {/* Search Bar */}
@@ -235,8 +239,6 @@ export default function AllTools() {
               </button>
             )}
           </div>
-          
-          {/* Search Results Count */}
           {searchQuery && (
             <p className="mt-3 text-center text-sm text-slate-500">
               Found {filteredTools.length} tool{filteredTools.length !== 1 ? 's' : ''} matching &quot;{searchQuery}&quot;
@@ -244,14 +246,14 @@ export default function AllTools() {
           )}
         </div>
 
-        {/* Popular Tools - Only show when no search */}
+        {/* Popular Tools */}
         {!searchQuery && (
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
               <Sparkles className="h-5 w-5 text-amber-500" />
               <h2 className="text-2xl font-bold text-slate-900">⭐ Popular Tools</h2>
             </div>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
               {POPULAR_TOOLS.map((tool) => (
                 <ToolCard key={tool.name} {...tool} />
               ))}
@@ -279,7 +281,6 @@ export default function AllTools() {
             ))}
           </div>
         ) : searchQuery ? (
-          // No results message
           <div className="text-center py-16">
             <div className="inline-flex items-center justify-center rounded-2xl bg-slate-100 p-4 mb-4">
               <Search className="h-12 w-12 text-slate-400" />
@@ -330,22 +331,15 @@ function ToolCard({
   return (
     <Link href={href} className="group">
       <div className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-indigo-500/10 border border-slate-200/50 h-full flex flex-col">
-        {/* Icon */}
         <div className={`mb-4 inline-flex rounded-xl bg-gradient-to-r ${color} p-3 shadow-lg`}>
           <Icon className="h-6 w-6 text-white" />
         </div>
-        
-        {/* Title */}
         <h3 className="text-lg font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
           {name}
         </h3>
-        
-        {/* Description */}
         <p className="mt-2 text-sm text-slate-600 flex-1 line-clamp-2">
           {description}
         </p>
-        
-        {/* Try Tool */}
         <div className="mt-4 flex items-center gap-1 text-sm font-medium text-indigo-600 group-hover:gap-2 transition-all">
           <span>Try Tool</span>
           <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
