@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { RefreshCw, ArrowRight, Layers } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface UnitCategory {
   name: string;
@@ -150,13 +150,11 @@ export default function UnitConverter() {
   const currentCategory = categories[category];
   const currentUnits = currentCategory.units;
 
-  // Find unit labels for display
   const fromLabel = currentUnits.find(u => u.value === fromUnit)?.label || fromUnit;
   const toLabel = currentUnits.find(u => u.value === toUnit)?.label || toUnit;
 
   return (
     <div className="space-y-6">
-      {/* Category Selection */}
       <div>
         <label className="text-sm font-medium text-slate-700">Category</label>
         <div className="grid grid-cols-3 gap-2 mt-1">
@@ -181,7 +179,6 @@ export default function UnitConverter() {
         </div>
       </div>
 
-      {/* From Unit */}
       <div>
         <label className="text-sm font-medium text-slate-700">From</label>
         <div className="flex gap-2 mt-1">
@@ -207,7 +204,6 @@ export default function UnitConverter() {
         </div>
       </div>
 
-      {/* Swap Button */}
       <div className="flex justify-center">
         <button
           onClick={swapUnits}
@@ -217,7 +213,6 @@ export default function UnitConverter() {
         </button>
       </div>
 
-      {/* To Unit */}
       <div>
         <label className="text-sm font-medium text-slate-700">To</label>
         <div className="flex gap-2 mt-1">
@@ -242,7 +237,6 @@ export default function UnitConverter() {
         </div>
       </div>
 
-      {/* Result Display */}
       {result !== null && (
         <div className="rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 p-4 border border-indigo-200/50">
           <p className="text-sm text-slate-600">
@@ -251,7 +245,6 @@ export default function UnitConverter() {
         </div>
       )}
 
-      {/* Info */}
       <div className="rounded-2xl bg-indigo-50/50 p-4 border border-indigo-200/50">
         <p className="text-sm text-slate-600">
           <span className="font-semibold text-indigo-600">💡 Pro Tip:</span> 
