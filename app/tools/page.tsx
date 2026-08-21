@@ -159,6 +159,14 @@ const ALL_TOOLS = [
     category: 'Design Tools',
     color: 'from-sky-500 to-blue-500',
   },
+  {
+  name: 'Password Generator',
+  description: 'Generate strong, secure passwords instantly. Customize length and character types.',
+  icon: Key,
+  href: '/tools/password-generator',
+  category: 'Security Tools',
+  color: 'from-amber-500 to-orange-500',
+},
 ];
 
 // Popular tools (first 5)
