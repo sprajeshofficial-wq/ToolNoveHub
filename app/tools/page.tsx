@@ -169,6 +169,15 @@ const ALL_TOOLS = [
     category: 'Security Tools',
     color: 'from-amber-500 to-orange-500',
   },
+  // In the ALL_TOOLS array, add this:
+{
+  name: 'Unit Converter',
+  description: 'Convert length, weight, temperature, area, volume, and speed instantly.',
+  icon: Layers,
+  href: '/tools/unit-converter',
+  category: 'Calculator Tools',
+  color: 'from-cyan-500 to-blue-500',
+},
 ];
 
 const POPULAR_TOOLS = ALL_TOOLS.slice(0, 6);
