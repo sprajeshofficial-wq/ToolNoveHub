@@ -24,7 +24,7 @@ import {
   Sparkles,
   RefreshCw,
   Key,
-  Layers
+  Layers  // ← ADD THIS
 } from 'lucide-react';
 
 // All tools data - 18 tools (added Unit Converter)
