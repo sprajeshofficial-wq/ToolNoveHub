@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Shield, Users, Eye } from 'lucide-react';
+import { Lock, Shield, Users, Eye, TrendingUp } from 'lucide-react';  // ← Added TrendingUp
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
