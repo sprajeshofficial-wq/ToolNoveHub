@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, RefreshCw, Copy, Check, Users, Gift, Cake, Sparkles } from 'lucide-react';
+import { Calendar, Clock, RefreshCw, Copy, Check, Sparkles } from 'lucide-react';
 
 interface AgeResult {
   years: number;
@@ -27,7 +27,6 @@ export default function AgeCalculator() {
   const [birthDate, setBirthDate] = useState('');
   const [result, setResult] = useState<AgeResult | null>(null);
   const [copied, setCopied] = useState(false);
-  const [isLive, setIsLive] = useState(true);
 
   // Real-time age update
   useEffect(() => {
@@ -81,7 +80,7 @@ export default function AgeCalculator() {
   };
 
   const getLifeExpectancy = (years: number): string => {
-    const avgLife = 78; // Global average
+    const avgLife = 78;
     const remaining = Math.max(0, avgLife - years);
     return `${Math.round(remaining)} years remaining`;
   };
@@ -164,10 +163,8 @@ export default function AgeCalculator() {
     setResult(null);
   };
 
-  // Set today's date as default
   const today = new Date().toISOString().split('T')[0];
 
-  // Fun facts about age
   const getFunFact = (years: number) => {
     const facts = [
       `You've lived through ${Math.floor(years / 4)} leap years!`,
@@ -266,7 +263,7 @@ export default function AgeCalculator() {
             </div>
           </div>
 
-          {/* Age in Animal Years */}
+          {/* Animal Years */}
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
               <p className="text-lg font-bold text-indigo-600">{result.ageInDogYears}</p>
