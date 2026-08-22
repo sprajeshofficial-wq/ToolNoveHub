@@ -5,8 +5,10 @@ import TextToASCII from './TextToASCII';
 export const metadata: Metadata = {
   title: 'Free Text to ASCII Art Converter - Create ASCII Art Online | ToolNoveHub',
   description: 'Free online text to ASCII art converter. Convert any text to beautiful ASCII art. Perfect for social media, emails, and creative projects.',
-  keywords: 'text to ascii, ascii art generator, text to ascii art, ascii converter, ascii creator',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/text-to-ascii' },
+  keywords: 'text to ascii, ascii art generator, text to ascii art, ascii converter, ascii creator, ascii art online, text to ascii free, create ascii art',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/text-to-ascii',
+  },
   openGraph: {
     title: 'Free Text to ASCII Art Converter - Create ASCII Art Online | ToolNoveHub',
     description: 'Free online text to ASCII art converter. Convert any text to beautiful ASCII art.',

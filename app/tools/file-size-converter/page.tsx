@@ -5,8 +5,10 @@ import FileSizeConverter from './FileSizeConverter';
 export const metadata: Metadata = {
   title: 'Free File Size Converter - Convert Bytes to KB, MB, GB | ToolNoveHub',
   description: 'Free online file size converter. Convert between bytes, KB, MB, GB, and TB instantly. Perfect for storage management and data transfer calculations.',
-  keywords: 'file size converter, bytes to mb, gb to mb, file size calculator, storage converter',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/file-size-converter' },
+  keywords: 'file size converter, bytes to mb, gb to mb, file size calculator, storage converter, file size calculator online, convert bytes to mb, file storage converter',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/file-size-converter',
+  },
   openGraph: {
     title: 'Free File Size Converter - Convert Bytes to KB, MB, GB | ToolNoveHub',
     description: 'Free online file size converter. Convert between bytes, KB, MB, GB, and TB instantly.',

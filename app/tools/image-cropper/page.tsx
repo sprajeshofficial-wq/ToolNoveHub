@@ -5,8 +5,10 @@ import ImageCropper from './ImageCropper';
 export const metadata: Metadata = {
   title: 'Free Image Cropper - Crop Images Online | ToolNoveHub',
   description: 'Free online image cropper. Crop images to any aspect ratio. Perfect for social media, websites, and design projects. No signup, 100% private.',
-  keywords: 'image cropper, crop image online, free image cropper, aspect ratio, photo cropper',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/image-cropper' },
+  keywords: 'image cropper, crop image online, free image cropper, aspect ratio, photo cropper, crop photo online, image crop tool, crop image free',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/image-cropper',
+  },
   openGraph: {
     title: 'Free Image Cropper - Crop Images Online | ToolNoveHub',
     description: 'Free online image cropper. Crop images to any aspect ratio.',

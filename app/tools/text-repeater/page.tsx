@@ -5,8 +5,10 @@ import TextRepeater from './TextRepeater';
 export const metadata: Metadata = {
   title: 'Free Text Repeater - Repeat Text Online | ToolNoveHub',
   description: 'Free online text repeater tool. Repeat text multiple times with custom separators. Perfect for content generation and creative projects.',
-  keywords: 'text repeater, repeat text, text generator, content generator, text multiplier',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/text-repeater' },
+  keywords: 'text repeater, repeat text, text generator, content generator, text multiplier, repeat text online, text duplicator, text copier',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/text-repeater',
+  },
   openGraph: {
     title: 'Free Text Repeater - Repeat Text Online | ToolNoveHub',
     description: 'Free online text repeater tool. Repeat text multiple times with custom separators.',

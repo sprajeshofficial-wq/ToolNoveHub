@@ -5,8 +5,10 @@ import QRCodeScanner from './QRCodeScanner';
 export const metadata: Metadata = {
   title: 'Free QR Code Scanner - Scan QR Codes Online | ToolNoveHub',
   description: 'Free online QR code scanner. Scan QR codes using your camera or upload an image. No signup, 100% private, browser-based.',
-  keywords: 'qr code scanner, scan qr code, qr code reader, qr code decoder, online qr scanner',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/qr-code-scanner' },
+  keywords: 'qr code scanner, scan qr code, qr code reader, qr code decoder, online qr scanner, scan qr code online, qr scanner free',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/qr-code-scanner',
+  },
   openGraph: {
     title: 'Free QR Code Scanner - Scan QR Codes Online | ToolNoveHub',
     description: 'Free online QR code scanner. Scan QR codes using your camera or upload an image.',
@@ -62,14 +64,8 @@ export default function QRCodeScannerPage() {
         <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About QR Code Scanners</h2>
           <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-slate-900">How do QR code scanners work?</h3>
-              <p className="text-slate-600">QR code scanners read the pattern of black and white squares, which encodes data such as URLs, text, or Wi-Fi credentials.</p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">Can I scan QR codes with my phone?</h3>
-              <p className="text-slate-600">Yes, most modern phones have built-in QR code scanning in the camera app.</p>
-            </div>
+            <div><h3 className="font-semibold text-slate-900">How do QR code scanners work?</h3><p className="text-slate-600">QR code scanners read the pattern of black and white squares, which encodes data such as URLs, text, or Wi-Fi credentials.</p></div>
+            <div><h3 className="font-semibold text-slate-900">Can I scan QR codes with my phone?</h3><p className="text-slate-600">Yes, most modern phones have built-in QR code scanning in the camera app.</p></div>
           </div>
         </div>
 

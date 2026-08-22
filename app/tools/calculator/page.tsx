@@ -5,8 +5,10 @@ import Calculator from './Calculator';
 export const metadata: Metadata = {
   title: 'Free Online Calculator - Simple & Fast | ToolNoveHub',
   description: 'Free online calculator for basic arithmetic. Add, subtract, multiply, and divide instantly. No signup, 100% private, browser-based.',
-  keywords: 'calculator, online calculator, simple calculator, arithmetic calculator, free calculator',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/calculator' },
+  keywords: 'calculator, online calculator, simple calculator, arithmetic calculator, free calculator, basic calculator, quick calculator, web calculator',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/calculator',
+  },
   openGraph: {
     title: 'Free Online Calculator - Simple & Fast | ToolNoveHub',
     description: 'Free online calculator for basic arithmetic. Add, subtract, multiply, and divide instantly.',

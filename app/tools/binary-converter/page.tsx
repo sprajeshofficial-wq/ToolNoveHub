@@ -5,8 +5,10 @@ import BinaryConverter from './BinaryConverter';
 export const metadata: Metadata = {
   title: 'Free Binary Converter - Text to Binary & Binary to Text | ToolNoveHub',
   description: 'Free online binary converter. Convert text to binary and binary to text instantly. Perfect for developers, students, and computer science enthusiasts.',
-  keywords: 'binary converter, text to binary, binary to text, binary translator, binary to ascii',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/binary-converter' },
+  keywords: 'binary converter, text to binary, binary to text, binary translator, binary to ascii, convert binary, binary code converter, text to binary online',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/binary-converter',
+  },
   openGraph: {
     title: 'Free Binary Converter - Text to Binary & Binary to Text | ToolNoveHub',
     description: 'Free online binary converter. Convert text to binary and binary to text instantly.',

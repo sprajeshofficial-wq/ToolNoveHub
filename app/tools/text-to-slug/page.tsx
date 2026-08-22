@@ -5,8 +5,10 @@ import TextToSlug from './TextToSlug';
 export const metadata: Metadata = {
   title: 'Free Text to Slug Converter - Create SEO-Friendly URLs | ToolNoveHub',
   description: 'Free online text to slug converter. Create SEO-friendly URLs instantly. Perfect for bloggers, developers, and content creators. No signup required.',
-  keywords: 'text to slug, slug converter, seo friendly url, url slug generator, slugify text',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/text-to-slug' },
+  keywords: 'text to slug, slug converter, seo friendly url, url slug generator, slugify text, create slug, text to url, slug generator online',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/text-to-slug',
+  },
   openGraph: {
     title: 'Free Text to Slug Converter - Create SEO-Friendly URLs | ToolNoveHub',
     description: 'Free online text to slug converter. Create SEO-friendly URLs instantly.',

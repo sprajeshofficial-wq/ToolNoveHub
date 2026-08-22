@@ -5,8 +5,10 @@ import JSONValidator from './JSONValidator';
 export const metadata: Metadata = {
   title: 'Free JSON Validator - Validate JSON Online | ToolNoveHub',
   description: 'Free online JSON validator. Validate JSON data and find syntax errors instantly. Perfect for API development and debugging. No signup, 100% private.',
-  keywords: 'json validator, validate json, json checker, json syntax validator, json verifier',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/json-validator' },
+  keywords: 'json validator, validate json, json checker, json syntax validator, json verifier, validate json online, json parser, json error checker',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/json-validator',
+  },
   openGraph: {
     title: 'Free JSON Validator - Validate JSON Online | ToolNoveHub',
     description: 'Free online JSON validator. Validate JSON data and find syntax errors instantly.',

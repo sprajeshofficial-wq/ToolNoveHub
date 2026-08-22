@@ -5,8 +5,10 @@ import NumberToWords from './NumberToWords';
 export const metadata: Metadata = {
   title: 'Free Number to Words Converter - Convert Numbers to Text | ToolNoveHub',
   description: 'Free online number to words converter. Convert any number to words instantly. Perfect for checks, invoices, and legal documents. No signup required.',
-  keywords: 'number to words, convert number to text, number to word converter, number to english',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/number-to-words' },
+  keywords: 'number to words, convert number to text, number to word converter, number to english, number spelling, number to words online, convert number to words free',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/number-to-words',
+  },
   openGraph: {
     title: 'Free Number to Words Converter - Convert Numbers to Text | ToolNoveHub',
     description: 'Free online number to words converter. Convert any number to words instantly.',
