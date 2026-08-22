@@ -13,7 +13,7 @@ const Header = () => {
     { name: 'Students', href: '/student', icon: GraduationCap },
     { name: 'Developers', href: '/developer', icon: Code },
     { name: 'Office', href: '/office', icon: Briefcase },
-    { name: 'Blog', href: '/blog', icon: BookOpen },  // ✅ FIXED: Now points to /blog
+    { name: 'Blog', href: '/blog', icon: BookOpen },
   ];
 
   return (
@@ -85,7 +85,7 @@ const Header = () => {
             ))}
             <Link
               href="/tools"
-              className="mt-2 flex w-full items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25"
+              className="mt-3 flex w-full items-center justify-center rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25"
               onClick={() => setIsOpen(false)}
             >
               Get Started
