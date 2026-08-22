@@ -173,7 +173,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-  <!-- NEW: Unit Converter -->
   <url>
     <loc>https://toolnovehub.tools/tools/unit-converter</loc>
     <lastmod>2026-08-22</lastmod>
@@ -181,8 +180,7 @@
     <priority>0.8</priority>
   </url>
 
-  <!-- ===== ALL 25+ BLOG POSTS ===== -->
-  <!-- Add all your blog posts here -->
+  <!-- ===== ALL 26 BLOG POSTS ===== -->
   <url>
     <loc>https://toolnovehub.tools/blog/password-generator-ultimate-guide</loc>
     <lastmod>2026-08-22</lastmod>
@@ -195,5 +193,148 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-  <!-- ... include all your existing blog posts ... -->
+  <url>
+    <loc>https://toolnovehub.tools/blog/color-picker-ultimate-guide</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/best-image-resizer-tools-social-media</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/resize-images-free-without-losing-quality</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/how-to-create-qr-code-for-wifi</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/qr-code-scanner-how-to-scan</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/how-to-calculate-discounts</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/how-to-compress-pdf</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/how-to-convert-jpg-to-pdf</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/qr-code-generator-ultimate-guide</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/text-to-slug-converter-seo-friendly-urls</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/json-formatter-why-developers-need</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/json-validator-common-mistakes</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/binary-converter-understand-computer-language</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/word-counter-content-writing</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/text-to-ascii-create-stunning-art</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/percentage-calculator-daily-life</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/number-to-words-converter</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/file-size-converter-understand-storage</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/top-5-tools-for-office-workers</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/top-5-tools-for-students</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/privacy-first-browser-tools</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/10-free-online-tools-every-developer-needs</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/how-to-convert-word-to-pdf</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://toolnovehub.tools/blog/how-to-use-color-palette-generator</loc>
+    <lastmod>2026-08-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
