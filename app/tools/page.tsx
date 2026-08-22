@@ -28,7 +28,7 @@ import {
   Calendar
 } from 'lucide-react';
 
-// All tools data - 19 tools
+// All tools data - 19 tools (Added Age Calculator)
 const ALL_TOOLS = [
   // Developer Tools (6)
   {
@@ -104,7 +104,7 @@ const ALL_TOOLS = [
     category: 'Text Tools',
     color: 'from-green-500 to-emerald-500',
   },
-  // Calculator Tools (6)
+  // Calculator Tools (6 - Added Age Calculator)
   {
     name: 'Percentage Calculator',
     description: 'Calculate percentages quickly and easily.',
@@ -145,7 +145,7 @@ const ALL_TOOLS = [
     category: 'Calculator Tools',
     color: 'from-cyan-500 to-blue-500',
   },
-  // ✅ Age Calculator
+  // ✅ ADDED: Age Calculator
   {
     name: 'Age Calculator',
     description: 'Calculate your exact age in years, months, days, hours, minutes, and seconds.',
@@ -219,6 +219,7 @@ export default function AllTools() {
   return (
     <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
       <div className="mx-auto max-w-7xl">
+        {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 p-3 shadow-lg shadow-indigo-500/25">
             <Wrench className="h-8 w-8 text-white" />
@@ -235,6 +236,7 @@ export default function AllTools() {
           </button>
         </div>
 
+        {/* Search Bar */}
         <div className="mb-8 max-w-2xl mx-auto">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -263,6 +265,7 @@ export default function AllTools() {
           )}
         </div>
 
+        {/* Popular Tools */}
         {!searchQuery && (
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
@@ -277,6 +280,7 @@ export default function AllTools() {
           </div>
         )}
 
+        {/* All Tools by Category */}
         {hasResults ? (
           <div className="space-y-12">
             {categories.map((category) => (
@@ -313,6 +317,7 @@ export default function AllTools() {
           </div>
         ) : null}
 
+        {/* Coming Soon */}
         <div className="mt-16 rounded-2xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-200/50 p-8 text-center">
           <h3 className="text-xl font-bold text-slate-900">🔜 More Tools Coming Soon</h3>
           <p className="mt-2 text-slate-600">
@@ -328,6 +333,7 @@ export default function AllTools() {
   );
 }
 
+// ToolCard Component
 function ToolCard({ 
   name, 
   description, 
