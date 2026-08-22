@@ -179,6 +179,15 @@ const ALL_TOOLS = [
     category: 'Security Tools',
     color: 'from-amber-500 to-orange-500',
   },
+  // In the ALL_TOOLS array, add this:
+{
+  name: 'Age Calculator',
+  description: 'Calculate your exact age in years, months, days, hours, minutes, and seconds.',
+  icon: Calendar,
+  href: '/tools/age-calculator',
+  category: 'Calculator Tools',
+  color: 'from-pink-500 to-rose-500',
+},
 ];
 
 const POPULAR_TOOLS = ALL_TOOLS.slice(0, 6);
