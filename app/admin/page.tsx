@@ -11,8 +11,8 @@ export default function AdminLogin() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Change this password to your own secret password
-    if (password === 'toolnovehub2026') {
+    // 🔑 UPDATED PASSWORD
+    if (password === '133011RDdr!@#***') {
       localStorage.setItem('adminLoggedIn', 'true');
       router.push('/admin/dashboard');
     } else {
