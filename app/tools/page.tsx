@@ -12,7 +12,7 @@ import {
   Search,
   Type,
   Hash,
-  Calculator,
+  Calculator as CalculatorIcon,
   Palette,
   FileJson,
   Scan,
@@ -24,10 +24,11 @@ import {
   Sparkles,
   RefreshCw,
   Key,
-  Layers
+  Layers,
+  Calendar
 } from 'lucide-react';
 
-// ALL TOOLS - ONLY 18 TOOLS, NO DUPLICATES
+// All tools data - 19 tools
 const ALL_TOOLS = [
   // Developer Tools (6)
   {
@@ -103,7 +104,7 @@ const ALL_TOOLS = [
     category: 'Text Tools',
     color: 'from-green-500 to-emerald-500',
   },
-  // Calculator Tools (5)
+  // Calculator Tools (6)
   {
     name: 'Percentage Calculator',
     description: 'Calculate percentages quickly and easily.',
@@ -115,7 +116,7 @@ const ALL_TOOLS = [
   {
     name: 'Calculator',
     description: 'Basic calculator for quick arithmetic.',
-    icon: Calculator,
+    icon: CalculatorIcon,
     href: '/tools/calculator',
     category: 'Calculator Tools',
     color: 'from-green-500 to-emerald-500',
@@ -136,7 +137,6 @@ const ALL_TOOLS = [
     category: 'Calculator Tools',
     color: 'from-amber-500 to-yellow-500',
   },
-  // ✅ ONLY ONE UNIT CONVERTER
   {
     name: 'Unit Converter',
     description: 'Convert length, weight, temperature, area, volume, and speed instantly.',
@@ -144,6 +144,15 @@ const ALL_TOOLS = [
     href: '/tools/unit-converter',
     category: 'Calculator Tools',
     color: 'from-cyan-500 to-blue-500',
+  },
+  // ✅ Age Calculator
+  {
+    name: 'Age Calculator',
+    description: 'Calculate your exact age in years, months, days, hours, minutes, and seconds.',
+    icon: Calendar,
+    href: '/tools/age-calculator',
+    category: 'Calculator Tools',
+    color: 'from-pink-500 to-rose-500',
   },
   // Design Tools (3)
   {
@@ -179,15 +188,6 @@ const ALL_TOOLS = [
     category: 'Security Tools',
     color: 'from-amber-500 to-orange-500',
   },
-  // In the ALL_TOOLS array, add this:
-{
-  name: 'Age Calculator',
-  description: 'Calculate your exact age in years, months, days, hours, minutes, and seconds.',
-  icon: Calendar,
-  href: '/tools/age-calculator',
-  category: 'Calculator Tools',
-  color: 'from-pink-500 to-rose-500',
-},
 ];
 
 const POPULAR_TOOLS = ALL_TOOLS.slice(0, 6);

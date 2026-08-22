@@ -10,7 +10,7 @@ const AgeCalculator = dynamic(
 export const metadata: Metadata = {
   title: 'Age Calculator - Calculate Your Age Instantly | ToolNoveHub',
   description: 'Free online age calculator. Calculate your exact age in years, months, days, hours, minutes, and seconds. No signup, 100% private, browser-based.',
-  keywords: 'age calculator, calculate age, age in years, date of birth calculator, how old am i, age calculator online, birth date calculator, age finder',
+  keywords: 'age calculator, calculate age, age in years, date of birth calculator, how old am i, age calculator online, birth date calculator, age finder, age counter',
   alternates: {
     canonical: 'https://toolnovehub.tools/tools/age-calculator',
   },
