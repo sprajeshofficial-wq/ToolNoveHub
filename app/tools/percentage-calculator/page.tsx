@@ -5,14 +5,23 @@ import PercentageCalculator from './PercentageCalculator';
 export const metadata: Metadata = {
   title: 'Free Percentage Calculator - Calculate Percentages Online | ToolNoveHub',
   description: 'Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more. No signup, 100% private, browser-based.',
-  keywords: 'percentage calculator, calculate percentage, percent calculator, percentage increase, percentage decrease',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/percentage-calculator' },
+  keywords: 'percentage calculator, calculate percentage, percent calculator, percentage increase, percentage decrease, online percentage calculator, percent calculator free, percentage of number',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/percentage-calculator',
+  },
   openGraph: {
     title: 'Free Percentage Calculator - Calculate Percentages Online | ToolNoveHub',
     description: 'Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more.',
     url: 'https://toolnovehub.tools/tools/percentage-calculator',
     type: 'website',
-    images: [{ url: 'https://toolnovehub.tools/og-percentage-calculator.jpg', width: 1200, height: 630, alt: 'Percentage Calculator - Free Online Tool' }],
+    images: [
+      {
+        url: 'https://toolnovehub.tools/og-percentage-calculator.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Percentage Calculator - Free Online Tool',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',

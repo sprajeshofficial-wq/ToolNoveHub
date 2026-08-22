@@ -9,8 +9,8 @@ const UnitConverter = dynamic(
 
 export const metadata: Metadata = {
   title: 'Unit Converter - Convert Length, Weight, Temperature & More | ToolNoveHub',
-  description: 'Free online unit converter. Convert length, weight, temperature, area, volume, speed, and more. 100% free, private browser-based converter.',
-  keywords: 'unit converter, length converter, weight converter, temperature converter, metric converter, imperial converter',
+  description: 'Free online unit converter. Convert length, weight, temperature, area, volume, and speed instantly. 100% free, private browser-based converter.',
+  keywords: 'unit converter, length converter, weight converter, temperature converter, metric converter, imperial converter, online unit converter, convert units, conversion tool',
   alternates: {
     canonical: 'https://toolnovehub.tools/tools/unit-converter',
   },
@@ -59,7 +59,7 @@ export default function UnitConverterPage() {
           Unit Converter – Convert Anything Instantly
         </h1>
         <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">
-          Free online unit converter. Convert length, weight, temperature, area, volume, speed, and more.
+          Free online unit converter. Convert length, weight, temperature, area, volume, and speed.
           100% free, private, browser-based.
         </p>
 

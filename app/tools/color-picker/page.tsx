@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-// Dynamically import ColorPicker with SSR disabled to fix hydration errors
 const ColorPicker = dynamic(
   () => import('./ColorPicker'),
   { ssr: false }
@@ -11,7 +10,7 @@ const ColorPicker = dynamic(
 export const metadata: Metadata = {
   title: 'Free Color Picker - Pick Colors & Convert HEX to RGB | ToolNoveHub',
   description: 'Free online color picker. Pick colors visually, convert between HEX, RGB, and HSL. Generate random palettes and export colors. Perfect for designers and developers.',
-  keywords: 'color picker, hex to rgb, color palette generator, color converter, design tool',
+  keywords: 'color picker, hex to rgb, color palette generator, color converter, design tool, online color picker, rgb to hex, color selector, pick color online',
   alternates: {
     canonical: 'https://toolnovehub.tools/tools/color-picker',
   },

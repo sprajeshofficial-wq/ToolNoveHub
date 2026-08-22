@@ -5,7 +5,7 @@ import QRCodeGenerator from './QRCodeGenerator';
 export const metadata: Metadata = {
   title: 'QR Code Generator - Create Free QR Codes Online | ToolNoveHub',
   description: 'Generate free QR codes for URLs, text, and Wi-Fi networks instantly. No signup required. 100% private, browser-based QR code generator with download options.',
-  keywords: 'qr code generator, free qr code, generate qr code, qr code for wifi, qr code maker',
+  keywords: 'qr code generator, free qr code, generate qr code, qr code for wifi, qr code maker, online qr code generator, create qr code, qr code creator',
   alternates: {
     canonical: 'https://toolnovehub.tools/tools/qr-code-generator',
   },
@@ -54,7 +54,6 @@ export default function QRCodeGeneratorPage() {
         <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">
           Free QR Code Generator – Create QR Codes Instantly
         </h1>
-
         <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">
           Generate free QR codes for URLs, text, and Wi-Fi networks instantly.
           No signup required. Works entirely in your browser — 100% private.

@@ -5,14 +5,23 @@ import WordCounter from './WordCounter';
 export const metadata: Metadata = {
   title: 'Free Word Counter - Count Words Online | ToolNoveHub',
   description: 'Free online word counter. Count words, characters, sentences, and paragraphs. Perfect for content writing, SEO, and academic work. No signup required.',
-  keywords: 'word counter, count words, character counter, word count, free word counter',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/word-counter' },
+  keywords: 'word counter, count words, character counter, word count, free word counter, online word counter, text counter, word counter online',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/word-counter',
+  },
   openGraph: {
     title: 'Free Word Counter - Count Words Online | ToolNoveHub',
     description: 'Free online word counter. Count words, characters, sentences, and paragraphs.',
     url: 'https://toolnovehub.tools/tools/word-counter',
     type: 'website',
-    images: [{ url: 'https://toolnovehub.tools/og-word-counter.jpg', width: 1200, height: 630, alt: 'Word Counter - Free Online Tool' }],
+    images: [
+      {
+        url: 'https://toolnovehub.tools/og-word-counter.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Word Counter - Free Online Tool',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',

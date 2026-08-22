@@ -5,14 +5,23 @@ import JSONFormatter from './JSONFormatter';
 export const metadata: Metadata = {
   title: 'Free JSON Formatter - Format & Validate JSON Online | ToolNoveHub',
   description: 'Free online JSON formatter and validator. Format, beautify, and validate JSON data. Perfect for API development and debugging. No signup, 100% private.',
-  keywords: 'json formatter, json validator, format json, beautify json, json pretty print',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/json-formatter' },
+  keywords: 'json formatter, json validator, format json, beautify json, json pretty print, online json formatter, json beautifier, json parser',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/json-formatter',
+  },
   openGraph: {
     title: 'Free JSON Formatter - Format & Validate JSON Online | ToolNoveHub',
     description: 'Free online JSON formatter and validator. Format, beautify, and validate JSON data.',
     url: 'https://toolnovehub.tools/tools/json-formatter',
     type: 'website',
-    images: [{ url: 'https://toolnovehub.tools/og-json-formatter.jpg', width: 1200, height: 630, alt: 'JSON Formatter - Free Online Tool' }],
+    images: [
+      {
+        url: 'https://toolnovehub.tools/og-json-formatter.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'JSON Formatter - Free Online Tool',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',

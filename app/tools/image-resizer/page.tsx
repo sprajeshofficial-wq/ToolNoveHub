@@ -5,14 +5,23 @@ import ImageResizer from './ImageResizer';
 export const metadata: Metadata = {
   title: 'Free Image Resizer - Resize Images Online | ToolNoveHub',
   description: 'Resize images online for free. Perfect for social media, websites, and printing. No signup, 100% private, browser-based image resizer with custom dimensions.',
-  keywords: 'image resizer, resize image online, free image resizer, bulk image resizer, image size converter',
-  alternates: { canonical: 'https://toolnovehub.tools/tools/image-resizer' },
+  keywords: 'image resizer, resize image online, free image resizer, bulk image resizer, image size converter, resize photo online, image resizer free, social media image resizer',
+  alternates: {
+    canonical: 'https://toolnovehub.tools/tools/image-resizer',
+  },
   openGraph: {
     title: 'Free Image Resizer - Resize Images Online | ToolNoveHub',
     description: 'Resize images online for free. Perfect for social media, websites, and printing.',
     url: 'https://toolnovehub.tools/tools/image-resizer',
     type: 'website',
-    images: [{ url: 'https://toolnovehub.tools/og-image-resizer.jpg', width: 1200, height: 630, alt: 'Image Resizer - Free Online Tool' }],
+    images: [
+      {
+        url: 'https://toolnovehub.tools/og-image-resizer.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Image Resizer - Free Online Tool',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
