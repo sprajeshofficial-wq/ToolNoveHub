@@ -4,7 +4,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, Github, Twitter, Linkedin, Mail } from 'lucide-react';
 import { useState } from 'react';
-import LiveVisitors from './LiveVisitors';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -129,7 +128,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Newsletter & Live Visitors */}
+          {/* Newsletter */}
           <div className="col-span-2 md:col-span-1">
             <h3 className="text-sm font-semibold text-slate-900">Stay Updated</h3>
             <p className="mt-2 text-sm text-slate-600">
@@ -155,11 +154,6 @@ const Footer = () => {
             <p className="mt-2 text-xs text-slate-400">
               No spam. Unsubscribe anytime.
             </p>
-
-            {/* Live Visitors Counter */}
-            <div className="mt-4 pt-4 border-t border-slate-200/50">
-              <LiveVisitors />
-            </div>
           </div>
         </div>
 
