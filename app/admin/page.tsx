@@ -1,17 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Shield } from 'lucide-react';
+import { Lock, Shield, Users, Eye } from 'lucide-react';
 
 export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [visitors, setVisitors] = useState({ active: 0, today: 0, total: 0 });
   const router = useRouter();
+
+  useEffect(() => {
+    fetch('/api/visitors')
+      .then(res => res.json())
+      .then(data => setVisitors(data))
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // 🔑 UPDATED PASSWORD
     if (password === '133011RDdr!@#***') {
       localStorage.setItem('adminLoggedIn', 'true');
       router.push('/admin/dashboard');
@@ -29,6 +36,25 @@ export default function AdminLogin() {
           </div>
           <h1 className="mt-4 text-2xl font-bold text-slate-900">Admin Access</h1>
           <p className="mt-2 text-sm text-slate-500">Enter the password to view analytics</p>
+        </div>
+
+        {/* Live Stats */}
+        <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+          <div className="rounded-lg bg-slate-50 p-2">
+            <Users className="h-4 w-4 text-emerald-500 mx-auto" />
+            <p className="text-sm font-bold text-slate-900">{visitors.active}</p>
+            <p className="text-xs text-slate-400">Active</p>
+          </div>
+          <div className="rounded-lg bg-slate-50 p-2">
+            <Eye className="h-4 w-4 text-blue-500 mx-auto" />
+            <p className="text-sm font-bold text-slate-900">{visitors.today}</p>
+            <p className="text-xs text-slate-400">Today</p>
+          </div>
+          <div className="rounded-lg bg-slate-50 p-2">
+            <TrendingUp className="h-4 w-4 text-purple-500 mx-auto" />
+            <p className="text-sm font-bold text-slate-900">{visitors.total}</p>
+            <p className="text-xs text-slate-400">Total</p>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
