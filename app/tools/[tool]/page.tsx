@@ -31,6 +31,7 @@ export const metadata: Metadata = {
     description: 'Description with keywords and benefits.',
     images: ['https://toolnovehub.tools/og-tool-name.jpg'],
   },
+  
 };
 
 export default function ToolPage() {

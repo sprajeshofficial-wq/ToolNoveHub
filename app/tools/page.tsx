@@ -25,10 +25,11 @@ import {
   RefreshCw,
   Key,
   Layers,
-  Calendar
+  Calendar,
+  Eraser // Added for Background Remover
 } from 'lucide-react';
 
-// All tools data - 19 tools (Added Age Calculator)
+// All tools data - 20 tools (Added Background Remover)
 const ALL_TOOLS = [
   // Developer Tools (6)
   {
@@ -104,7 +105,7 @@ const ALL_TOOLS = [
     category: 'Text Tools',
     color: 'from-green-500 to-emerald-500',
   },
-  // Calculator Tools (6 - Added Age Calculator)
+  // Calculator Tools (6)
   {
     name: 'Percentage Calculator',
     description: 'Calculate percentages quickly and easily.',
@@ -145,7 +146,6 @@ const ALL_TOOLS = [
     category: 'Calculator Tools',
     color: 'from-cyan-500 to-blue-500',
   },
-  // ✅ ADDED: Age Calculator
   {
     name: 'Age Calculator',
     description: 'Calculate your exact age in years, months, days, hours, minutes, and seconds.',
@@ -154,7 +154,7 @@ const ALL_TOOLS = [
     category: 'Calculator Tools',
     color: 'from-pink-500 to-rose-500',
   },
-  // Design Tools (3)
+  
   {
     name: 'Image Resizer',
     description: 'Resize images in bulk with custom dimensions.',
