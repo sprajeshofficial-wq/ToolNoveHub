@@ -8,14 +8,25 @@ const pageUrl = `${siteUrl}/tools/qr-code-generator`;
 export const metadata: Metadata = {
   title: "QR Code Generator – Create Free QR Codes Online",
   description:
-    "Create free QR codes for URLs, text, and Wi-Fi networks. Generate and download QR codes instantly with no signup required.",
+    "Create a free QR code online for URLs, text, and Wi-Fi networks. Make a WiFi QR code or QR code for a WiFi password and download it instantly with no signup.",
   keywords: [
     "QR code generator",
     "free QR code generator",
+    "QR code maker online",
     "create QR code",
-    "QR code maker",
-    "QR code for Wi-Fi",
+    "create QR code online",
     "online QR code generator",
+    "WiFi QR code",
+    "WiFi QR code generator",
+    "QR code for WiFi",
+    "QR code for WiFi password",
+    "create QR code for WiFi",
+    "create WiFi QR code",
+    "create WiFi password QR code",
+    "generate QR code for WiFi",
+    "generate WiFi QR code",
+    "make a WiFi QR code",
+    "make WiFi QR code",
   ],
   alternates: {
     canonical: pageUrl,
@@ -27,13 +38,13 @@ export const metadata: Metadata = {
     url: pageUrl,
     title: "QR Code Generator – Create Free QR Codes Online",
     description:
-      "Create free QR codes for URLs, text, and Wi-Fi networks. Generate and download QR codes instantly with no signup required.",
+      "Create free QR codes for websites, text, and Wi-Fi networks. Make a WiFi QR code or QR code for a WiFi password and download it instantly.",
   },
   twitter: {
     card: "summary",
     title: "QR Code Generator – Create Free QR Codes Online",
     description:
-      "Create free QR codes for URLs, text, and Wi-Fi networks. Generate and download QR codes instantly.",
+      "Create free QR codes for URLs, text, and Wi-Fi networks. Make a WiFi QR code and download it instantly.",
   },
   robots: {
     index: true,
@@ -56,7 +67,7 @@ export default function QRCodeGeneratorPage() {
     name: "QR Code Generator",
     url: pageUrl,
     description:
-      "Create free QR codes for URLs, text, and Wi-Fi networks. Generate and download QR codes instantly with no signup required.",
+      "Free online QR code generator for URLs, text, and Wi-Fi networks. Create a WiFi QR code or QR code for a WiFi password directly in your browser.",
     applicationCategory: "UtilityApplication",
     operatingSystem: "All",
     browserRequirements:
@@ -111,6 +122,22 @@ export default function QRCodeGeneratorPage() {
         acceptedAnswer: {
           "@type": "Answer",
           text: "Yes. Use the Wi-Fi Network option in the QR code generator and enter the network information required by the tool.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How do I create a QR code for Wi-Fi?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Select the Wi-Fi Network option, enter the required Wi-Fi network information, generate the QR code, and then download or share the resulting QR code.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I create a QR code for a Wi-Fi password?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. A Wi-Fi QR code can store the network information needed by a compatible device to connect to the Wi-Fi network.",
         },
       },
       {
@@ -192,8 +219,8 @@ export default function QRCodeGeneratorPage() {
 
           <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-slate-600">
             Create QR codes for URLs, text, and Wi-Fi networks instantly.
-            No signup is required, and the generator works directly in
-            your browser.
+            Make a WiFi QR code or create a QR code for a WiFi password
+            directly in your browser. No signup required.
           </p>
         </header>
 
@@ -209,8 +236,69 @@ export default function QRCodeGeneratorPage() {
           <QRCodeGenerator />
         </section>
 
+        {/* Wi-Fi QR Code Section */}
+        <section
+          aria-labelledby="wifi-qr-heading"
+          className="mt-12"
+        >
+          <h2
+            id="wifi-qr-heading"
+            className="text-2xl font-bold text-slate-900 sm:text-3xl"
+          >
+            Create a WiFi QR Code
+          </h2>
+
+          <p className="mt-3 leading-7 text-slate-600">
+            Need to share your Wi-Fi connection quickly? You can use this
+            QR code generator to create a WiFi QR code for compatible
+            devices. A Wi-Fi QR code can make it easier for guests,
+            customers, friends, or family members to connect without
+            manually typing a long Wi-Fi password.
+          </p>
+
+          <p className="mt-3 leading-7 text-slate-600">
+            To generate a QR code for WiFi, select the Wi-Fi Network option
+            in the generator above and enter the required network details.
+            After generating the code, you can download it and place it
+            somewhere convenient for people who need access to the network.
+          </p>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-3">
+            {[
+              [
+                "Create WiFi QR Code",
+                "Generate a QR code containing compatible Wi-Fi network information.",
+              ],
+              [
+                "Share WiFi Easily",
+                "Place the QR code on a desk, wall, poster, menu, or other convenient location.",
+              ],
+              [
+                "Scan With a Phone",
+                "Compatible phones can scan the QR code to access the stored network information.",
+              ],
+            ].map(([title, description]) => (
+              <article
+                key={title}
+                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+              >
+                <h3 className="font-semibold text-slate-900">
+                  {title}
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         {/* How to Use */}
-        <section aria-labelledby="how-to-use-heading" className="mt-12">
+        <section
+          aria-labelledby="how-to-use-heading"
+          className="mt-12"
+        >
           <h2
             id="how-to-use-heading"
             className="text-2xl font-bold text-slate-900 sm:text-3xl"
@@ -262,7 +350,10 @@ export default function QRCodeGeneratorPage() {
         </section>
 
         {/* Uses */}
-        <section aria-labelledby="uses-heading" className="mt-12">
+        <section
+          aria-labelledby="uses-heading"
+          className="mt-12"
+        >
           <h2
             id="uses-heading"
             className="text-2xl font-bold text-slate-900 sm:text-3xl"
@@ -274,7 +365,7 @@ export default function QRCodeGeneratorPage() {
             {[
               [
                 "Wi-Fi Networks",
-                "Create a QR code that makes it easier for guests and customers to connect to a compatible Wi-Fi network.",
+                "Create a QR code for WiFi that makes it easier for guests and customers to connect to a compatible Wi-Fi network.",
               ],
               [
                 "Website URLs",
@@ -306,7 +397,10 @@ export default function QRCodeGeneratorPage() {
         </section>
 
         {/* Benefits */}
-        <section aria-labelledby="benefits-heading" className="mt-12">
+        <section
+          aria-labelledby="benefits-heading"
+          className="mt-12"
+        >
           <h2
             id="benefits-heading"
             className="text-2xl font-bold text-slate-900 sm:text-3xl"
@@ -316,10 +410,26 @@ export default function QRCodeGeneratorPage() {
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              ["🔒", "Browser-Based", "Generate QR codes directly in your browser without installing separate software."],
-              ["⚡", "Fast", "Generate QR codes quickly without creating an account."],
-              ["💰", "Free", "Use the QR code generator without a paid subscription or signup."],
-              ["📱", "Mobile Friendly", "The page is designed to work across modern desktop and mobile browsers."],
+              [
+                "🔒",
+                "Browser-Based",
+                "Generate QR codes directly in your browser without installing separate software.",
+              ],
+              [
+                "⚡",
+                "Fast",
+                "Generate QR codes quickly without creating an account.",
+              ],
+              [
+                "💰",
+                "Free",
+                "Use the QR code generator without a paid subscription or signup.",
+              ],
+              [
+                "📱",
+                "Mobile Friendly",
+                "The page is designed to work across modern desktop and mobile browsers.",
+              ],
             ].map(([icon, title, description]) => (
               <div
                 key={title}
@@ -346,7 +456,10 @@ export default function QRCodeGeneratorPage() {
           aria-labelledby="faq-heading"
           className="mt-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg sm:p-8"
         >
-          <h2 id="faq-heading" className="text-2xl font-bold text-slate-900">
+          <h2
+            id="faq-heading"
+            className="text-2xl font-bold text-slate-900"
+          >
             Frequently Asked Questions
           </h2>
 
@@ -355,6 +468,14 @@ export default function QRCodeGeneratorPage() {
               [
                 "Can I generate a QR code for Wi-Fi?",
                 "Yes. Use the Wi-Fi Network option in the QR code generator and enter the network information required by the tool.",
+              ],
+              [
+                "How do I create a QR code for Wi-Fi?",
+                "Select the Wi-Fi Network option, enter the required Wi-Fi network information, generate the QR code, and then download or share the resulting QR code.",
+              ],
+              [
+                "Can I create a QR code for a Wi-Fi password?",
+                "Yes. A Wi-Fi QR code can store the network information needed by a compatible device to connect to the Wi-Fi network.",
               ],
               [
                 "Is the QR code generator free?",
