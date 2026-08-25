@@ -1,32 +1,46 @@
 import type { Metadata, Viewport } from "next";
-import "./globals.css";
+import Script from "next/script";
 
+import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
-const siteUrl = "https://toolnovehub.tools";
+const GA_MEASUREMENT_ID = "G-F3HNEJW9QE";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL("https://toolnovehub.tools"),
 
   title: {
-    default: "ToolNoveHub – Free Online Tools",
+    default: "ToolNoveHub — Free Online Tools",
     template: "%s | ToolNoveHub",
   },
 
   description:
-    "Free online tools for QR codes, images, calculations, text, JSON, and everyday tasks. Fast, simple, and privacy-focused.",
+    "ToolNoveHub provides free online tools for developers, students, office workers, and everyday tasks.",
 
   applicationName: "ToolNoveHub",
 
+  keywords: [
+    "free online tools",
+    "online tools",
+    "developer tools",
+    "student tools",
+    "office tools",
+    "calculators",
+    "QR code generator",
+    "JSON formatter",
+    "image tools",
+    "text tools",
+  ],
+
   authors: [
     {
-      name: "ToolNoveHub",
-      url: siteUrl,
+      name: "ToolNoveHub Team",
     },
   ],
 
   creator: "ToolNoveHub",
+
   publisher: "ToolNoveHub",
 
   robots: {
@@ -35,75 +49,33 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
     },
   },
 
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+  alternates: {
+    canonical: "https://toolnovehub.tools",
   },
 
   openGraph: {
     type: "website",
-    locale: "en_US",
+    url: "https://toolnovehub.tools",
     siteName: "ToolNoveHub",
-    title: "ToolNoveHub – Free Online Tools",
+    title: "ToolNoveHub — Free Online Tools",
     description:
-      "Free online tools for QR codes, images, calculations, text, JSON, and everyday tasks.",
-    url: siteUrl,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "ToolNoveHub – Free Online Tools",
-      },
-    ],
+      "Free online tools for developers, students, office workers, and everyday tasks.",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "ToolNoveHub – Free Online Tools",
+    title: "ToolNoveHub — Free Online Tools",
     description:
-      "Free online tools for QR codes, images, calculations, text, JSON, and more.",
-    images: ["/og-image.png"],
+      "Free online tools for developers, students, office workers, and everyday tasks.",
   },
-
-  category: "technology",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  colorScheme: "light",
-};
-
-const structuredData = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "@id": `${siteUrl}/#website`,
-      url: siteUrl,
-      name: "ToolNoveHub",
-      description:
-        "Free online tools for everyday tasks, developers, students, and professionals.",
-      publisher: {
-        "@id": `${siteUrl}/#organization`,
-      },
-      inLanguage: "en",
-    },
-    {
-      "@type": "Organization",
-      "@id": `${siteUrl}/#organization`,
-      name: "ToolNoveHub",
-      url: siteUrl,
-    },
-  ],
 };
 
 export default function RootLayout({
@@ -113,19 +85,65 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col bg-gray-50 antialiased font-sans">
+      <body className="min-h-screen bg-gray-50 font-sans antialiased">
+        {/* Google Analytics 4 */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+        >
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '${GA_MEASUREMENT_ID}', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
+
+        {/* Website structured data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(structuredData),
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "ToolNoveHub",
+              url: "https://toolnovehub.tools",
+              description:
+                "Free online tools for developers, students, office workers, and everyday tasks.",
+            }),
           }}
         />
 
-        <Header />
+        {/* Organization structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "ToolNoveHub",
+              url: "https://toolnovehub.tools",
+            }),
+          }}
+        />
 
-        <main className="flex-1">{children}</main>
+        <div className="flex min-h-screen flex-col">
+          <Header />
 
-        <Footer />
+          <main className="flex-1">
+            {children}
+          </main>
+
+          <Footer />
+        </div>
       </body>
     </html>
   );
