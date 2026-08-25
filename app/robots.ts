@@ -1,20 +1,18 @@
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
+
+const siteUrl = "https://toolnovehub.tools";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
-      userAgent: '*',
-      allow: '/',
+      userAgent: "*",
+      allow: "/",
       disallow: [
-        '/_next/',
-        '/_next/static/',
-        '/_next/data/',
-        '/api/',
-        '/static/',
-        '/admin/',
-        '/private/',
+        "/api/",
+        "/admin/",
       ],
     },
-    sitemap: 'https://toolnovehub.tools/sitemap.xml',
+    sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
   };
 }
