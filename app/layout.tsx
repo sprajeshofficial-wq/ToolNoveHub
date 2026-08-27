@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 const GA_MEASUREMENT_ID = "G-F3HNEJW9QE";
+const ADSENSE_CLIENT_ID = "ca-pub-5069738244258245";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://toolnovehub.tools"),
@@ -92,10 +93,7 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
 
-        <Script
-          id="google-analytics"
-          strategy="afterInteractive"
-        >
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){window.dataLayer.push(arguments);}
@@ -106,6 +104,15 @@ export default function RootLayout({
             });
           `}
         </Script>
+
+        {/* Google AdSense */}
+        <Script
+          id="google-adsense"
+          async
+          strategy="afterInteractive"
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
+          crossOrigin="anonymous"
+        />
 
         {/* Website structured data */}
         <script
