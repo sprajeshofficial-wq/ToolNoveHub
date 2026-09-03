@@ -1,186 +1,231 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
+"use client";
 
-const AgeCalculator = dynamic(
-  () => import('./AgeCalculator'),
-  { ssr: false }
-);
+import { useState } from "react";
 
-export const metadata: Metadata = {
-  title: 'Age Calculator - Calculate Your Age Instantly | ToolNoveHub',
-  description: 'Free online age calculator. Calculate your exact age in years, months, days, hours, minutes, and seconds. No signup, 100% private, browser-based.',
-  keywords: 'age calculator, calculate age, age in years, date of birth calculator, how old am i, age calculator online, birth date calculator, age finder, age counter',
-  alternates: {
-    canonical: 'https://toolnovehub.tools/tools/age-calculator',
-  },
-  openGraph: {
-    title: 'Age Calculator - Calculate Your Age Instantly | ToolNoveHub',
-    description: 'Free online age calculator. Calculate your exact age in years, months, days, hours, minutes, and seconds.',
-    url: 'https://toolnovehub.tools/tools/age-calculator',
-    type: 'website',
-    images: [
-      {
-        url: 'https://toolnovehub.tools/og-age-calculator.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Age Calculator - Free Online Tool',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Age Calculator - Calculate Your Age Instantly | ToolNoveHub',
-    description: 'Free online age calculator. Calculate your exact age in years, months, days, hours, minutes, and seconds.',
-    images: ['https://toolnovehub.tools/og-age-calculator.jpg'],
-  },
-};
+function calculateAge(dateOfBirth: string) {
+  const birthDate = new Date(`${dateOfBirth}T00:00:00`);
+  const today = new Date();
+
+  if (Number.isNaN(birthDate.getTime()) || birthDate > today) {
+    return null;
+  }
+
+  let years = today.getFullYear() - birthDate.getFullYear();
+  let months = today.getMonth() - birthDate.getMonth();
+  let days = today.getDate() - birthDate.getDate();
+
+  if (days < 0) {
+    months--;
+
+    const previousMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      0,
+    );
+
+    days += previousMonth.getDate();
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  const totalMilliseconds = today.getTime() - birthDate.getTime();
+  const totalDays = Math.floor(
+    totalMilliseconds / (1000 * 60 * 60 * 24),
+  );
+
+  return {
+    years,
+    months,
+    days,
+    totalDays,
+  };
+}
 
 export default function AgeCalculatorPage() {
-  const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'Age Calculator',
-    description: 'Calculate your exact age in years, months, days, hours, minutes, and seconds.',
-    applicationCategory: 'Utility',
-    operatingSystem: 'All',
-    browserRequirements: 'Requires JavaScript',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-    },
+  const [dateOfBirth, setDateOfBirth] = useState("");
+  const [result, setResult] = useState<ReturnType<typeof calculateAge>>(null);
+  const [error, setError] = useState("");
+
+  const calculate = () => {
+    setError("");
+
+    if (!dateOfBirth) {
+      setResult(null);
+      setError("Please select your date of birth.");
+      return;
+    }
+
+    const calculatedAge = calculateAge(dateOfBirth);
+
+    if (!calculatedAge) {
+      setResult(null);
+      setError("Please enter a valid date of birth.");
+      return;
+    }
+
+    setResult(calculatedAge);
+  };
+
+  const reset = () => {
+    setDateOfBirth("");
+    setResult(null);
+    setError("");
   };
 
   return (
-    <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">
-          Age Calculator – Calculate Your Exact Age
-        </h1>
-        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">
-          Free online age calculator. Calculate your exact age in years, months, days, hours, minutes, and seconds.
-          No signup, 100% private, browser-based.
-        </p>
+    <div className="min-h-screen bg-gray-50">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+              ToolNoveHub Tool
+            </p>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <AgeCalculator />
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Age Calculator
+            </h1>
+
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
+              Calculate your exact age in years, months, and days using your
+              date of birth.
+            </p>
+          </div>
         </div>
+      </section>
 
-        <div className="mt-12 prose prose-slate max-w-none">
-          <h2>How to Use the Age Calculator</h2>
-          <ol>
+      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="mx-auto max-w-xl">
+            <label
+              htmlFor="date-of-birth"
+              className="block text-sm font-semibold text-gray-900"
+            >
+              Date of birth
+            </label>
+
+            <input
+              id="date-of-birth"
+              type="date"
+              value={dateOfBirth}
+              max={new Date().toISOString().split("T")[0]}
+              onChange={(event) => setDateOfBirth(event.target.value)}
+              className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+
+            {error && (
+              <div
+                className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                role="alert"
+                aria-live="polite"
+              >
+                {error}
+              </div>
+            )}
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={calculate}
+                className="rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+              >
+                Calculate Age
+              </button>
+
+              <button
+                type="button"
+                onClick={reset}
+                className="rounded-xl border border-gray-300 bg-white px-5 py-3.5 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {result && (
+          <section className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6 sm:p-8">
+            <div className="text-center">
+              <p className="text-sm font-medium text-blue-700">
+                Your current age
+              </p>
+
+              <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+                <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
+                  <div className="text-3xl font-bold text-gray-900">
+                    {result.years}
+                  </div>
+                  <div className="mt-1 text-xs font-medium text-gray-500">
+                    Years
+                  </div>
+                </div>
+
+                <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
+                  <div className="text-3xl font-bold text-gray-900">
+                    {result.months}
+                  </div>
+                  <div className="mt-1 text-xs font-medium text-gray-500">
+                    Months
+                  </div>
+                </div>
+
+                <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
+                  <div className="text-3xl font-bold text-gray-900">
+                    {result.days}
+                  </div>
+                  <div className="mt-1 text-xs font-medium text-gray-500">
+                    Days
+                  </div>
+                </div>
+              </div>
+
+              <p className="mt-6 text-sm text-gray-600">
+                Approximately{" "}
+                <strong className="text-gray-900">
+                  {result.totalDays.toLocaleString()}
+                </strong>{" "}
+                days old.
+              </p>
+            </div>
+          </section>
+        )}
+
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            How to use the Age Calculator
+          </h2>
+
+          <ol className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
             <li>
-              <strong>Enter your date of birth:</strong> Use the date picker to select your birth date
+              <strong className="text-gray-900">1.</strong> Select your date of
+              birth.
             </li>
             <li>
-              <strong>Calculate:</strong> Click the &quot;Calculate Age&quot; button
+              <strong className="text-gray-900">2.</strong> Click
+              <strong className="text-gray-900"> Calculate Age</strong>.
             </li>
             <li>
-              <strong>View results:</strong> See your exact age in years, months, days, hours, minutes, and seconds
+              <strong className="text-gray-900">3.</strong> Your age will be
+              displayed in years, months, and days.
             </li>
           </ol>
+        </section>
 
-          <h2>Why Use an Age Calculator?</h2>
-          <ul>
-            <li>
-              <strong>Quick and accurate:</strong> Get your exact age instantly
-            </li>
-            <li>
-              <strong>Multiple formats:</strong> See age in years, months, days, and more
-            </li>
-            <li>
-              <strong>100% private:</strong> All processing happens in your browser
-            </li>
-            <li>
-              <strong>Free:</strong> No signup, no hidden charges
-            </li>
-          </ul>
-
-          <h2>Common Uses for Age Calculator</h2>
-          <ul>
-            <li>
-              <strong>Birthdays:</strong> Calculate how old you are today
-            </li>
-            <li>
-              <strong>Applications:</strong> Age verification for forms
-            </li>
-            <li>
-              <strong>Fun:</strong> See your age in hours and minutes
-            </li>
-            <li>
-              <strong>Gifts:</strong> Plan age-specific gifts
-            </li>
-          </ul>
-        </div>
-
-        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">
-            Frequently Asked Questions About Age Calculators
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            About this calculator
           </h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-slate-900">
-                How accurate is the age calculator?
-              </h3>
-              <p className="text-slate-600">
-                The age calculator is 100% accurate. It uses your date of birth and the current date to calculate your exact age down to the second.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">
-                Can I calculate age for any date?
-              </h3>
-              <p className="text-slate-600">
-                Yes! You can enter any date of birth and the tool will calculate the age from that date to today.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">
-                Is this age calculator free?
-              </h3>
-              <p className="text-slate-600">
-                Yes, completely free. No signup or payment required.
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link
-              href="/tools/percentage-calculator"
-              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
-            >
-              <span className="text-sm font-medium text-slate-900">Percentage Calculator</span>
-            </Link>
-            <Link
-              href="/tools/calculator"
-              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
-            >
-              <span className="text-sm font-medium text-slate-900">Calculator</span>
-            </Link>
-            <Link
-              href="/tools/unit-converter"
-              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
-            >
-              <span className="text-sm font-medium text-slate-900">Unit Converter</span>
-            </Link>
-            <Link
-              href="/tools/number-to-words"
-              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
-            >
-              <span className="text-sm font-medium text-slate-900">Number to Words</span>
-            </Link>
-          </div>
-        </div>
-
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-        />
-      </div>
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            The ToolNoveHub Age Calculator calculates your age based on your
+            date of birth and today&apos;s date. It provides the result in
+            years, months, and days and also shows the approximate total number
+            of days.
+          </p>
+        </section>
+      </main>
     </div>
   );
 }

@@ -1,95 +1,454 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import PercentageCalculator from './PercentageCalculator';
+"use client";
 
-export const metadata: Metadata = {
-  title: 'Free Percentage Calculator - Calculate Percentages Online | ToolNoveHub',
-  description: 'Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more. No signup, 100% private, browser-based.',
-  keywords: 'percentage calculator, calculate percentage, percent calculator, percentage increase, percentage decrease, online percentage calculator, percent calculator free, percentage of number',
-  alternates: {
-    canonical: 'https://toolnovehub.tools/tools/percentage-calculator',
-  },
-  openGraph: {
-    title: 'Free Percentage Calculator - Calculate Percentages Online | ToolNoveHub',
-    description: 'Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more.',
-    url: 'https://toolnovehub.tools/tools/percentage-calculator',
-    type: 'website',
-    images: [
-      {
-        url: 'https://toolnovehub.tools/og-percentage-calculator.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Percentage Calculator - Free Online Tool',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Free Percentage Calculator - Calculate Percentages Online | ToolNoveHub',
-    description: 'Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more.',
-    images: ['https://toolnovehub.tools/og-percentage-calculator.jpg'],
-  },
-};
+import { useState } from "react";
+
+type CalculationType = "percentage" | "change" | "value";
 
 export default function PercentageCalculatorPage() {
-  const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'Percentage Calculator',
-    description: 'Calculate percentages, percentage increase/decrease, and more. 100% private, browser-based.',
-    applicationCategory: 'Utility',
-    operatingSystem: 'All',
-    browserRequirements: 'Requires JavaScript',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  const [type, setType] = useState<CalculationType>("percentage");
+
+  const [percentage, setPercentage] = useState("");
+  const [number, setNumber] = useState("");
+
+  const [oldValue, setOldValue] = useState("");
+  const [newValue, setNewValue] = useState("");
+
+  const [value, setValue] = useState("");
+  const [total, setTotal] = useState("");
+
+  const [result, setResult] = useState<number | null>(null);
+  const [error, setError] = useState("");
+
+  const calculate = () => {
+    setError("");
+    setResult(null);
+
+    if (type === "percentage") {
+      const percent = Number(percentage);
+      const amount = Number(number);
+
+      if (
+        percentage.trim() === "" ||
+        number.trim() === "" ||
+        !Number.isFinite(percent) ||
+        !Number.isFinite(amount)
+      ) {
+        setError("Please enter valid numbers.");
+        return;
+      }
+
+      setResult((percent / 100) * amount);
+      return;
+    }
+
+    if (type === "change") {
+      const oldNumber = Number(oldValue);
+      const newNumber = Number(newValue);
+
+      if (
+        oldValue.trim() === "" ||
+        newValue.trim() === "" ||
+        !Number.isFinite(oldNumber) ||
+        !Number.isFinite(newNumber)
+      ) {
+        setError("Please enter valid numbers.");
+        return;
+      }
+
+      if (oldNumber === 0) {
+        setError("The original value cannot be zero.");
+        return;
+      }
+
+      setResult(((newNumber - oldNumber) / oldNumber) * 100);
+      return;
+    }
+
+    const part = Number(value);
+    const whole = Number(total);
+
+    if (
+      value.trim() === "" ||
+      total.trim() === "" ||
+      !Number.isFinite(part) ||
+      !Number.isFinite(whole)
+    ) {
+      setError("Please enter valid numbers.");
+      return;
+    }
+
+    if (whole === 0) {
+      setError("The total value cannot be zero.");
+      return;
+    }
+
+    setResult((part / whole) * 100);
+  };
+
+  const reset = () => {
+    setPercentage("");
+    setNumber("");
+    setOldValue("");
+    setNewValue("");
+    setValue("");
+    setTotal("");
+    setResult(null);
+    setError("");
+  };
+
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat("en-US", {
+      maximumFractionDigits: 10,
+    }).format(num);
   };
 
   return (
-    <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free Percentage Calculator – Calculate Percentages Instantly</h1>
-        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online percentage calculator. Calculate percentages, percentage increase/decrease, and more. Perfect for tips, discounts, taxes, and grades.</p>
+    <div className="min-h-screen bg-gray-50">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+              ToolNoveHub Tool
+            </p>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <PercentageCalculator />
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Percentage Calculator
+            </h1>
+
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
+              Calculate percentages, percentage changes, and what percentage
+              one number is of another.
+            </p>
+          </div>
         </div>
+      </section>
 
-        <div className="mt-12 prose prose-slate max-w-none">
-          <h2>How to Use the Percentage Calculator</h2>
-          <ol>
-            <li><strong>Choose calculation type:</strong> Select &quot;% of a number&quot;, &quot;% increase&quot;, or &quot;% decrease&quot;</li>
-            <li><strong>Enter your numbers:</strong> Input the number and percentage</li>
-            <li><strong>Calculate:</strong> Click the &quot;Calculate&quot; button</li>
-            <li><strong>Get results:</strong> View the result instantly</li>
+      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <div
+            className="grid gap-2 rounded-xl bg-gray-100 p-1 sm:grid-cols-3"
+            role="tablist"
+            aria-label="Percentage calculation type"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={type === "percentage"}
+              onClick={() => {
+                setType("percentage");
+                setResult(null);
+                setError("");
+              }}
+              className={`rounded-lg px-4 py-3 text-sm font-semibold transition ${
+                type === "percentage"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Percentage of a Number
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              aria-selected={type === "change"}
+              onClick={() => {
+                setType("change");
+                setResult(null);
+                setError("");
+              }}
+              className={`rounded-lg px-4 py-3 text-sm font-semibold transition ${
+                type === "change"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Percentage Change
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              aria-selected={type === "value"}
+              onClick={() => {
+                setType("value");
+                setResult(null);
+                setError("");
+              }}
+              className={`rounded-lg px-4 py-3 text-sm font-semibold transition ${
+                type === "value"
+                  ? "bg-white text-blue-600 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              What Percentage?
+            </button>
+          </div>
+
+          <div className="mx-auto mt-8 max-w-xl">
+            {type === "percentage" && (
+              <div className="space-y-5">
+                <div>
+                  <label
+                    htmlFor="percentage"
+                    className="block text-sm font-semibold text-gray-900"
+                  >
+                    Percentage
+                  </label>
+
+                  <div className="relative mt-2">
+                    <input
+                      id="percentage"
+                      type="number"
+                      inputMode="decimal"
+                      value={percentage}
+                      onChange={(event) => setPercentage(event.target.value)}
+                      placeholder="25"
+                      className="w-full rounded-xl border border-gray-300 px-4 py-3 pr-12 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    />
+
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+                      %
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="number"
+                    className="block text-sm font-semibold text-gray-900"
+                  >
+                    Number
+                  </label>
+
+                  <input
+                    id="number"
+                    type="number"
+                    inputMode="decimal"
+                    value={number}
+                    onChange={(event) => setNumber(event.target.value)}
+                    placeholder="200"
+                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </div>
+
+                <p className="text-sm text-gray-500">
+                  Example: What is 25% of 200?
+                </p>
+              </div>
+            )}
+
+            {type === "change" && (
+              <div className="space-y-5">
+                <div>
+                  <label
+                    htmlFor="old-value"
+                    className="block text-sm font-semibold text-gray-900"
+                  >
+                    Original value
+                  </label>
+
+                  <input
+                    id="old-value"
+                    type="number"
+                    inputMode="decimal"
+                    value={oldValue}
+                    onChange={(event) => setOldValue(event.target.value)}
+                    placeholder="100"
+                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="new-value"
+                    className="block text-sm font-semibold text-gray-900"
+                  >
+                    New value
+                  </label>
+
+                  <input
+                    id="new-value"
+                    type="number"
+                    inputMode="decimal"
+                    value={newValue}
+                    onChange={(event) => setNewValue(event.target.value)}
+                    placeholder="125"
+                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </div>
+
+                <p className="text-sm text-gray-500">
+                  Example: From 100 to 125 is a 25% increase.
+                </p>
+              </div>
+            )}
+
+            {type === "value" && (
+              <div className="space-y-5">
+                <div>
+                  <label
+                    htmlFor="part-value"
+                    className="block text-sm font-semibold text-gray-900"
+                  >
+                    Value
+                  </label>
+
+                  <input
+                    id="part-value"
+                    type="number"
+                    inputMode="decimal"
+                    value={value}
+                    onChange={(event) => setValue(event.target.value)}
+                    placeholder="25"
+                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="total-value"
+                    className="block text-sm font-semibold text-gray-900"
+                  >
+                    Total
+                  </label>
+
+                  <input
+                    id="total-value"
+                    type="number"
+                    inputMode="decimal"
+                    value={total}
+                    onChange={(event) => setTotal(event.target.value)}
+                    placeholder="200"
+                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </div>
+
+                <p className="text-sm text-gray-500">
+                  Example: 25 is 12.5% of 200.
+                </p>
+              </div>
+            )}
+
+            {error && (
+              <div
+                className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                role="alert"
+                aria-live="polite"
+              >
+                {error}
+              </div>
+            )}
+
+            <div className="mt-7 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={calculate}
+                className="rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+              >
+                Calculate
+              </button>
+
+              <button
+                type="button"
+                onClick={reset}
+                className="rounded-xl border border-gray-300 bg-white px-5 py-3.5 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {result !== null && (
+          <section className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6 sm:p-8">
+            <div className="text-center">
+              <p className="text-sm font-medium text-blue-700">Result</p>
+
+              <div className="mt-3 text-4xl font-bold tracking-tight text-gray-900">
+                {formatNumber(result)}
+                {type !== "percentage" && "%"}
+              </div>
+
+              <p className="mt-3 text-sm text-gray-600">
+                {type === "percentage" &&
+                  `${formatNumber(Number(percentage))}% of ${formatNumber(
+                    Number(number),
+                  )} is ${formatNumber(result)}.`}
+
+                {type === "change" &&
+                  `The percentage change from ${formatNumber(
+                    Number(oldValue),
+                  )} to ${formatNumber(Number(newValue))} is ${formatNumber(
+                    result,
+                  )}%.`}
+
+                {type === "value" &&
+                  `${formatNumber(Number(value))} is ${formatNumber(
+                    result,
+                  )}% of ${formatNumber(Number(total))}.`}
+              </p>
+            </div>
+          </section>
+        )}
+
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            How to use the Percentage Calculator
+          </h2>
+
+          <ol className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
+            <li>
+              <strong className="text-gray-900">1.</strong> Choose the type of
+              percentage calculation.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">2.</strong> Enter the required
+              numbers.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">3.</strong> Click
+              <strong className="text-gray-900"> Calculate</strong>.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">4.</strong> View the result
+              instantly.
+            </li>
           </ol>
-          <h2>Common Percentage Calculations</h2>
-          <ul>
-            <li><strong>Tips:</strong> 20% of $50 = $10 (total $60)</li>
-            <li><strong>Discounts:</strong> 25% off $100 = $25 off (total $75)</li>
-            <li><strong>Tax:</strong> 8% tax on $100 = $8 (total $108)</li>
-            <li><strong>Grade:</strong> 85 out of 100 = 85%</li>
-          </ul>
-        </div>
+        </section>
 
-        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About Percentage Calculators</h2>
-          <div className="space-y-4">
-            <div><h3 className="font-semibold text-slate-900">How do I calculate a percentage of a number?</h3><p className="text-slate-600">Use the &quot;% of a number&quot; mode. Enter the number and percentage, and the tool will calculate the result.</p></div>
-            <div><h3 className="font-semibold text-slate-900">What is percentage increase?</h3><p className="text-slate-600">Percentage increase shows how much a value has grown relative to the original. For example, 100 increased by 20% = 120.</p></div>
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            Percentage formulas
+          </h2>
+
+          <div className="mt-5 space-y-4 text-sm leading-7 text-gray-600">
+            <p>
+              <strong className="text-gray-900">
+                Percentage of a number:
+              </strong>{" "}
+              Percentage ÷ 100 × Number
+            </p>
+
+            <p>
+              <strong className="text-gray-900">
+                Percentage change:
+              </strong>{" "}
+              (New Value − Original Value) ÷ Original Value × 100
+            </p>
+
+            <p>
+              <strong className="text-gray-900">
+                What percentage:
+              </strong>{" "}
+              Value ÷ Total × 100
+            </p>
           </div>
-        </div>
-
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/tools/calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Calculator</span></Link>
-            <Link href="/tools/number-to-words" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Number to Words</span></Link>
-            <Link href="/tools/file-size-converter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">File Size Converter</span></Link>
-            <Link href="/tools/qr-code-generator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">QR Code Generator</span></Link>
-          </div>
-        </div>
-
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
-      </div>
+        </section>
+      </main>
     </div>
   );
 }

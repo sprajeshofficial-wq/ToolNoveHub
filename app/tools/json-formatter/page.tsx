@@ -1,93 +1,272 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import JSONFormatter from './JSONFormatter';
+"use client";
 
-export const metadata: Metadata = {
-  title: 'Free JSON Formatter - Format & Validate JSON Online | ToolNoveHub',
-  description: 'Free online JSON formatter and validator. Format, beautify, and validate JSON data. Perfect for API development and debugging. No signup, 100% private.',
-  keywords: 'json formatter, json validator, format json, beautify json, json pretty print, online json formatter, json beautifier, json parser',
-  alternates: {
-    canonical: 'https://toolnovehub.tools/tools/json-formatter',
-  },
-  openGraph: {
-    title: 'Free JSON Formatter - Format & Validate JSON Online | ToolNoveHub',
-    description: 'Free online JSON formatter and validator. Format, beautify, and validate JSON data.',
-    url: 'https://toolnovehub.tools/tools/json-formatter',
-    type: 'website',
-    images: [
-      {
-        url: 'https://toolnovehub.tools/og-json-formatter.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'JSON Formatter - Free Online Tool',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Free JSON Formatter - Format & Validate JSON Online | ToolNoveHub',
-    description: 'Free online JSON formatter and validator. Format, beautify, and validate JSON data.',
-    images: ['https://toolnovehub.tools/og-json-formatter.jpg'],
-  },
-};
+import { useState } from "react";
 
 export default function JSONFormatterPage() {
-  const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'JSON Formatter',
-    description: 'Format, beautify, and validate JSON data. Perfect for API development and debugging.',
-    applicationCategory: 'Utility',
-    operatingSystem: 'All',
-    browserRequirements: 'Requires JavaScript',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
+  const [error, setError] = useState("");
+
+  const formatJSON = () => {
+    setError("");
+    setOutput("");
+
+    if (!input.trim()) {
+      setError("Please enter JSON to format.");
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(input);
+      const formatted = JSON.stringify(parsed, null, 2);
+
+      setOutput(formatted);
+    } catch {
+      setError("Invalid JSON. Please check your JSON syntax and try again.");
+    }
+  };
+
+  const minifyJSON = () => {
+    setError("");
+    setOutput("");
+
+    if (!input.trim()) {
+      setError("Please enter JSON to minify.");
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(input);
+      const minified = JSON.stringify(parsed);
+
+      setOutput(minified);
+    } catch {
+      setError("Invalid JSON. Please check your JSON syntax and try again.");
+    }
+  };
+
+  const copyOutput = async () => {
+    if (!output) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(output);
+    } catch {
+      // Clipboard access may be unavailable.
+    }
+  };
+
+  const clearAll = () => {
+    setInput("");
+    setOutput("");
+    setError("");
+  };
+
+  const loadExample = () => {
+    const example = `{
+  "name": "ToolNoveHub",
+  "type": "Online Tools",
+  "free": true,
+  "tools": [
+    "QR Code Generator",
+    "Word Counter",
+    "Age Calculator"
+  ]
+}`;
+
+    setInput(example);
+    setOutput("");
+    setError("");
   };
 
   return (
-    <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-violet-50/30">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free JSON Formatter – Format &amp; Validate JSON Data</h1>
-        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online JSON formatter and validator. Format, beautify, and validate JSON data. Perfect for API development and debugging.</p>
+    <div className="min-h-screen bg-gray-50">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+              Developer Tool
+            </p>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <JSONFormatter />
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              JSON Formatter
+            </h1>
+
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
+              Format, beautify, and minify JSON online. Validate your JSON
+              syntax instantly in your browser.
+            </p>
+          </div>
         </div>
+      </section>
 
-        <div className="mt-12 prose prose-slate max-w-none">
-          <h2>How to Use the JSON Formatter</h2>
-          <ol>
-            <li><strong>Paste your JSON:</strong> Enter JSON data in the input area</li>
-            <li><strong>Format or validate:</strong> Click &quot;Format &amp; Validate&quot; or &quot;Minify&quot;</li>
-            <li><strong>Copy results:</strong> Use the formatted JSON in your project</li>
+      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                JSON Input
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-500">
+                Paste or type your JSON below.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={loadExample}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+            >
+              Load Example
+            </button>
+          </div>
+
+          <label htmlFor="json-input" className="sr-only">
+            JSON input
+          </label>
+
+          <textarea
+            id="json-input"
+            value={input}
+            onChange={(event) => {
+              setInput(event.target.value);
+              setError("");
+            }}
+            placeholder='{"name":"ToolNoveHub","free":true}'
+            spellCheck={false}
+            className="mt-6 min-h-[320px] w-full resize-y rounded-xl border border-gray-300 bg-gray-950 px-4 py-4 font-mono text-sm leading-6 text-gray-100 outline-none transition placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          />
+
+          {error && (
+            <div
+              className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+              role="alert"
+              aria-live="polite"
+            >
+              {error}
+            </div>
+          )}
+
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={formatJSON}
+              className="rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+            >
+              Format JSON
+            </button>
+
+            <button
+              type="button"
+              onClick={minifyJSON}
+              className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
+            >
+              Minify JSON
+            </button>
+
+            <button
+              type="button"
+              onClick={clearAll}
+              className="rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
+            >
+              Clear
+            </button>
+          </div>
+        </section>
+
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Formatted Output
+              </h2>
+
+              <p className="mt-1 text-sm text-gray-500">
+                Your formatted or minified JSON appears here.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={copyOutput}
+              disabled={!output}
+              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Copy Output
+            </button>
+          </div>
+
+          <label htmlFor="json-output" className="sr-only">
+            JSON output
+          </label>
+
+          <textarea
+            id="json-output"
+            value={output}
+            readOnly
+            spellCheck={false}
+            placeholder="Formatted JSON will appear here..."
+            className="mt-6 min-h-[320px] w-full resize-y rounded-xl border border-gray-300 bg-gray-950 px-4 py-4 font-mono text-sm leading-6 text-green-300 outline-none placeholder:text-gray-500"
+          />
+        </section>
+
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            How to use the JSON Formatter
+          </h2>
+
+          <ol className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
+            <li>
+              <strong className="text-gray-900">1.</strong> Paste your JSON
+              into the input box.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">2.</strong> Click
+              <strong className="text-gray-900"> Format JSON</strong> to
+              beautify it.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">3.</strong> Use
+              <strong className="text-gray-900"> Minify JSON</strong> to
+              remove unnecessary whitespace.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">4.</strong> Copy the resulting
+              JSON using the Copy Output button.
+            </li>
           </ol>
-          <h2>Why Use a JSON Formatter?</h2>
-          <ul>
-            <li><strong>Debugging:</strong> Readable JSON makes errors easier to spot</li>
-            <li><strong>API development:</strong> Format API responses for analysis</li>
-            <li><strong>Configuration:</strong> Format JSON config files for readability</li>
-          </ul>
-        </div>
+        </section>
 
-        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About JSON Formatters</h2>
-          <div className="space-y-4">
-            <div><h3 className="font-semibold text-slate-900">What does JSON formatter do?</h3><p className="text-slate-600">It formats JSON data with proper indentation, making it readable and easier to understand. It also validates JSON syntax.</p></div>
-            <div><h3 className="font-semibold text-slate-900">Is my JSON data safe?</h3><p className="text-slate-600">Yes! All processing happens in your browser. Your JSON data is never uploaded to any server.</p></div>
-          </div>
-        </div>
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            What is JSON?
+          </h2>
 
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/tools/json-validator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">JSON Validator</span></Link>
-            <Link href="/tools/text-to-slug" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text to Slug</span></Link>
-            <Link href="/tools/binary-converter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Binary Converter</span></Link>
-            <Link href="/tools/color-picker" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Color Picker</span></Link>
-          </div>
-        </div>
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            JSON, or JavaScript Object Notation, is a lightweight text format
+            commonly used for storing and exchanging structured data. It is
+            widely used in APIs, web applications, configuration files, and
+            software development.
+          </p>
+        </section>
 
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
-      </div>
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            Browser-based processing
+          </h2>
+
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            JSON formatting and minification are performed directly in your
+            browser. The tool does not require an account or a server-side
+            JSON processing service.
+          </p>
+        </section>
+      </main>
     </div>
   );
 }

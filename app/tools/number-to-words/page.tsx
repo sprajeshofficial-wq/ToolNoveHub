@@ -1,85 +1,447 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import NumberToWords from './NumberToWords';
+"use client";
 
-export const metadata: Metadata = {
-  title: 'Free Number to Words Converter - Convert Numbers to Text | ToolNoveHub',
-  description: 'Free online number to words converter. Convert any number to words instantly. Perfect for checks, invoices, and legal documents. No signup required.',
-  keywords: 'number to words, convert number to text, number to word converter, number to english, number spelling, number to words online, convert number to words free',
-  alternates: {
-    canonical: 'https://toolnovehub.tools/tools/number-to-words',
-  },
-  openGraph: {
-    title: 'Free Number to Words Converter - Convert Numbers to Text | ToolNoveHub',
-    description: 'Free online number to words converter. Convert any number to words instantly.',
-    url: 'https://toolnovehub.tools/tools/number-to-words',
-    type: 'website',
-    images: [{ url: 'https://toolnovehub.tools/og-number-to-words.jpg', width: 1200, height: 630, alt: 'Number to Words Converter - Free Online Tool' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Free Number to Words Converter - Convert Numbers to Text | ToolNoveHub',
-    description: 'Free online number to words converter. Convert any number to words instantly.',
-    images: ['https://toolnovehub.tools/og-number-to-words.jpg'],
-  },
-};
+import { useState } from "react";
+
+const ones = [
+  "",
+  "One",
+  "Two",
+  "Three",
+  "Four",
+  "Five",
+  "Six",
+  "Seven",
+  "Eight",
+  "Nine",
+  "Ten",
+  "Eleven",
+  "Twelve",
+  "Thirteen",
+  "Fourteen",
+  "Fifteen",
+  "Sixteen",
+  "Seventeen",
+  "Eighteen",
+  "Nineteen",
+];
+
+const tens = [
+  "",
+  "",
+  "Twenty",
+  "Thirty",
+  "Forty",
+  "Fifty",
+  "Sixty",
+  "Seventy",
+  "Eighty",
+  "Ninety",
+];
+
+const scales = [
+  "",
+  "Thousand",
+  "Million",
+  "Billion",
+  "Trillion",
+  "Quadrillion",
+];
+
+function convertHundreds(num: number): string {
+  const words: string[] = [];
+
+  if (num >= 100) {
+    words.push(ones[Math.floor(num / 100)], "Hundred");
+    num %= 100;
+  }
+
+  if (num >= 20) {
+    words.push(tens[Math.floor(num / 10)]);
+    num %= 10;
+  }
+
+  if (num > 0) {
+    words.push(ones[num]);
+  }
+
+  return words.join(" ");
+}
+
+function numberToWords(num: number): string {
+  if (!Number.isFinite(num)) {
+    return "";
+  }
+
+  if (num === 0) {
+    return "Zero";
+  }
+
+  if (num < 0) {
+    return `Negative ${numberToWords(Math.abs(num))}`;
+  }
+
+  const integerPart = Math.floor(num);
+
+  if (integerPart > 999999999999999) {
+    return "Number is too large.";
+  }
+
+  let remaining = integerPart;
+  let scaleIndex = 0;
+  const groups: string[] = [];
+
+  while (remaining > 0) {
+    const group = remaining % 1000;
+
+    if (group !== 0) {
+      const groupWords = convertHundreds(group);
+
+      if (scaleIndex > 0) {
+        groups.unshift(`${groupWords} ${scales[scaleIndex]}`);
+      } else {
+        groups.unshift(groupWords);
+      }
+    }
+
+    remaining = Math.floor(remaining / 1000);
+    scaleIndex++;
+  }
+
+  return groups.join(" ");
+}
+
+function decimalToWords(decimalPart: string): string {
+  const digits = decimalPart.replace(/\D/g, "");
+
+  if (!digits) {
+    return "";
+  }
+
+  const digitWords = digits
+    .split("")
+    .map((digit) => ones[Number(digit)])
+    .join(" ");
+
+  return digitWords;
+}
+
+function convertNumber(input: string): string {
+  const cleaned = input.replace(/,/g, "").trim();
+
+  if (!cleaned) {
+    return "";
+  }
+
+  if (!/^-?\d*\.?\d+$/.test(cleaned)) {
+    return "";
+  }
+
+  const [integerPart, decimalPart] = cleaned.split(".");
+
+  const integerNumber = Number(integerPart || "0");
+
+  if (!Number.isSafeInteger(integerNumber)) {
+    return "Number is too large.";
+  }
+
+  let result = numberToWords(integerNumber);
+
+  if (decimalPart !== undefined && decimalPart.length > 0) {
+    const decimalWords = decimalToWords(decimalPart);
+
+    if (decimalWords) {
+      result += ` Point ${decimalWords}`;
+    }
+  }
+
+  return result;
+}
 
 export default function NumberToWordsPage() {
-  const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'Number to Words Converter',
-    description: 'Convert any number to words instantly. Perfect for checks, invoices, and legal documents.',
-    applicationCategory: 'Utility',
-    operatingSystem: 'All',
-    browserRequirements: 'Requires JavaScript',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  const [input, setInput] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const result = convertNumber(input);
+
+  const handleInputChange = (value: string) => {
+    setInput(value);
+    setCopied(false);
+  };
+
+  const handleCopy = async () => {
+    if (!result || result === "Number is too large.") {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(result);
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const handleClear = () => {
+    setInput("");
+    setCopied(false);
+  };
+
+  const loadExample = () => {
+    setInput("1234567.89");
+    setCopied(false);
   };
 
   return (
-    <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free Number to Words Converter – Convert Numbers Instantly</h1>
-        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online number to words converter. Convert any number to words instantly. Perfect for checks, invoices, and legal documents.</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        {/* Page Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Number to Words Converter
+          </h1>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <NumberToWords />
+          <p className="mx-auto mt-3 max-w-2xl text-gray-600">
+            Convert numbers into words instantly. Supports large
+            numbers, decimals, negative numbers, and comma-separated
+            values.
+          </p>
         </div>
 
-        <div className="mt-12 prose prose-slate max-w-none">
-          <h2>How to Use the Number to Words Converter</h2>
-          <ol>
-            <li><strong>Enter a number:</strong> Type any number between 0 and 999,999,999</li>
-            <li><strong>Convert:</strong> Click &quot;Convert to Words&quot; or press Enter</li>
-            <li><strong>Copy:</strong> Copy the result for use in documents</li>
+        {/* Tool */}
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          {/* Input */}
+          <div>
+            <label
+              htmlFor="number-input"
+              className="mb-2 block text-sm font-semibold text-gray-900"
+            >
+              Enter a number
+            </label>
+
+            <input
+              id="number-input"
+              type="text"
+              inputMode="decimal"
+              value={input}
+              onChange={(e) => handleInputChange(e.target.value)}
+              placeholder="Example: 1234567.89"
+              className="w-full rounded-xl border border-gray-300 px-4 py-3 text-lg text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              aria-describedby="number-help"
+            />
+
+            <p
+              id="number-help"
+              className="mt-2 text-xs text-gray-500"
+            >
+              You can enter values such as 1000, 1,234,567, -250,
+              or 123.45.
+            </p>
+          </div>
+
+          {/* Result */}
+          <div className="mt-6">
+            <label
+              htmlFor="words-output"
+              className="mb-2 block text-sm font-semibold text-gray-900"
+            >
+              Result
+            </label>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <textarea
+                id="words-output"
+                value={result}
+                readOnly
+                rows={4}
+                placeholder="Your number in words will appear here..."
+                className="min-w-0 flex-1 resize-none rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 outline-none"
+                aria-live="polite"
+              />
+
+              <button
+                type="button"
+                onClick={handleCopy}
+                disabled={
+                  !result || result === "Number is too large."
+                }
+                className="h-fit rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                {copied ? "Copied!" : "Copy"}
+              </button>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={loadExample}
+              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              Load Example
+            </button>
+
+            <button
+              type="button"
+              onClick={handleClear}
+              disabled={!input}
+              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Clear
+            </button>
+          </div>
+
+          {/* Copy Status */}
+          {copied && (
+            <div
+              role="status"
+              className="mt-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+            >
+              Result copied to your clipboard.
+            </div>
+          )}
+        </section>
+
+        {/* Examples */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Examples
+          </h2>
+
+          <div className="mt-5 overflow-x-auto">
+            <table className="w-full min-w-[500px] border-collapse text-left text-sm">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="px-4 py-3 font-semibold text-gray-900">
+                    Number
+                  </th>
+                  <th className="px-4 py-3 font-semibold text-gray-900">
+                    Words
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr className="border-b border-gray-100">
+                  <td className="px-4 py-3 text-gray-700">0</td>
+                  <td className="px-4 py-3 text-gray-700">Zero</td>
+                </tr>
+
+                <tr className="border-b border-gray-100">
+                  <td className="px-4 py-3 text-gray-700">125</td>
+                  <td className="px-4 py-3 text-gray-700">
+                    One Hundred Twenty Five
+                  </td>
+                </tr>
+
+                <tr className="border-b border-gray-100">
+                  <td className="px-4 py-3 text-gray-700">1,500</td>
+                  <td className="px-4 py-3 text-gray-700">
+                    One Thousand Five Hundred
+                  </td>
+                </tr>
+
+                <tr className="border-b border-gray-100">
+                  <td className="px-4 py-3 text-gray-700">
+                    1,234,567
+                  </td>
+                  <td className="px-4 py-3 text-gray-700">
+                    One Million Two Hundred Thirty Four Thousand Five
+                    Hundred Sixty Seven
+                  </td>
+                </tr>
+
+                <tr>
+                  <td className="px-4 py-3 text-gray-700">
+                    -250
+                  </td>
+                  <td className="px-4 py-3 text-gray-700">
+                    Negative Two Hundred Fifty
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* How to Use */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            How to use the Number to Words Converter
+          </h2>
+
+          <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-600">
+            <li>Enter a number in the input box.</li>
+            <li>
+              The converter automatically changes the number into
+              words.
+            </li>
+            <li>Review the generated result.</li>
+            <li>Click Copy to copy the result.</li>
           </ol>
-          <h2>When to Convert Numbers to Words</h2>
-          <ul>
-            <li><strong>Writing checks:</strong> Prevent fraud with written amounts</li>
-            <li><strong>Legal documents:</strong> Avoid ambiguity in contracts</li>
-            <li><strong>Invoices:</strong> Professional presentation</li>
-          </ul>
-        </div>
+        </section>
 
-        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About Number to Words</h2>
-          <div className="space-y-4">
-            <div><h3 className="font-semibold text-slate-900">Why convert numbers to words?</h3><p className="text-slate-600">Converting numbers to words helps prevent fraud on checks, makes legal documents clearer, and improves readability in formal writing.</p></div>
-            <div><h3 className="font-semibold text-slate-900">What numbers are supported?</h3><p className="text-slate-600">This tool supports numbers from 0 to 999,999,999.</p></div>
+        {/* Features */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Features
+          </h2>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Large numbers
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Convert numbers from small values to very large
+                values using standard English number names.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Decimal support
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Decimal values are converted using individual digits
+                after the decimal point.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Negative numbers
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Negative values are automatically converted using
+                the word “Negative.”
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Browser based
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Your number is processed directly in your browser.
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/tools/percentage-calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Percentage Calculator</span></Link>
-            <Link href="/tools/calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Calculator</span></Link>
-            <Link href="/tools/file-size-converter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">File Size Converter</span></Link>
-            <Link href="/tools/word-counter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Word Counter</span></Link>
-          </div>
+        {/* Privacy */}
+        <div className="mt-8 rounded-xl border border-blue-100 bg-blue-50 px-5 py-4 text-center text-sm text-blue-800">
+          Your input is processed locally in your browser and is not
+          uploaded to our server.
         </div>
-
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );

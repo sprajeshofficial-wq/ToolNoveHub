@@ -1,57 +1,40 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import Script from "next/script";
-
 import "./globals.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 const GA_MEASUREMENT_ID = "G-F3HNEJW9QE";
-const ADSENSE_CLIENT_ID = "ca-pub-5069738244258245";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://toolnovehub.tools"),
 
   title: {
-    default: "ToolNoveHub — Free Online Tools",
+    default: "ToolNoveHub – Free Online Tools",
     template: "%s | ToolNoveHub",
   },
 
   description:
-    "ToolNoveHub provides free online tools for developers, students, office workers, and everyday tasks.",
-
-  applicationName: "ToolNoveHub",
+    "ToolNoveHub provides free, fast, and easy-to-use online tools for everyday tasks, students, developers, creators, and businesses.",
 
   keywords: [
     "free online tools",
     "online tools",
-    "developer tools",
-    "student tools",
-    "office tools",
-    "calculators",
-    "QR code generator",
-    "JSON formatter",
-    "image tools",
-    "text tools",
+    "free tools",
+    "ToolNoveHub",
   ],
+
+  applicationName: "ToolNoveHub",
 
   authors: [
     {
-      name: "ToolNoveHub Team",
+      name: "ToolNoveHub",
+      url: "https://toolnovehub.tools",
     },
   ],
 
   creator: "ToolNoveHub",
-
   publisher: "ToolNoveHub",
-
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-    },
-  },
 
   alternates: {
     canonical: "https://toolnovehub.tools",
@@ -59,24 +42,30 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
+    locale: "en_US",
     url: "https://toolnovehub.tools",
     siteName: "ToolNoveHub",
-    title: "ToolNoveHub — Free Online Tools",
+    title: "ToolNoveHub – Free Online Tools",
     description:
-      "Free online tools for developers, students, office workers, and everyday tasks.",
+      "Free, fast, and easy-to-use online tools for everyday tasks, students, developers, creators, and businesses.",
   },
 
-  twitter: {
-    card: "summary_large_image",
-    title: "ToolNoveHub — Free Online Tools",
-    description:
-      "Free online tools for developers, students, office workers, and everyday tasks.",
-  },
-};
+  robots: {
+    index: true,
+    follow: true,
 
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -85,72 +74,37 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-gray-50 font-sans antialiased">
-        {/* Google Analytics 4 */}
+    <html
+      lang="en"
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+    >
+      <body className="min-h-screen bg-gray-50 text-gray-900 antialiased">
+        <Header />
+
+        <main className="flex-1">
+          {children}
+        </main>
+
+        <Footer />
+
+        {/* Google Analytics */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
         />
 
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+        >
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){window.dataLayer.push(arguments);}
             gtag('js', new Date());
-
-            gtag('config', '${GA_MEASUREMENT_ID}', {
-              page_path: window.location.pathname,
-            });
+            gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
-
-        {/* Google AdSense */}
-        <Script
-          id="google-adsense"
-          async
-          strategy="afterInteractive"
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT_ID}`}
-          crossOrigin="anonymous"
-        />
-
-        {/* Website structured data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "ToolNoveHub",
-              url: "https://toolnovehub.tools",
-              description:
-                "Free online tools for developers, students, office workers, and everyday tasks.",
-            }),
-          }}
-        />
-
-        {/* Organization structured data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "ToolNoveHub",
-              url: "https://toolnovehub.tools",
-            }),
-          }}
-        />
-
-        <div className="flex min-h-screen flex-col">
-          <Header />
-
-          <main className="flex-1">
-            {children}
-          </main>
-
-          <Footer />
-        </div>
       </body>
     </html>
   );

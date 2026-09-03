@@ -1,164 +1,493 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import dynamic from 'next/dynamic';
+"use client";
 
-const ColorPicker = dynamic(
-  () => import('./ColorPicker'),
-  { ssr: false }
-);
+import { useState } from "react";
 
-export const metadata: Metadata = {
-  title: 'Free Color Picker - Pick Colors & Convert HEX to RGB | ToolNoveHub',
-  description: 'Free online color picker. Pick colors visually, convert between HEX, RGB, and HSL. Generate random palettes and export colors. Perfect for designers and developers.',
-  keywords: 'color picker, hex to rgb, color palette generator, color converter, design tool, online color picker, rgb to hex, color selector, pick color online',
-  alternates: {
-    canonical: 'https://toolnovehub.tools/tools/color-picker',
-  },
-  openGraph: {
-    title: 'Free Color Picker - Pick Colors & Convert HEX to RGB | ToolNoveHub',
-    description: 'Free online color picker. Pick colors visually, convert between HEX, RGB, and HSL.',
-    url: 'https://toolnovehub.tools/tools/color-picker',
-    type: 'website',
-    images: [
-      {
-        url: 'https://toolnovehub.tools/og-color-picker.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Color Picker - Free Online Tool',
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Free Color Picker - Pick Colors & Convert HEX to RGB | ToolNoveHub',
-    description: 'Free online color picker. Pick colors visually, convert between HEX, RGB, and HSL.',
-    images: ['https://toolnovehub.tools/og-color-picker.jpg'],
-  },
+type ColorValues = {
+  hex: string;
+  rgb: string;
+  hsl: string;
 };
 
-export default function ColorPickerPage() {
-  const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'Color Picker',
-    description:
-      'Pick colors visually, convert between HEX, RGB, and HSL. Generate random palettes and export colors.',
-    applicationCategory: 'Utility',
-    operatingSystem: 'All',
-    browserRequirements: 'Requires JavaScript',
-    offers: {
-      '@type': 'Offer',
-      price: '0',
-      priceCurrency: 'USD',
-    },
+const DEFAULT_COLOR = "#2563EB";
+
+function hexToRgb(hex: string) {
+  const clean = hex.replace("#", "");
+
+  const bigint = parseInt(clean, 16);
+
+  return {
+    r: (bigint >> 16) & 255,
+    g: (bigint >> 8) & 255,
+    b: bigint & 255,
   };
+}
+
+function rgbToHsl(r: number, g: number, b: number) {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      default:
+        h = (r - g) / d + 4;
+        break;
+    }
+
+    h /= 6;
+  }
+
+  return {
+    h: Math.round(h * 360),
+    s: Math.round(s * 100),
+    l: Math.round(l * 100),
+  };
+}
+
+function getColorValues(hex: string): ColorValues {
+  const { r, g, b } = hexToRgb(hex);
+  const { h, s, l } = rgbToHsl(r, g, b);
+
+  return {
+    hex: hex.toUpperCase(),
+    rgb: `rgb(${r}, ${g}, ${b})`,
+    hsl: `hsl(${h}, ${s}%, ${l}%)`,
+  };
+}
+
+function isValidHex(value: string) {
+  return /^#[0-9A-Fa-f]{6}$/.test(value);
+}
+
+export default function ColorPickerPage() {
+  const [color, setColor] = useState(DEFAULT_COLOR);
+  const [copied, setCopied] = useState("");
+
+  const values = getColorValues(
+    isValidHex(color) ? color : DEFAULT_COLOR
+  );
+
+  async function copyValue(value: string, type: string) {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(type);
+
+      setTimeout(() => {
+        setCopied("");
+      }, 1500);
+    } catch {
+      setCopied("");
+    }
+  }
+
+  function handleHexChange(value: string) {
+    let formatted = value;
+
+    if (!formatted.startsWith("#")) {
+      formatted = `#${formatted}`;
+    }
+
+    setColor(formatted.slice(0, 7).toUpperCase());
+  }
+
+  function handleReset() {
+    setColor(DEFAULT_COLOR);
+    setCopied("");
+  }
+
+  function loadExample() {
+    setColor("#7C3AED");
+  }
 
   return (
-    <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-purple-50/30">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">
-          Free Color Picker – Pick Colors &amp; Convert Formats
-        </h1>
-        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">
-          Free online color picker. Pick colors visually, convert between HEX, RGB, and HSL.
-          Generate random palettes and export colors.
-        </p>
+    <div className="min-h-screen bg-gray-50">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-14 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-blue-600">
+              Design Tool
+            </p>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <ColorPicker />
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+              Color Picker
+            </h1>
+
+            <p className="mt-5 text-lg leading-8 text-gray-600">
+              Pick a color and instantly get its HEX, RGB, and HSL values.
+              Free, simple, and easy to use.
+            </p>
+          </div>
         </div>
+      </section>
 
-        <div className="mt-12 prose prose-slate max-w-none">
-          <h2>How to Use the Color Picker</h2>
-          <ol>
-            <li>
-              <strong>Pick a color:</strong> Use the color input or click preset colors
+      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="grid gap-8 lg:grid-cols-2">
+            {/* Color Preview */}
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Choose a color
+              </h2>
+
+              <div
+                className="mt-4 h-64 w-full rounded-2xl border border-gray-200 shadow-inner"
+                style={{
+                  backgroundColor: isValidHex(color)
+                    ? color
+                    : DEFAULT_COLOR,
+                }}
+                aria-label="Selected color preview"
+              />
+
+              <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-end">
+                <div className="flex-1">
+                  <label
+                    htmlFor="color"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
+                    Color
+                  </label>
+
+                  <input
+                    id="color"
+                    type="color"
+                    value={isValidHex(color) ? color : DEFAULT_COLOR}
+                    onChange={(event) => setColor(event.target.value.toUpperCase())}
+                    className="h-12 w-full cursor-pointer rounded-lg border border-gray-300 bg-white p-1"
+                    aria-label="Choose color"
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <label
+                    htmlFor="hex-input"
+                    className="mb-2 block text-sm font-medium text-gray-700"
+                  >
+                    HEX
+                  </label>
+
+                  <input
+                    id="hex-input"
+                    type="text"
+                    value={color}
+                    onChange={(event) =>
+                      handleHexChange(event.target.value)
+                    }
+                    placeholder="#2563EB"
+                    maxLength={7}
+                    className="h-12 w-full rounded-lg border border-gray-300 px-4 font-mono text-sm uppercase outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                  />
+                </div>
+              </div>
+
+              {!isValidHex(color) && (
+                <p
+                  className="mt-2 text-sm text-red-600"
+                  role="alert"
+                >
+                  Enter a valid 6-digit HEX color such as #2563EB.
+                </p>
+              )}
+            </div>
+
+            {/* Color Values */}
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                Color values
+              </h2>
+
+              <div className="mt-4 space-y-4">
+                <ColorValue
+                  label="HEX"
+                  value={values.hex}
+                  copied={copied === "HEX"}
+                  onCopy={() => copyValue(values.hex, "HEX")}
+                />
+
+                <ColorValue
+                  label="RGB"
+                  value={values.rgb}
+                  copied={copied === "RGB"}
+                  onCopy={() => copyValue(values.rgb, "RGB")}
+                />
+
+                <ColorValue
+                  label="HSL"
+                  value={values.hsl}
+                  copied={copied === "HSL"}
+                  onCopy={() => copyValue(values.hsl, "HSL")}
+                />
+              </div>
+
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={loadExample}
+                  className="flex-1 rounded-lg border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                >
+                  Load Example
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleReset}
+                  className="flex-1 rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Quick Examples */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Popular colors
+          </h2>
+
+          <p className="mt-2 text-gray-600">
+            Click a color to load it into the picker.
+          </p>
+
+          <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <ExampleColor
+              name="Blue"
+              color="#2563EB"
+              onClick={() => setColor("#2563EB")}
+            />
+
+            <ExampleColor
+              name="Purple"
+              color="#7C3AED"
+              onClick={() => setColor("#7C3AED")}
+            />
+
+            <ExampleColor
+              name="Green"
+              color="#16A34A"
+              onClick={() => setColor("#16A34A")}
+            />
+
+            <ExampleColor
+              name="Orange"
+              color="#EA580C"
+              onClick={() => setColor("#EA580C")}
+            />
+          </div>
+        </section>
+
+        {/* How To Use */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 className="text-2xl font-bold text-gray-900">
+            How to use the Color Picker
+          </h2>
+
+          <ol className="mt-5 space-y-4 text-gray-600">
+            <li className="flex gap-3">
+              <span className="font-bold text-blue-600">1.</span>
+              <span>Choose a color using the color selector.</span>
             </li>
-            <li>
-              <strong>View conversions:</strong> See HEX, RGB, and HSL values
+
+            <li className="flex gap-3">
+              <span className="font-bold text-blue-600">2.</span>
+              <span>
+                Enter or edit the HEX value if you already know the color.
+              </span>
             </li>
-            <li>
-              <strong>Generate palettes:</strong> Click &quot;Generate&quot; for random color palettes
+
+            <li className="flex gap-3">
+              <span className="font-bold text-blue-600">3.</span>
+              <span>
+                View the corresponding HEX, RGB, and HSL values.
+              </span>
             </li>
-            <li>
-              <strong>Export:</strong> Export colors as JSON for your project
+
+            <li className="flex gap-3">
+              <span className="font-bold text-blue-600">4.</span>
+              <span>
+                Copy the color value you need for your project.
+              </span>
             </li>
           </ol>
-          <h2>Color Formats Explained</h2>
-          <ul>
-            <li>
-              <strong>HEX:</strong> #FF5733 (used in web design and CSS)
-            </li>
-            <li>
-              <strong>RGB:</strong> rgb(255, 87, 51) (used in digital design)
-            </li>
-            <li>
-              <strong>HSL:</strong> hsl(10, 100%, 60%) (intuitive color model)
-            </li>
-          </ul>
-        </div>
+        </section>
 
-        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">
-            Frequently Asked Questions About Color Picker
+        {/* Explanation */}
+        <section className="mt-8 grid gap-6 md:grid-cols-3">
+          <InfoCard
+            title="HEX"
+            text="HEX is a six-digit hexadecimal color format commonly used in HTML and CSS."
+          />
+
+          <InfoCard
+            title="RGB"
+            text="RGB represents a color using red, green, and blue values from 0 to 255."
+          />
+
+          <InfoCard
+            title="HSL"
+            text="HSL describes colors using hue, saturation, and lightness."
+          />
+        </section>
+
+        {/* Features */}
+        <section className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6 sm:p-8">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Why use our Color Picker?
           </h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-slate-900">
-                How do I pick a color?
-              </h3>
-              <p className="text-slate-600">
-                Use the color input to pick any color visually, or click preset colors.
-                You can also enter a HEX value directly.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-slate-900">
-                What is the difference between HEX and RGB?
-              </h3>
-              <p className="text-slate-600">
-                HEX uses hexadecimal values (#FF5733). RGB uses decimal values (255, 87, 51).
-                They represent the same colors in different formats.
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link
-              href="/tools/image-resizer"
-              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
-            >
-              <span className="text-sm font-medium text-slate-900">Image Resizer</span>
-            </Link>
-            <Link
-              href="/tools/image-cropper"
-              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
-            >
-              <span className="text-sm font-medium text-slate-900">Image Cropper</span>
-            </Link>
-            <Link
-              href="/tools/json-formatter"
-              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
-            >
-              <span className="text-sm font-medium text-slate-900">JSON Formatter</span>
-            </Link>
-            <Link
-              href="/tools/qr-code-generator"
-              className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"
-            >
-              <span className="text-sm font-medium text-slate-900">QR Code Generator</span>
-            </Link>
-          </div>
-        </div>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <Feature
+              title="Free"
+              text="Use the tool without registration or payment."
+            />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-        />
+            <Feature
+              title="Instant results"
+              text="Color values update immediately as you choose a color."
+            />
+
+            <Feature
+              title="Easy copying"
+              text="Copy HEX, RGB, or HSL values with one click."
+            />
+
+            <Feature
+              title="Browser-based"
+              text="Your selected colors are processed directly in your browser."
+            />
+          </div>
+        </section>
+
+        {/* Privacy */}
+        <section className="mt-8 pb-8 text-center">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Privacy-focused
+          </h2>
+
+          <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-gray-600">
+            This Color Picker works directly in your browser. No color data
+            needs to be uploaded to a server.
+          </p>
+        </section>
+      </main>
+    </div>
+  );
+}
+
+function ColorValue({
+  label,
+  value,
+  copied,
+  onCopy,
+}: {
+  label: string;
+  value: string;
+  copied: boolean;
+  onCopy: () => void;
+}) {
+  return (
+    <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+      <div className="flex items-center justify-between gap-4">
+        <span className="text-sm font-semibold text-gray-700">
+          {label}
+        </span>
+
+        <button
+          type="button"
+          onClick={onCopy}
+          className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 transition hover:bg-gray-100"
+        >
+          {copied ? "Copied!" : "Copy"}
+        </button>
       </div>
+
+      <p className="mt-3 break-all font-mono text-base text-gray-900">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function ExampleColor({
+  name,
+  color,
+  onClick,
+}: {
+  name: string;
+  color: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="overflow-hidden rounded-xl border border-gray-200 bg-white text-left transition hover:-translate-y-0.5 hover:shadow-md"
+    >
+      <span
+        className="block h-20 w-full"
+        style={{ backgroundColor: color }}
+        aria-hidden="true"
+      />
+
+      <span className="block p-3">
+        <span className="block text-sm font-semibold text-gray-900">
+          {name}
+        </span>
+
+        <span className="mt-1 block font-mono text-xs text-gray-500">
+          {color}
+        </span>
+      </span>
+    </button>
+  );
+}
+
+function InfoCard({
+  title,
+  text,
+}: {
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+
+      <p className="mt-3 text-sm leading-6 text-gray-600">{text}</p>
+    </div>
+  );
+}
+
+function Feature({
+  title,
+  text,
+}: {
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="rounded-xl bg-white p-5">
+      <h3 className="font-semibold text-gray-900">{title}</h3>
+
+      <p className="mt-2 text-sm leading-6 text-gray-600">{text}</p>
     </div>
   );
 }

@@ -1,88 +1,257 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import TextToSlug from './TextToSlug';
+"use client";
 
-export const metadata: Metadata = {
-  title: 'Free Text to Slug Converter - Create SEO-Friendly URLs | ToolNoveHub',
-  description: 'Free online text to slug converter. Create SEO-friendly URLs instantly. Perfect for bloggers, developers, and content creators. No signup required.',
-  keywords: 'text to slug, slug converter, seo friendly url, url slug generator, slugify text, create slug, text to url, slug generator online',
-  alternates: {
-    canonical: 'https://toolnovehub.tools/tools/text-to-slug',
-  },
-  openGraph: {
-    title: 'Free Text to Slug Converter - Create SEO-Friendly URLs | ToolNoveHub',
-    description: 'Free online text to slug converter. Create SEO-friendly URLs instantly.',
-    url: 'https://toolnovehub.tools/tools/text-to-slug',
-    type: 'website',
-    images: [{ url: 'https://toolnovehub.tools/og-text-to-slug.jpg', width: 1200, height: 630, alt: 'Text to Slug Converter - Free Online Tool' }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Free Text to Slug Converter - Create SEO-Friendly URLs | ToolNoveHub',
-    description: 'Free online text to slug converter. Create SEO-friendly URLs instantly.',
-    images: ['https://toolnovehub.tools/og-text-to-slug.jpg'],
-  },
-};
+import { useState } from "react";
+
+function createSlug(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .replace(/-{2,}/g, "-");
+}
 
 export default function TextToSlugPage() {
-  const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'Text to Slug Converter',
-    description: 'Create SEO-friendly URLs instantly. Perfect for bloggers, developers, and content creators.',
-    applicationCategory: 'Utility',
-    operatingSystem: 'All',
-    browserRequirements: 'Requires JavaScript',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+  const [text, setText] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const slug = createSlug(text);
+
+  const handleCopy = async () => {
+    if (!slug) return;
+
+    try {
+      await navigator.clipboard.writeText(slug);
+      setCopied(true);
+
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  const handleClear = () => {
+    setText("");
+    setCopied(false);
+  };
+
+  const loadExample = () => {
+    setText(
+      "10 Free Online Tools Every Small Business Owner Should Know"
+    );
+    setCopied(false);
   };
 
   return (
-    <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free Text to Slug Converter – Create SEO-Friendly URLs</h1>
-        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online text to slug converter. Create SEO-friendly URLs instantly. Perfect for bloggers, developers, and content creators.</p>
+    <div className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+            Text to Slug Converter
+          </h1>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <TextToSlug />
+          <p className="mx-auto mt-3 max-w-2xl text-gray-600">
+            Convert titles and text into clean, SEO-friendly URL slugs
+            instantly.
+          </p>
         </div>
 
-        <div className="mt-12 prose prose-slate max-w-none">
-          <h2>How to Use the Text to Slug Converter</h2>
-          <ol>
-            <li><strong>Enter your text:</strong> Type or paste the text you want to convert</li>
-            <li><strong>Generate:</strong> Click &quot;Generate Slug&quot; or press Enter</li>
-            <li><strong>Copy:</strong> Copy the generated slug for use in your URL</li>
+        {/* Main tool */}
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          {/* Input */}
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <label
+                htmlFor="slug-input"
+                className="text-sm font-semibold text-gray-900"
+              >
+                Enter text
+              </label>
+
+              <span className="text-xs text-gray-500">
+                {text.length} characters
+              </span>
+            </div>
+
+            <textarea
+              id="slug-input"
+              value={text}
+              onChange={(e) => {
+                setText(e.target.value);
+                setCopied(false);
+              }}
+              placeholder="Enter a title or text..."
+              rows={5}
+              className="w-full resize-y rounded-xl border border-gray-300 px-4 py-3 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
+          {/* Output */}
+          <div className="mt-6">
+            <label
+              htmlFor="slug-output"
+              className="mb-2 block text-sm font-semibold text-gray-900"
+            >
+              Generated slug
+            </label>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <input
+                id="slug-output"
+                type="text"
+                value={slug}
+                readOnly
+                placeholder="your-generated-slug"
+                className="min-w-0 flex-1 rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 outline-none"
+              />
+
+              <button
+                type="button"
+                onClick={handleCopy}
+                disabled={!slug}
+                className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+              >
+                {copied ? "Copied!" : "Copy"}
+              </button>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={loadExample}
+              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50"
+            >
+              Load Example
+            </button>
+
+            <button
+              type="button"
+              onClick={handleClear}
+              disabled={!text}
+              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Clear
+            </button>
+          </div>
+
+          {/* Status */}
+          {copied && (
+            <div
+              role="status"
+              className="mt-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+            >
+              Slug copied to your clipboard.
+            </div>
+          )}
+        </section>
+
+        {/* Example */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Example
+          </h2>
+
+          <div className="mt-4 space-y-4">
+            <div>
+              <p className="text-sm font-medium text-gray-700">
+                Input
+              </p>
+
+              <div className="mt-2 rounded-lg bg-gray-50 p-4 text-sm text-gray-700">
+                10 Free Online Tools Every Small Business Owner Should
+                Know
+              </div>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-700">
+                Output
+              </p>
+
+              <div className="mt-2 overflow-x-auto rounded-lg bg-gray-50 p-4 font-mono text-sm text-blue-700">
+                10-free-online-tools-every-small-business-owner-should-know
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* How it works */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            How to use the Text to Slug Converter
+          </h2>
+
+          <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-gray-600">
+            <li>Enter your title or text in the input box.</li>
+            <li>
+              The converter automatically creates a clean URL slug.
+            </li>
+            <li>Review the generated slug.</li>
+            <li>Click Copy to copy the slug to your clipboard.</li>
           </ol>
-          <h2>What is a Slug in URLs?</h2>
-          <p>A slug is the part of a URL that identifies a specific page. For example, in <code>example.com/blog/my-awesome-post</code>, <code>my-awesome-post</code> is the slug.</p>
-          <h2>Best Practices for URL Slugs</h2>
-          <ul>
-            <li>Keep it short and descriptive</li>
-            <li>Use hyphens, not underscores</li>
-            <li>Include target keywords</li>
-            <li>Avoid special characters and spaces</li>
-          </ul>
-        </div>
+        </section>
 
-        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About URL Slugs</h2>
-          <div className="space-y-4">
-            <div><h3 className="font-semibold text-slate-900">Why are slugs important for SEO?</h3><p className="text-slate-600">Slugs help search engines understand page content. Keywords in slugs can improve search rankings and click-through rates.</p></div>
-            <div><h3 className="font-semibold text-slate-900">What makes a good slug?</h3><p className="text-slate-600">A good slug is short, descriptive, includes relevant keywords, and uses hyphens instead of spaces or underscores.</p></div>
+        {/* Features */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Why use a URL slug?
+          </h2>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                SEO friendly
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Clean and readable URLs are easier for users and
+                search engines to understand.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Easy to read
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Spaces and unnecessary characters are converted into
+                simple hyphen-separated words.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Fast conversion
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Your slug is generated instantly as you type.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Browser based
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Text is processed directly in your browser without
+                requiring a server upload.
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/tools/word-counter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Word Counter</span></Link>
-            <Link href="/tools/text-to-ascii" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text to ASCII</span></Link>
-            <Link href="/tools/text-repeater" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text Repeater</span></Link>
-            <Link href="/tools/percentage-calculator" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Percentage Calculator</span></Link>
-          </div>
+        {/* Privacy note */}
+        <div className="mt-8 rounded-xl border border-blue-100 bg-blue-50 px-5 py-4 text-center text-sm text-blue-800">
+          Your text is processed locally in your browser and is not
+          uploaded to our server.
         </div>
-
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
       </div>
     </div>
   );
