@@ -39,7 +39,6 @@ const contentSecurityPolicy = [
 ].join("; ");
 
 const nextConfig = {
-  // Image optimization
   images: {
     domains: [],
     formats: ["image/avif", "image/webp"],
@@ -65,25 +64,18 @@ const nextConfig = {
     ],
   },
 
-  // Compression
   compress: true,
 
-  // React
   reactStrictMode: true,
 
-  // Next.js 14
-  swcMinify: true,
-
-  // Font optimization
-  optimizeFonts: true,
-
-  // Experimental features
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
   },
 
-  // Security headers
+  // Explicitly use Turbopack with Next.js 16
+  turbopack: {},
+
   async headers() {
     return [
       {
@@ -112,40 +104,6 @@ const nextConfig = {
         ],
       },
     ];
-  },
-
-  // Webpack optimizations
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.optimization = {
-        ...config.optimization,
-
-        splitChunks: {
-          chunks: "all",
-          minSize: 20000,
-          maxSize: 244000,
-          minChunks: 1,
-          maxAsyncRequests: 30,
-          maxInitialRequests: 30,
-
-          cacheGroups: {
-            defaultVendors: {
-              test: /[\\/]node_modules[\\/]/,
-              priority: -10,
-              reuseExistingChunk: true,
-            },
-
-            default: {
-              minChunks: 2,
-              priority: -20,
-              reuseExistingChunk: true,
-            },
-          },
-        },
-      };
-    }
-
-    return config;
   },
 };
 
