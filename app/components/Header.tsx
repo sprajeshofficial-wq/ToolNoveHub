@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, Wrench } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -23,18 +24,24 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/95 backdrop-blur">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
+
+          {/* Logo + Brand Name */}
           <Link
             href="/"
             onClick={closeMenu}
-            className="flex items-center gap-2 text-xl font-bold tracking-tight text-gray-900"
+            className="flex items-center gap-3"
             aria-label="ToolNoveHub home"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
-              <Wrench size={20} strokeWidth={2.2} />
-            </span>
+            <Image
+              src="/logo.png"
+              alt="ToolNoveHub logo"
+              width={42}
+              height={42}
+              priority
+              className="h-10 w-10 object-contain"
+            />
 
-            <span>
+            <span className="text-xl font-bold tracking-tight text-gray-900">
               Tool<span className="text-blue-600">Nove</span>Hub
             </span>
           </Link>
@@ -64,7 +71,9 @@ export default function Header() {
             type="button"
             onClick={() => setIsOpen((open) => !open)}
             className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-700 transition hover:bg-gray-100 md:hidden"
-            aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-label={
+              isOpen ? "Close navigation menu" : "Open navigation menu"
+            }
             aria-expanded={isOpen}
             aria-controls="mobile-navigation"
           >

@@ -113,7 +113,9 @@ export default function HomePage() {
 
             <h1 className="text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl lg:text-6xl">
               Simple tools that help you
-              <span className="block text-blue-600">get things done</span>
+              <span className="block text-blue-600">
+                get things done
+              </span>
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-600">
@@ -122,17 +124,19 @@ export default function HomePage() {
             </p>
 
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              {/* Primary Button */}
               <Link
                 href="/tools"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold !text-white shadow-sm transition hover:bg-blue-700 sm:w-auto"
               >
                 Explore all tools
                 <ArrowRight size={18} />
               </Link>
 
+              {/* Secondary Button */}
               <Link
                 href="/about"
-                className="inline-flex w-full items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:w-auto"
+                className="inline-flex w-full items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3.5 text-sm font-semibold !text-gray-900 transition hover:bg-gray-50 sm:w-auto"
               >
                 Learn about ToolNoveHub
               </Link>
@@ -162,7 +166,7 @@ export default function HomePage() {
 
             <Link
               href="/tools"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
+              className="inline-flex items-center gap-1 text-sm font-semibold !text-blue-600 hover:!text-blue-700"
             >
               View all tools
               <ArrowRight size={16} />
@@ -179,19 +183,19 @@ export default function HomePage() {
                   href={tool.href}
                   className="group rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-md"
                 >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 !text-blue-600">
                     <Icon size={22} />
                   </div>
 
-                  <h3 className="mt-5 text-lg font-semibold text-gray-900 group-hover:text-blue-600">
+                  <h3 className="mt-5 text-lg font-semibold !text-gray-900 group-hover:!text-blue-600">
                     {tool.name}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-gray-600">
+                  <p className="mt-2 text-sm leading-6 !text-gray-600">
                     {tool.description}
                   </p>
 
-                  <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
+                  <span className="mt-5 inline-flex items-center gap-1 text-sm font-semibold !text-blue-600">
                     Use tool
                     <ArrowRight
                       size={15}
@@ -232,19 +236,19 @@ export default function HomePage() {
                   href={category.href}
                   className="group rounded-2xl border border-gray-200 bg-white p-6 transition hover:border-blue-200 hover:shadow-sm"
                 >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100 text-gray-700 transition group-hover:bg-blue-50 group-hover:text-blue-600">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-100 !text-gray-700 transition group-hover:bg-blue-50 group-hover:!text-blue-600">
                     <Icon size={21} />
                   </div>
 
-                  <h3 className="mt-5 font-semibold text-gray-900">
+                  <h3 className="mt-5 font-semibold !text-gray-900">
                     {category.name}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-gray-600">
+                  <p className="mt-2 text-sm leading-6 !text-gray-600">
                     {category.description}
                   </p>
 
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold !text-blue-600">
                     Browse
                     <ArrowRight size={15} />
                   </span>
@@ -282,15 +286,15 @@ export default function HomePage() {
                   key={benefit.title}
                   className="rounded-2xl border border-gray-200 bg-gray-50 p-7"
                 >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-blue-600 shadow-sm">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white !text-blue-600 shadow-sm">
                     <Icon size={21} />
                   </div>
 
-                  <h3 className="mt-5 text-lg font-semibold text-gray-900">
+                  <h3 className="mt-5 text-lg font-semibold !text-gray-900">
                     {benefit.title}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-gray-600">
+                  <p className="mt-2 text-sm leading-6 !text-gray-600">
                     {benefit.description}
                   </p>
                 </div>
@@ -303,24 +307,25 @@ export default function HomePage() {
       {/* Information section */}
       <section className="bg-gray-950 py-16 text-white sm:py-20">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 !text-white">
             <Wrench size={23} />
           </div>
 
-          <h2 className="mt-6 text-3xl font-bold tracking-tight">
+          <h2 className="mt-6 text-3xl font-bold tracking-tight !text-white">
             Tools made for real-world tasks
           </h2>
 
-          <p className="mt-4 text-base leading-7 text-gray-300">
+          <p className="mt-4 text-base leading-7 !text-gray-300">
             Whether you are checking a calculation, preparing content,
             working with images, formatting data, or solving a developer
             problem, ToolNoveHub is designed to make common tasks easier.
           </p>
 
           <div className="mt-8">
+            {/* Dark Section Button */}
             <Link
               href="/tools"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-gray-900 transition hover:bg-gray-100"
+              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold !text-gray-900 shadow-sm transition hover:bg-gray-100"
             >
               Explore ToolNoveHub
               <ArrowRight size={17} />
