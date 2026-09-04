@@ -1,4 +1,4 @@
-import Link from 'next/link';
+﻿import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
@@ -39,23 +39,23 @@ const docsData: Record<string, { title: string; content: string }> = {
     content: `
       <h2>QR Code Generator</h2>
       <p>Generate QR codes for any text or URL. Use for Wi-Fi, contact information, links, and more.</p>
-      <p><a href="/tools/qr-code-generator">Try QR Code Generator →</a></p>
+      <p><a href="/tools/qr-code-generator">Try QR Code Generator â†’</a></p>
       
       <h2>Image Resizer</h2>
       <p>Resize images to any dimensions. Perfect for social media, websites, and printing.</p>
-      <p><a href="/tools/image-resizer">Try Image Resizer →</a></p>
+      <p><a href="/tools/image-resizer">Try Image Resizer â†’</a></p>
       
       <h2>Percentage Calculator</h2>
       <p>Calculate percentages, increases, and decreases quickly and easily.</p>
-      <p><a href="/tools/percentage-calculator">Try Percentage Calculator →</a></p>
+      <p><a href="/tools/percentage-calculator">Try Percentage Calculator â†’</a></p>
       
       <h2>Word Counter</h2>
       <p>Count words, characters, sentences, and paragraphs in any text.</p>
-      <p><a href="/tools/word-counter">Try Word Counter →</a></p>
+      <p><a href="/tools/word-counter">Try Word Counter â†’</a></p>
       
       <h2>JSON Formatter</h2>
       <p>Format, validate, and beautify JSON data for better readability and debugging.</p>
-      <p><a href="/tools/json-formatter">Try JSON Formatter →</a></p>
+      <p><a href="/tools/json-formatter">Try JSON Formatter â†’</a></p>
     `,
   },
   'faq': {
@@ -92,13 +92,14 @@ const docsData: Record<string, { title: string; content: string }> = {
       <h2>Security Best Practices</h2>
       <p>We follow security best practices to protect your privacy and data.</p>
       
-      <p><a href="/privacy">Read our full Privacy Policy →</a></p>
+      <p><a href="/privacy">Read our full Privacy Policy â†’</a></p>
     `,
   },
 };
 
-export default function DocsSubPage({ params }: { params: { slug: string } }) {
-  const doc = docsData[params.slug];
+export default async function DocsSubPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const doc = docsData[slug];
 
   if (!doc) {
     notFound();
@@ -134,3 +135,4 @@ export default function DocsSubPage({ params }: { params: { slug: string } }) {
     </div>
   );
 }
+
