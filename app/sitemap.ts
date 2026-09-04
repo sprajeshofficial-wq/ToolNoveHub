@@ -33,6 +33,27 @@ const categories = [
   "utility",
 ];
 
+const blogPosts = [
+  "age-calculator-ultimate-guide",
+  "how-to-create-qr-code-for-wifi",
+  "qr-code-generator-ultimate-guide",
+  "qr-code-scanner-how-to-scan",
+  "best-image-resizer-tools-social-media",
+  "resize-images-free-without-losing-quality",
+  "image-cropper-how-to-crop",
+  "word-counter-content-writing",
+  "text-to-slug-converter-seo-friendly-urls",
+  "text-to-ascii-create-stunning-art",
+  "percentage-calculator-daily-life",
+  "number-to-words-converter",
+  "file-size-converter-understand-storage",
+  "json-formatter-why-developers-need",
+  "json-validator-common-mistakes",
+  "binary-converter-understand-computer-language",
+  "privacy-first-browser-tools",
+  "10-free-online-tools-every-developer-needs",
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
@@ -107,5 +128,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
   }));
 
-  return [...mainPages, ...categoryPages, ...toolPages];
+  const blogPages: MetadataRoute.Sitemap = blogPosts.map((slug) => ({
+    url: `${siteUrl}/blog/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
+  return [
+    ...mainPages,
+    ...categoryPages,
+    ...toolPages,
+    ...blogPages,
+  ];
 }
