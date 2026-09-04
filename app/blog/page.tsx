@@ -30,7 +30,7 @@ const articles = [
       "Discover practical online tools for calculations, text, images, development, and other common digital tasks.",
     category: "Tools",
     date: "September 3, 2026",
-    href: "#",
+    slug: "10-free-online-tools-every-developer-needs",
     icon: Wrench,
   },
   {
@@ -39,7 +39,7 @@ const articles = [
       "A simple guide to choosing online tools based on speed, ease of use, privacy, and the type of task you need to complete.",
     category: "Guides",
     date: "September 3, 2026",
-    href: "#",
+    slug: "privacy-first-browser-tools",
     icon: Lightbulb,
   },
   {
@@ -48,7 +48,7 @@ const articles = [
       "Explore practical tools that can help with studying, writing, calculations, file preparation, and everyday productivity.",
     category: "Productivity",
     date: "September 3, 2026",
-    href: "#",
+    slug: "10-free-online-tools-every-developer-needs",
     icon: BookOpen,
   },
 ];
@@ -94,7 +94,7 @@ export default function BlogPage() {
 
               return (
                 <article
-                  key={article.title}
+                  key={article.slug}
                   className="flex flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
                 >
                   <div className="flex items-center justify-between">
@@ -116,24 +116,18 @@ export default function BlogPage() {
                   </p>
 
                   <div className="mt-6 border-t border-gray-100 pt-5">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between gap-4">
                       <span className="text-xs text-gray-500">
                         {article.date}
                       </span>
 
-                      {article.href === "#" ? (
-                        <span className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600">
-                          Coming soon
-                        </span>
-                      ) : (
-                        <Link
-                          href={article.href}
-                          className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
-                        >
-                          Read article
-                          <ArrowRight size={16} />
-                        </Link>
-                      )}
+                      <Link
+                        href={`/blog/${article.slug}`}
+                        className="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700"
+                      >
+                        Read article
+                        <ArrowRight size={16} />
+                      </Link>
                     </div>
                   </div>
                 </article>
