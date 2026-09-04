@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   Calculator,
   QrCode,
+  ScanLine,
   FileText,
   Percent,
   CalendarDays,
@@ -15,6 +16,8 @@ import {
   HardDrive,
   Repeat2,
   CaseSensitive,
+  LockKeyhole,
+  Ruler,
 } from "lucide-react";
 
 const categories = [
@@ -84,6 +87,14 @@ const tools = [
     icon: QrCode,
   },
   {
+    name: "QR Code Scanner",
+    description:
+      "Scan QR codes directly from your device and quickly read their content.",
+    href: "/tools/qr-code-scanner",
+    category: "Utility",
+    icon: ScanLine,
+  },
+  {
     name: "Word Counter",
     description:
       "Count words, characters, sentences, and paragraphs in your text.",
@@ -100,12 +111,28 @@ const tools = [
     icon: Braces,
   },
   {
+    name: "JSON Validator",
+    description:
+      "Check JSON data for syntax errors and validate its structure.",
+    href: "/tools/json-validator",
+    category: "Developer",
+    icon: Braces,
+  },
+  {
     name: "Binary Converter",
     description:
       "Convert binary numbers to decimal and decimal numbers to binary.",
     href: "/tools/binary-converter",
     category: "Developer",
     icon: Binary,
+  },
+  {
+    name: "Password Generator",
+    description:
+      "Generate strong random passwords with customizable options.",
+    href: "/tools/password-generator",
+    category: "Utility",
+    icon: LockKeyhole,
   },
   {
     name: "Image Resizer",
@@ -170,6 +197,14 @@ const tools = [
     href: "/tools/text-to-ascii",
     category: "Text",
     icon: CaseSensitive,
+  },
+  {
+    name: "Unit Converter",
+    description:
+      "Convert common measurements such as length, weight, temperature, and more.",
+    href: "/tools/unit-converter",
+    category: "Utility",
+    icon: Ruler,
   },
 ];
 
