@@ -27,10 +27,6 @@ export default function QRCodeScanner() {
   useEffect(() => {
     return () => {
       stopCamera();
-
-      if (scanTimerRef.current !== null) {
-        window.clearTimeout(scanTimerRef.current);
-      }
     };
   }, []);
 
@@ -58,25 +54,51 @@ export default function QRCodeScanner() {
     setCameraActive(false);
   }
 
-  function resetResult() {
-    setScannedData("");
-    setCopied(false);
+  function clearError() {
     setError("");
   }
 
+  function resetScanner() {
+    stopCamera();
+    setScannedData("");
+    setCopied(false);
+    setError("");
+    setIsScanning(false);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
   async function startCamera() {
-    resetResult();
+    setError("");
+    setScannedData("");
+    setCopied(false);
+
+    stopCamera();
+    setIsScanning(true);
+
+    if (typeof window === "undefined") {
+      setIsScanning(false);
+      setError("Camera scanning is not available.");
+      return;
+    }
 
     if (!navigator.mediaDevices?.getUserMedia) {
+      setIsScanning(false);
       setError(
         "Camera scanning is not supported by this browser. Please use Upload Image instead.",
       );
       return;
     }
 
-    stopCamera();
-
-    setIsScanning(true);
+    if (!window.isSecureContext) {
+      setIsScanning(false);
+      setError(
+        "Camera access requires a secure connection. Please use the HTTPS ToolNoveHub website.",
+      );
+      return;
+    }
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -106,53 +128,83 @@ export default function QRCodeScanner() {
       }
 
       video.srcObject = stream;
-      video.setAttribute("playsinline", "true");
       video.muted = true;
+      video.playsInline = true;
 
       await video.play();
 
       setCameraActive(true);
+      setIsScanning(false);
       scanningRef.current = true;
 
       scanCamera();
     } catch (cameraError) {
       stopCamera();
+      setIsScanning(false);
 
       if (
         cameraError instanceof DOMException &&
         cameraError.name === "NotAllowedError"
       ) {
         setError(
-          "Camera access was denied. Allow camera access for localhost in Chrome and try again. You can also use Upload Image.",
+          "Camera access was denied. Please allow camera access for this website in your browser settings, then try again.",
         );
-      } else if (
+        return;
+      }
+
+      if (
+        cameraError instanceof DOMException &&
+        cameraError.name === "PermissionDeniedError"
+      ) {
+        setError(
+          "Camera permission was denied. Please allow camera access for this website and try again.",
+        );
+        return;
+      }
+
+      if (
         cameraError instanceof DOMException &&
         cameraError.name === "NotFoundError"
       ) {
         setError(
-          "No camera was found on this device. Please connect a camera or use Upload Image.",
+          "No camera was found. Please connect a camera or use Upload Image.",
         );
-      } else if (
+        return;
+      }
+
+      if (
         cameraError instanceof DOMException &&
         cameraError.name === "NotReadableError"
       ) {
         setError(
-          "The camera is currently being used by another application. Close other camera apps and try again.",
+          "The camera is currently being used by another application. Close other camera applications and try again.",
         );
-      } else if (
+        return;
+      }
+
+      if (
+        cameraError instanceof DOMException &&
+        cameraError.name === "OverconstrainedError"
+      ) {
+        setError(
+          "The selected camera does not support the requested settings. Please try again or use Upload Image.",
+        );
+        return;
+      }
+
+      if (
         cameraError instanceof DOMException &&
         cameraError.name === "SecurityError"
       ) {
         setError(
-          "Camera access was blocked by your browser or system settings. Please check camera permissions.",
+          "Camera access was blocked by your browser or device security settings.",
         );
-      } else {
-        setError(
-          "Unable to access the camera. Please check your camera permissions or use Upload Image.",
-        );
+        return;
       }
-    } finally {
-      setIsScanning(false);
+
+      setError(
+        "Unable to access the camera. Please check your browser and device camera permissions, then try again.",
+      );
     }
   }
 
@@ -163,12 +215,15 @@ export default function QRCodeScanner() {
 
     const video = videoRef.current;
 
-    if (!video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
-      scanTimerRef.current = window.setTimeout(scanCamera, 200);
+    if (!video) {
       return;
     }
 
-    if (video.videoWidth === 0 || video.videoHeight === 0) {
+    if (
+      video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
+      video.videoWidth === 0 ||
+      video.videoHeight === 0
+    ) {
       scanTimerRef.current = window.setTimeout(scanCamera, 200);
       return;
     }
@@ -184,6 +239,7 @@ export default function QRCodeScanner() {
 
     if (!context) {
       stopCamera();
+      setIsScanning(false);
       setError("Unable to process the camera image.");
       return;
     }
@@ -224,14 +280,42 @@ export default function QRCodeScanner() {
         return;
       }
     } catch {
-      // Continue scanning the next camera frame.
+      // Continue scanning.
     }
 
     scanTimerRef.current = window.setTimeout(scanCamera, 150);
   }
 
+  function handleFileUpload(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    setError("");
+    setScannedData("");
+    setCopied(false);
+
+    if (!file.type.startsWith("image/")) {
+      setError("Please select a valid image file.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setError("Please select an image smaller than 10 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    stopCamera();
+    scanUploadedImage(file);
+  }
+
   function scanUploadedImage(file: File) {
-    resetResult();
     setIsScanning(true);
 
     const imageUrl = URL.createObjectURL(file);
@@ -278,9 +362,10 @@ export default function QRCodeScanner() {
 
         if (code?.data) {
           setScannedData(code.data);
+          setError("");
         } else {
           setError(
-            "No readable QR code was found in this image. Please try a clearer image.",
+            "No readable QR code was found in this image. Please try a clearer QR code image.",
           );
         }
       } catch {
@@ -306,31 +391,6 @@ export default function QRCodeScanner() {
     image.src = imageUrl;
   }
 
-  function handleFileUpload(
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      setError("Please select a valid image file.");
-      event.target.value = "";
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      setError("Please select an image smaller than 10 MB.");
-      event.target.value = "";
-      return;
-    }
-
-    stopCamera();
-    scanUploadedImage(file);
-  }
-
   async function copyToClipboard() {
     if (!scannedData) {
       return;
@@ -349,20 +409,9 @@ export default function QRCodeScanner() {
     }
   }
 
-  function clearScan() {
-    stopCamera();
-    resetResult();
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-
-    setIsScanning(false);
-  }
-
   return (
     <div className="space-y-6">
-      {/* Camera preview */}
+      {/* Camera Preview */}
       {cameraActive && (
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-black">
           <video
@@ -374,10 +423,11 @@ export default function QRCodeScanner() {
             aria-label="Camera preview for QR code scanning"
           />
 
-          <div className="flex items-center justify-between gap-4 border-t border-white/10 bg-slate-950 px-4 py-3">
-            <p className="text-sm text-white">
-              Point your camera at a QR code.
-            </p>
+          <div className="flex items-center justify-between gap-4 bg-slate-950 px-4 py-3">
+            <div className="flex items-center gap-2 text-sm text-white">
+              <Scan className="h-4 w-4" />
+              <span>Point your camera at a QR code</span>
+            </div>
 
             <button
               type="button"
@@ -385,7 +435,7 @@ export default function QRCodeScanner() {
                 stopCamera();
                 setIsScanning(false);
               }}
-              className="rounded-lg bg-white/10 px-3 py-2 text-sm font-medium text-white hover:bg-white/20"
+              className="rounded-lg bg-white/10 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-white/20"
             >
               Stop
             </button>
@@ -393,7 +443,7 @@ export default function QRCodeScanner() {
         </div>
       )}
 
-      {/* Scanner buttons */}
+      {/* Main Buttons */}
       <div className="grid gap-4 sm:grid-cols-2">
         <button
           type="button"
@@ -417,7 +467,10 @@ export default function QRCodeScanner() {
 
         <button
           type="button"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => {
+            clearError();
+            fileInputRef.current?.click();
+          }}
           disabled={isScanning}
           className="flex min-h-36 flex-col items-center justify-center gap-2 rounded-2xl bg-slate-100 p-6 text-slate-700 transition-colors hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
         >
@@ -445,7 +498,7 @@ export default function QRCodeScanner() {
         />
       </div>
 
-      {/* Scanning status */}
+      {/* Scanning */}
       {isScanning && (
         <div
           className="rounded-xl border border-teal-200 bg-teal-50 px-4 py-5 text-center"
@@ -464,8 +517,7 @@ export default function QRCodeScanner() {
           </p>
 
           <p className="mt-1 text-sm text-teal-600">
-            Point the camera at a QR code or wait for the image
-            to be processed.
+            Point the camera at a QR code.
           </p>
         </div>
       )}
@@ -475,14 +527,36 @@ export default function QRCodeScanner() {
         <div
           className="rounded-xl border border-red-200 bg-red-50 p-4"
           role="alert"
+          aria-live="assertive"
         >
           <p className="text-sm leading-6 text-red-700">
             {error}
           </p>
+
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={startCamera}
+              className="rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-800 transition-colors hover:bg-red-200"
+            >
+              Try Camera Again
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setError("");
+                fileInputRef.current?.click();
+              }}
+              className="rounded-lg bg-white px-3 py-2 text-sm font-medium text-slate-700 ring-1 ring-slate-200 transition-colors hover:bg-slate-50"
+            >
+              Upload Image
+            </button>
+          </div>
         </div>
       )}
 
-      {/* Result */}
+      {/* Successful Result */}
       {scannedData && !isScanning && (
         <div
           className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"
@@ -523,7 +597,7 @@ export default function QRCodeScanner() {
 
               <button
                 type="button"
-                onClick={clearScan}
+                onClick={resetScanner}
                 aria-label="Clear scanned QR code"
                 className="inline-flex items-center justify-center rounded-lg bg-red-100 px-3 py-2 text-red-700 transition-colors hover:bg-red-200"
               >
@@ -537,16 +611,16 @@ export default function QRCodeScanner() {
         </div>
       )}
 
-      {/* Privacy */}
+      {/* Privacy Information */}
       <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-center">
         <p className="text-sm font-medium text-slate-700">
           🔒 Browser-based QR scanning
         </p>
 
         <p className="mt-1 text-xs leading-5 text-slate-500">
-          QR decoding is performed in your browser. Uploaded
-          images are processed locally for scanning. No account
-          or signup is required.
+          Camera frames and uploaded images are processed in
+          your browser for QR code decoding. No account or signup
+          is required.
         </p>
       </div>
     </div>
