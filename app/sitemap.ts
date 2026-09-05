@@ -33,6 +33,13 @@ const categories = [
   "utility",
 ];
 
+const docs = [
+  "getting-started",
+  "tool-guides",
+  "faq",
+  "privacy-security",
+];
+
 const blogPosts = [
   "age-calculator-ultimate-guide",
   "how-to-create-qr-code-for-wifi",
@@ -121,6 +128,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  const docPages: MetadataRoute.Sitemap = docs.map((slug) => ({
+    url: `${siteUrl}/docs/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.6,
+  }));
+
   const toolPages: MetadataRoute.Sitemap = tools.map((tool) => ({
     url: `${siteUrl}/tools/${tool}`,
     lastModified: now,
@@ -138,6 +152,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...mainPages,
     ...categoryPages,
+    ...docPages,
     ...toolPages,
     ...blogPages,
   ];
