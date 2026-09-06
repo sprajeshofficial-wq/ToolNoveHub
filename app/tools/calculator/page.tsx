@@ -11,6 +11,12 @@ export default function CalculatorPage() {
   const [waitingForOperand, setWaitingForOperand] = useState(false);
 
   function inputDigit(digit: string) {
+    if (display === "Error") {
+      setDisplay(digit);
+      setWaitingForOperand(false);
+      return;
+    }
+
     if (waitingForOperand) {
       setDisplay(digit);
       setWaitingForOperand(false);
@@ -23,6 +29,12 @@ export default function CalculatorPage() {
   }
 
   function inputDecimal() {
+    if (display === "Error") {
+      setDisplay("0.");
+      setWaitingForOperand(false);
+      return;
+    }
+
     if (waitingForOperand) {
       setDisplay("0.");
       setWaitingForOperand(false);
@@ -42,10 +54,14 @@ export default function CalculatorPage() {
   }
 
   function deleteLast() {
-    if (waitingForOperand) return;
+    if (waitingForOperand || display === "Error") {
+      return;
+    }
 
     setDisplay((current) => {
-      if (current.length <= 1) return "0";
+      if (current.length <= 1) {
+        return "0";
+      }
 
       const next = current.slice(0, -1);
 
@@ -61,7 +77,7 @@ export default function CalculatorPage() {
     first: number,
     second: number,
     selectedOperator: Operator
-  ) {
+  ): number | null {
     switch (selectedOperator) {
       case "+":
         return first + second;
@@ -91,7 +107,15 @@ export default function CalculatorPage() {
   function chooseOperator(nextOperator: Operator) {
     const inputValue = Number(display);
 
-    if (operator && previousValue !== null && !waitingForOperand) {
+    if (!Number.isFinite(inputValue)) {
+      return;
+    }
+
+    if (
+      operator &&
+      previousValue !== null &&
+      !waitingForOperand
+    ) {
       const result = calculate(
         previousValue,
         inputValue,
@@ -122,6 +146,14 @@ export default function CalculatorPage() {
     }
 
     const inputValue = Number(display);
+
+    if (!Number.isFinite(inputValue)) {
+      setDisplay("Error");
+      setPreviousValue(null);
+      setOperator(null);
+      setWaitingForOperand(true);
+      return;
+    }
 
     const result = calculate(
       previousValue,
@@ -234,13 +266,16 @@ export default function CalculatorPage() {
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-gray-600">
             A simple free online calculator for everyday arithmetic,
-            percentages, and basic calculations.
+            percentages, decimals, and basic calculations.
           </p>
         </div>
       </section>
 
       {/* Calculator */}
-      <section className="px-4 py-10 sm:px-6 lg:px-8">
+      <section
+        className="px-4 py-10 sm:px-6 lg:px-8"
+        aria-label="Online calculator"
+      >
         <div className="mx-auto max-w-md">
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
             {/* Display */}
@@ -257,11 +292,20 @@ export default function CalculatorPage() {
             {/* Buttons */}
             <div className="grid grid-cols-4 gap-3 p-4">
               {buttons.flat().map((button) => {
-                const isOperator =
-                  ["+", "-", "×", "÷", "="].includes(button);
+                const isOperator = [
+                  "+",
+                  "-",
+                  "×",
+                  "÷",
+                  "=",
+                ].includes(button);
 
-                const isAction =
-                  ["C", "DEL", "%", "±"].includes(button);
+                const isAction = [
+                  "C",
+                  "DEL",
+                  "%",
+                  "±",
+                ].includes(button);
 
                 const isEquals = button === "=";
 
@@ -272,6 +316,7 @@ export default function CalculatorPage() {
                     onClick={() => handleButton(button)}
                     className={[
                       "flex h-14 items-center justify-center rounded-xl text-lg font-semibold transition active:scale-[0.98]",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2",
                       isEquals
                         ? "bg-blue-600 !text-white hover:bg-blue-700"
                         : isOperator
@@ -285,7 +330,17 @@ export default function CalculatorPage() {
                         ? "Delete last digit"
                         : button === "±"
                           ? "Toggle positive or negative"
-                          : button
+                          : button === "×"
+                            ? "Multiply"
+                            : button === "÷"
+                              ? "Divide"
+                              : button === "+"
+                                ? "Add"
+                                : button === "-"
+                                  ? "Subtract"
+                                  : button === "="
+                                    ? "Calculate result"
+                                    : button
                     }
                   >
                     {button}
@@ -305,9 +360,10 @@ export default function CalculatorPage() {
           </h2>
 
           <p className="mt-4 leading-7 text-gray-600">
-            Use this calculator for common arithmetic operations including
-            addition, subtraction, multiplication, and division. You can also
-            calculate percentages and work with decimal numbers.
+            Use this calculator for common arithmetic operations
+            including addition, subtraction, multiplication, and
+            division. You can also work with decimal numbers and
+            convert a number to its percentage value.
           </p>
 
           <div className="mt-8 grid gap-5 sm:grid-cols-3">
@@ -317,17 +373,19 @@ export default function CalculatorPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Perform addition, subtraction, multiplication, and division.
+                Perform addition, subtraction, multiplication, and
+                division.
               </p>
             </div>
 
             <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
               <h3 className="font-semibold text-gray-900">
-                Percentage
+                Decimal calculations
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Quickly convert a number into its percentage value.
+                Enter decimal values for everyday calculations
+                involving fractions of a unit.
               </p>
             </div>
 
@@ -353,23 +411,46 @@ export default function CalculatorPage() {
 
           <ol className="mt-6 space-y-4 text-gray-600">
             <li>
-              <strong className="text-gray-900">1. Enter a number:</strong>{" "}
+              <strong className="text-gray-900">
+                1. Enter a number:
+              </strong>{" "}
               Select the number buttons you need.
             </li>
 
             <li>
-              <strong className="text-gray-900">2. Choose an operation:</strong>{" "}
-              Select addition, subtraction, multiplication, or division.
+              <strong className="text-gray-900">
+                2. Choose an operation:
+              </strong>{" "}
+              Select addition, subtraction, multiplication, or
+              division.
             </li>
 
             <li>
-              <strong className="text-gray-900">3. Complete the calculation:</strong>{" "}
-              Enter the second number and press the equals button.
+              <strong className="text-gray-900">
+                3. Enter the second number:
+              </strong>{" "}
+              Enter the next number after selecting an operation.
             </li>
 
             <li>
-              <strong className="text-gray-900">4. Start again:</strong>{" "}
+              <strong className="text-gray-900">
+                4. Complete the calculation:
+              </strong>{" "}
+              Press the equals button to display the result.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">
+                5. Start again:
+              </strong>{" "}
               Press the C button to clear the calculator.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">
+                6. Correct an entry:
+              </strong>{" "}
+              Use DEL to remove the last digit.
             </li>
           </ol>
         </div>
@@ -383,9 +464,9 @@ export default function CalculatorPage() {
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-blue-800">
-            Calculations are performed directly in your browser. No account is
-            required and calculator inputs do not need to be uploaded to a
-            server.
+            Calculations are performed directly in your browser.
+            No account is required, and calculator inputs do not
+            need to be uploaded to a server.
           </p>
         </div>
       </section>
