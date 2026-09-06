@@ -16,7 +16,6 @@ const tools = [
   "password-generator",
   "percentage-calculator",
   "qr-code-generator",
-  "qr-code-scanner",
   "text-repeater",
   "text-to-ascii",
   "text-to-slug",
@@ -121,12 +120,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const categoryPages: MetadataRoute.Sitemap = categories.map((category) => ({
-    url: `${siteUrl}/tools/${category}`,
-    lastModified: now,
-    changeFrequency: "monthly",
-    priority: 0.7,
-  }));
+  const categoryPages: MetadataRoute.Sitemap = categories.map(
+    (category) => ({
+      url: `${siteUrl}/tools/${category}`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    })
+  );
 
   const docPages: MetadataRoute.Sitemap = docs.map((slug) => ({
     url: `${siteUrl}/docs/${slug}`,

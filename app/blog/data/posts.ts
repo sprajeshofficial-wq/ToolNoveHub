@@ -154,12 +154,8 @@ export const blogPosts: BlogPost[] = [
       <h2>What If the Code Does Not Scan?</h2>
       <p>Move the phone slightly closer or farther away and make sure the entire code is visible. Check that there is enough light and that the code is not badly blurred, damaged, or stretched.</p>
 
-      <p>If you need to work with a QR image on your computer or another device, you can also try the <a href="/tools/qr-code-scanner">QR Code Scanner</a>.</p>
-
       <h2>Scan Safely</h2>
       <p>A QR code can lead to a website or other content, so treat unfamiliar codes like unfamiliar links. Before entering passwords, payment information, or other sensitive details, check that the destination is the website you intended to visit.</p>
-
-      <p><a href="/tools/qr-code-scanner">Try the QR Code Scanner →</a></p>
     `,
   },
   {

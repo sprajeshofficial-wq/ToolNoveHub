@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -5,6 +6,34 @@ import {
   Binary,
   Code2,
 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Free Developer Tools",
+  description:
+    "Free online developer tools from ToolNoveHub for JSON formatting, binary conversion, and everyday coding tasks.",
+  alternates: {
+    canonical: "https://toolnovehub.tools/tools/developer",
+  },
+  openGraph: {
+    type: "website",
+    url: "https://toolnovehub.tools/tools/developer",
+    title: "Free Developer Tools | ToolNoveHub",
+    description:
+      "Free online developer tools for JSON formatting, binary conversion, and everyday coding tasks.",
+    siteName: "ToolNoveHub",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+};
 
 const developerTools = [
   {
@@ -23,23 +52,10 @@ const developerTools = [
   },
 ];
 
-export const metadata = {
-  title: "Free Developer Tools",
-  description:
-    "Free online developer tools from ToolNoveHub for JSON formatting, binary conversion, and everyday coding tasks.",
-  alternates: {
-    canonical:
-      "https://toolnovehub.tools/tools/developer",
-  },
-};
-
 export default function DeveloperToolsPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* =====================================================
-          HERO
-      ====================================================== */}
-
+    <main className="min-h-screen bg-gray-50">
+      {/* Hero */}
       <section className="border-b border-gray-200 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
@@ -56,20 +72,15 @@ export default function DeveloperToolsPage() {
             </h1>
 
             <p className="mt-5 text-lg leading-8 text-gray-600">
-              Useful browser-based tools for developers,
-              programmers, students, and technical users.
+              Useful browser-based tools for developers, programmers,
+              students, and technical users.
             </p>
           </div>
         </div>
       </section>
 
-      {/* =====================================================
-          MAIN CONTENT
-      ====================================================== */}
-
-      <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        {/* SECTION HEADER */}
-
+      {/* Main */}
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
@@ -90,8 +101,7 @@ export default function DeveloperToolsPage() {
           </Link>
         </div>
 
-        {/* TOOL CARDS */}
-
+        {/* Tool Cards */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {developerTools.map((tool) => {
             const Icon = tool.icon;
@@ -129,68 +139,65 @@ export default function DeveloperToolsPage() {
           })}
         </div>
 
-        {/* =====================================================
-            BENEFITS
-        ====================================================== */}
-
+        {/* Benefits */}
         <section className="mt-12 rounded-2xl border border-blue-100 bg-blue-50 p-6 sm:p-8">
           <h2 className="text-2xl font-bold text-gray-900">
             Developer tools made simple
           </h2>
 
           <p className="mt-3 max-w-3xl text-sm leading-6 text-gray-600">
-            ToolNoveHub provides simple online utilities
-            that help developers work with common data
-            formats and everyday technical tasks without
+            ToolNoveHub provides simple online utilities that help developers
+            work with common data formats and everyday technical tasks without
             installing additional software.
           </p>
 
           <div className="mt-7 grid gap-6 md:grid-cols-3">
             <div>
-              <div className="text-2xl">⚡</div>
+              <div className="text-2xl" aria-hidden="true">
+                ⚡
+              </div>
 
               <h3 className="mt-3 font-bold text-gray-900">
                 Fast
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Quickly format or convert data directly in
-                your browser.
+                Quickly format or convert data directly in your browser.
               </p>
             </div>
 
             <div>
-              <div className="text-2xl">🧑‍💻</div>
+              <div className="text-2xl" aria-hidden="true">
+                🧑‍💻
+              </div>
 
               <h3 className="mt-3 font-bold text-gray-900">
                 Developer friendly
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Designed for developers, programmers,
-                students, and technical users.
+                Designed for developers, programmers, students, and technical
+                users.
               </p>
             </div>
 
             <div>
-              <div className="text-2xl">🔒</div>
+              <div className="text-2xl" aria-hidden="true">
+                🔒
+              </div>
 
               <h3 className="mt-3 font-bold text-gray-900">
                 Browser based
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Supported tools process your data directly
-                in your browser.
+                Supported tools process your data directly in your browser.
               </p>
             </div>
           </div>
         </section>
 
-        {/* =====================================================
-            POPULAR USE CASES
-        ====================================================== */}
-
+        {/* Popular Developer Tasks */}
         <section className="mt-12">
           <h2 className="text-2xl font-bold text-gray-900">
             Popular developer tasks
@@ -203,8 +210,8 @@ export default function DeveloperToolsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Make compressed or difficult-to-read JSON
-                easier to understand and inspect.
+                Make compressed or difficult-to-read JSON easier to understand
+                and inspect.
               </p>
             </div>
 
@@ -214,8 +221,7 @@ export default function DeveloperToolsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Quickly check JSON syntax and identify
-                invalid data.
+                Quickly check JSON syntax and identify invalid data.
               </p>
             </div>
 
@@ -225,17 +231,13 @@ export default function DeveloperToolsPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Convert binary and decimal values for
-                programming and learning.
+                Convert binary and decimal values for programming and learning.
               </p>
             </div>
           </div>
         </section>
 
-        {/* =====================================================
-            BREADCRUMB
-        ====================================================== */}
-
+        {/* Breadcrumb */}
         <nav
           aria-label="Breadcrumb"
           className="mt-10 text-sm text-gray-500"
@@ -262,7 +264,7 @@ export default function DeveloperToolsPage() {
             Developer
           </span>
         </nav>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
