@@ -7,17 +7,12 @@ type ConversionMode = "binary-to-decimal" | "decimal-to-binary";
 function binaryToDecimal(value: string): string {
   const cleaned = value.replace(/\s+/g, "").trim();
 
-  if (!cleaned) {
-    return "";
-  }
-
-  if (!/^[01]+$/.test(cleaned)) {
+  if (!cleaned || !/^[01]+$/.test(cleaned)) {
     return "";
   }
 
   try {
-    const result = BigInt(`0b${cleaned}`);
-    return result.toString(10);
+    return BigInt(`0b${cleaned}`).toString(10);
   } catch {
     return "";
   }
@@ -26,11 +21,7 @@ function binaryToDecimal(value: string): string {
 function decimalToBinary(value: string): string {
   const cleaned = value.replace(/,/g, "").trim();
 
-  if (!cleaned) {
-    return "";
-  }
-
-  if (!/^\d+$/.test(cleaned)) {
+  if (!cleaned || !/^\d+$/.test(cleaned)) {
     return "";
   }
 
@@ -52,6 +43,9 @@ export default function BinaryConverterPage() {
     mode === "binary-to-decimal"
       ? binaryToDecimal(input)
       : decimalToBinary(input);
+
+  const hasInput = input.trim().length > 0;
+  const isInvalid = hasInput && result === "";
 
   const inputLabel =
     mode === "binary-to-decimal"
@@ -75,6 +69,10 @@ export default function BinaryConverterPage() {
   };
 
   const handleSwap = () => {
+    if (!result) {
+      return;
+    }
+
     const newMode =
       mode === "binary-to-decimal"
         ? "decimal-to-binary"
@@ -94,7 +92,7 @@ export default function BinaryConverterPage() {
       await navigator.clipboard.writeText(result);
       setCopied(true);
 
-      setTimeout(() => {
+      window.setTimeout(() => {
         setCopied(false);
       }, 2000);
     } catch {
@@ -108,48 +106,58 @@ export default function BinaryConverterPage() {
   };
 
   const loadExample = () => {
-    if (mode === "binary-to-decimal") {
-      setInput("110101");
-    } else {
-      setInput("53");
-    }
+    setInput(
+      mode === "binary-to-decimal"
+        ? "110101"
+        : "53"
+    );
 
     setCopied(false);
   };
 
-  const isInvalid =
-    input.length > 0 && result.length === 0;
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+
         {/* Header */}
-        <div className="mb-8 text-center">
+        <header className="mb-8 text-center">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             Binary Converter
           </h1>
 
           <p className="mx-auto mt-3 max-w-2xl text-gray-600">
-            Convert binary numbers to decimal and decimal numbers
-            to binary instantly.
+            Convert binary numbers to decimal or decimal numbers
+            to binary instantly with this free online converter.
           </p>
-        </div>
+        </header>
 
         {/* Converter */}
-        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+        <section
+          aria-labelledby="converter-heading"
+          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+        >
+          <h2 id="converter-heading" className="sr-only">
+            Binary and decimal converter
+          </h2>
+
           {/* Conversion mode */}
           <div>
             <p className="mb-3 text-sm font-semibold text-gray-900">
-              Conversion
+              Conversion type
             </p>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div
+              className="grid gap-3 sm:grid-cols-2"
+              role="group"
+              aria-label="Conversion type"
+            >
               <button
                 type="button"
                 onClick={() =>
                   handleModeChange("binary-to-decimal")
                 }
-                className={`rounded-xl border px-4 py-3 text-sm font-semibold transition ${
+                aria-pressed={mode === "binary-to-decimal"}
+                className={`rounded-xl border px-4 py-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                   mode === "binary-to-decimal"
                     ? "border-blue-600 bg-blue-600 text-white"
                     : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
@@ -163,7 +171,8 @@ export default function BinaryConverterPage() {
                 onClick={() =>
                   handleModeChange("decimal-to-binary")
                 }
-                className={`rounded-xl border px-4 py-3 text-sm font-semibold transition ${
+                aria-pressed={mode === "decimal-to-binary"}
+                className={`rounded-xl border px-4 py-3 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                   mode === "decimal-to-binary"
                     ? "border-blue-600 bg-blue-600 text-white"
                     : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
@@ -186,16 +195,24 @@ export default function BinaryConverterPage() {
             <input
               id="binary-input"
               type="text"
-              inputMode="numeric"
+              inputMode={
+                mode === "binary-to-decimal"
+                  ? "text"
+                  : "numeric"
+              }
               value={input}
-              onChange={(e) =>
-                handleInputChange(e.target.value)
+              onChange={(event) =>
+                handleInputChange(event.target.value)
               }
               placeholder={
                 mode === "binary-to-decimal"
                   ? "Example: 110101"
                   : "Example: 53"
               }
+              autoComplete="off"
+              spellCheck={false}
+              aria-invalid={isInvalid}
+              aria-describedby="binary-input-help binary-input-error"
               className={`w-full rounded-xl border px-4 py-3 text-lg text-gray-900 outline-none transition placeholder:text-gray-400 focus:ring-2 ${
                 isInvalid
                   ? "border-red-400 focus:border-red-500 focus:ring-red-100"
@@ -203,27 +220,24 @@ export default function BinaryConverterPage() {
               }`}
             />
 
-            {mode === "binary-to-decimal" ? (
-              <p className="mt-2 text-xs text-gray-500">
-                Enter only 0 and 1. Spaces between binary digits are
-                also accepted.
-              </p>
-            ) : (
-              <p className="mt-2 text-xs text-gray-500">
-                Enter a non-negative whole number. Commas are
-                accepted.
-              </p>
-            )}
+            <p
+              id="binary-input-help"
+              className="mt-2 text-xs leading-5 text-gray-500"
+            >
+              {mode === "binary-to-decimal"
+                ? "Enter only 0 and 1. Spaces between binary digits are accepted."
+                : "Enter a non-negative whole number. Commas are accepted."}
+            </p>
 
             {isInvalid && (
               <p
+                id="binary-input-error"
                 role="alert"
-                className="mt-2 text-sm text-red-600"
+                className="mt-2 text-sm font-medium text-red-600"
               >
-                Please enter a valid{" "}
                 {mode === "binary-to-decimal"
-                  ? "binary number using only 0 and 1."
-                  : "non-negative decimal number."}
+                  ? "Enter a valid binary number using only 0 and 1."
+                  : "Enter a valid non-negative whole decimal number."}
               </p>
             )}
           </div>
@@ -244,27 +258,33 @@ export default function BinaryConverterPage() {
                 value={result}
                 readOnly
                 placeholder="Result will appear here..."
-                className="min-w-0 flex-1 rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-lg text-gray-900 outline-none"
                 aria-live="polite"
+                aria-label={resultLabel}
+                className="min-w-0 flex-1 rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-lg text-gray-900 outline-none"
               />
 
               <button
                 type="button"
                 onClick={handleCopy}
                 disabled={!result}
-                className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
+                aria-label={
+                  copied
+                    ? "Result copied"
+                    : "Copy result"
+                }
+                className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-300"
               >
                 {copied ? "Copied!" : "Copy"}
               </button>
             </div>
           </div>
 
-          {/* Action buttons */}
+          {/* Actions */}
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <button
               type="button"
               onClick={loadExample}
-              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50"
+              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               Load Example
             </button>
@@ -273,7 +293,7 @@ export default function BinaryConverterPage() {
               type="button"
               onClick={handleSwap}
               disabled={!result}
-              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Swap Conversion
             </button>
@@ -282,20 +302,20 @@ export default function BinaryConverterPage() {
               type="button"
               onClick={handleClear}
               disabled={!input}
-              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Clear
             </button>
           </div>
 
-          {copied && (
-            <div
-              role="status"
-              className="mt-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
-            >
-              Result copied to your clipboard.
-            </div>
-          )}
+          {/* Copy status */}
+          <div
+            role="status"
+            aria-live="polite"
+            className="mt-5 min-h-6 text-center text-sm text-green-700"
+          >
+            {copied ? "Result copied to your clipboard." : ""}
+          </div>
         </section>
 
         {/* Examples */}
@@ -304,70 +324,56 @@ export default function BinaryConverterPage() {
             Binary conversion examples
           </h2>
 
+          <p className="mt-3 text-sm leading-6 text-gray-600">
+            These examples show how common binary values correspond
+            to decimal numbers.
+          </p>
+
           <div className="mt-5 overflow-x-auto">
             <table className="w-full min-w-[420px] border-collapse text-left text-sm">
+              <caption className="sr-only">
+                Binary to decimal conversion examples
+              </caption>
+
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="px-4 py-3 font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="px-4 py-3 font-semibold text-gray-900"
+                  >
                     Binary
                   </th>
 
-                  <th className="px-4 py-3 font-semibold text-gray-900">
+                  <th
+                    scope="col"
+                    className="px-4 py-3 font-semibold text-gray-900"
+                  >
                     Decimal
                   </th>
                 </tr>
               </thead>
 
               <tbody>
-                <tr className="border-b border-gray-100">
-                  <td className="px-4 py-3 font-mono text-gray-700">
-                    0
-                  </td>
+                {[
+                  ["0", "0"],
+                  ["1", "1"],
+                  ["1010", "10"],
+                  ["110101", "53"],
+                  ["11111111", "255"],
+                ].map(([binary, decimal]) => (
+                  <tr
+                    key={binary}
+                    className="border-b border-gray-100 last:border-0"
+                  >
+                    <td className="px-4 py-3 font-mono text-gray-700">
+                      {binary}
+                    </td>
 
-                  <td className="px-4 py-3 text-gray-700">
-                    0
-                  </td>
-                </tr>
-
-                <tr className="border-b border-gray-100">
-                  <td className="px-4 py-3 font-mono text-gray-700">
-                    1
-                  </td>
-
-                  <td className="px-4 py-3 text-gray-700">
-                    1
-                  </td>
-                </tr>
-
-                <tr className="border-b border-gray-100">
-                  <td className="px-4 py-3 font-mono text-gray-700">
-                    1010
-                  </td>
-
-                  <td className="px-4 py-3 text-gray-700">
-                    10
-                  </td>
-                </tr>
-
-                <tr className="border-b border-gray-100">
-                  <td className="px-4 py-3 font-mono text-gray-700">
-                    110101
-                  </td>
-
-                  <td className="px-4 py-3 text-gray-700">
-                    53
-                  </td>
-                </tr>
-
-                <tr>
-                  <td className="px-4 py-3 font-mono text-gray-700">
-                    11111111
-                  </td>
-
-                  <td className="px-4 py-3 text-gray-700">
-                    255
-                  </td>
-                </tr>
+                    <td className="px-4 py-3 text-gray-700">
+                      {decimal}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -384,40 +390,89 @@ export default function BinaryConverterPage() {
               Choose Binary to Decimal or Decimal to Binary.
             </li>
 
-            <li>Enter your number in the input box.</li>
-
             <li>
-              The converted value appears automatically.
+              Enter your number in the input field.
             </li>
 
             <li>
-              Click Copy to copy the result to your clipboard.
+              Review the converted result, which updates as you
+              type.
+            </li>
+
+            <li>
+              Use Copy to copy the result to your clipboard.
+            </li>
+
+            <li>
+              Use Swap Conversion to reverse the conversion using
+              the current result.
             </li>
           </ol>
         </section>
 
-        {/* About binary */}
+        {/* What is binary */}
         <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-gray-900">
             What is binary?
           </h2>
 
           <p className="mt-4 text-sm leading-7 text-gray-600">
-            Binary is a number system that uses only two digits:
-            0 and 1. Computers use binary to represent and process
-            digital information.
+            Binary is a base-2 number system that uses only two
+            digits: 0 and 1. Digital computers use binary because
+            electronic systems can represent information using
+            two distinct states.
           </p>
 
           <p className="mt-4 text-sm leading-7 text-gray-600">
             Each position in a binary number represents a power of
-            two. For example, binary 110101 represents decimal 53.
+            two. For example, 110101 can be expanded as 32 + 16 +
+            4 + 1, which equals decimal 53.
+          </p>
+
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            Binary conversion is commonly used when learning
+            computer science, working with digital systems, reading
+            low-level data, or understanding how numbers are
+            represented inside computers.
+          </p>
+        </section>
+
+        {/* Conversion method */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            How binary conversion works
+          </h2>
+
+          <h3 className="mt-5 font-semibold text-gray-900">
+            Binary to decimal
+          </h3>
+
+          <p className="mt-2 text-sm leading-7 text-gray-600">
+            Starting from the right, each binary digit represents a
+            power of two. Multiply each digit by its corresponding
+            power of two and add the values together.
+          </p>
+
+          <div className="mt-4 rounded-xl bg-gray-50 p-4 font-mono text-sm text-gray-700">
+            110101 = 32 + 16 + 4 + 1 = 53
+          </div>
+
+          <h3 className="mt-6 font-semibold text-gray-900">
+            Decimal to binary
+          </h3>
+
+          <p className="mt-2 text-sm leading-7 text-gray-600">
+            A decimal whole number can be converted to binary by
+            repeatedly dividing it by two and recording the
+            remainders. Reading the remainders from bottom to top
+            produces the binary representation.
           </p>
         </section>
 
         {/* Features */}
         <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold text-gray-900">
-            Features
+            Binary Converter features
           </h2>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
@@ -427,50 +482,171 @@ export default function BinaryConverterPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Convert binary to decimal or decimal to binary with
-                one click.
+                Convert between binary and decimal numbers in either
+                direction.
               </p>
             </div>
 
             <div className="rounded-xl bg-gray-50 p-4">
               <h3 className="font-semibold text-gray-900">
-                Large numbers
+                Large whole numbers
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Uses BigInt for accurate conversion of large whole
-                numbers.
+                Uses JavaScript BigInt so large whole-number values
+                can be converted without relying on floating-point
+                arithmetic.
               </p>
             </div>
 
             <div className="rounded-xl bg-gray-50 p-4">
               <h3 className="font-semibold text-gray-900">
-                Instant results
+                Instant conversion
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Results are calculated immediately as you type.
+                The result updates automatically while you enter a
+                valid number.
               </p>
             </div>
 
             <div className="rounded-xl bg-gray-50 p-4">
               <h3 className="font-semibold text-gray-900">
-                Browser based
+                Copy and swap
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Your numbers are processed locally in your browser.
+                Copy the result or swap the conversion direction to
+                continue working with the converted value.
               </p>
             </div>
           </div>
         </section>
 
-        {/* Privacy */}
-        <div className="mt-8 rounded-xl border border-blue-100 bg-blue-50 px-5 py-4 text-center text-sm text-blue-800">
-          Your input is processed locally in your browser and is not
-          uploaded to our server.
+        {/* Common uses */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Common uses for binary conversion
+          </h2>
+
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-6 text-gray-600">
+            <li>
+              Computer science and programming exercises
+            </li>
+
+            <li>
+              Learning number systems and place values
+            </li>
+
+            <li>
+              Digital electronics and computer engineering
+            </li>
+
+            <li>
+              Understanding binary data representation
+            </li>
+
+            <li>
+              Checking binary and decimal values during development
+            </li>
+          </ul>
+        </section>
+
+        {/* Browser processing */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Browser-based conversion
+          </h2>
+
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            The conversion calculations are performed in your web
+            browser. The tool does not need to send the number to a
+            conversion service to calculate the result.
+          </p>
+
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            As with any online service, other website features such
+            as analytics or standard browser behavior may operate
+            separately from the calculator itself. See the
+            ToolNoveHub Privacy Policy for more information about
+            site-wide data handling.
+          </p>
+        </section>
+
+        {/* FAQ */}
+        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-semibold text-gray-900">
+            Binary Converter FAQ
+          </h2>
+
+          <div className="mt-5 space-y-6">
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                What is 110101 in decimal?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Binary 110101 is decimal 53.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Can I convert large numbers?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Yes. The converter uses JavaScript BigInt for
+                whole-number conversion, allowing it to handle
+                values beyond the normal JavaScript Number safe
+                integer range.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Can I enter spaces in a binary number?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Yes. Spaces are removed before a binary value is
+                validated, so values such as 110 101 can be
+                converted.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Does this converter support negative numbers?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                No. This tool is designed for non-negative whole
+                numbers and unsigned binary values.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Is the conversion performed in the browser?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Yes. The conversion logic runs in the browser,
+                without requiring the number to be submitted to a
+                separate conversion API.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Privacy notice */}
+        <div className="mt-8 rounded-xl border border-blue-100 bg-blue-50 px-5 py-4 text-center text-sm leading-6 text-blue-800">
+          Binary and decimal conversion is calculated directly in
+          your browser. No conversion request needs to be sent to a
+          server.
         </div>
       </div>
-    </div>
+    </main>
   );
 }
