@@ -1,88 +1,346 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
-import JSONValidator from './JSONValidator';
+import type { Metadata } from "next";
+import Link from "next/link";
+import JSONValidator from "./JSONValidator";
 
 export const metadata: Metadata = {
-  title: 'Free JSON Validator - Validate JSON Online | ToolNoveHub',
-  description: 'Free online JSON validator. Validate JSON data and find syntax errors instantly. Perfect for API development and debugging. No signup, 100% private.',
-  keywords: 'json validator, validate json, json checker, json syntax validator, json verifier, validate json online, json parser, json error checker',
+  title: "JSON Validator - Validate JSON Online",
+  description:
+    "Validate JSON online, check syntax errors, and format valid JSON with a fast browser-based JSON validator.",
+  keywords: [
+    "json validator",
+    "validate json",
+    "json checker",
+    "json syntax validator",
+    "json verifier",
+    "validate json online",
+    "json parser",
+    "json error checker",
+  ],
   alternates: {
-    canonical: 'https://toolnovehub.tools/tools/json-validator',
+    canonical: "https://toolnovehub.tools/tools/json-validator",
   },
   openGraph: {
-    title: 'Free JSON Validator - Validate JSON Online | ToolNoveHub',
-    description: 'Free online JSON validator. Validate JSON data and find syntax errors instantly.',
-    url: 'https://toolnovehub.tools/tools/json-validator',
-    type: 'website',
-    images: [{ url: 'https://toolnovehub.tools/og-json-validator.jpg', width: 1200, height: 630, alt: 'JSON Validator - Free Online Tool' }],
+    title: "JSON Validator - Validate JSON Online",
+    description:
+      "Validate JSON syntax and format valid JSON directly in your browser.",
+    url: "https://toolnovehub.tools/tools/json-validator",
+    type: "website",
+    images: [
+      {
+        url: "https://toolnovehub.tools/og-json-validator.jpg",
+        width: 1200,
+        height: 630,
+        alt: "JSON Validator - ToolNoveHub",
+      },
+    ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Free JSON Validator - Validate JSON Online | ToolNoveHub',
-    description: 'Free online JSON validator. Validate JSON data and find syntax errors instantly.',
-    images: ['https://toolnovehub.tools/og-json-validator.jpg'],
+    card: "summary_large_image",
+    title: "JSON Validator - Validate JSON Online",
+    description:
+      "Validate JSON syntax and format valid JSON directly in your browser.",
+    images: ["https://toolnovehub.tools/og-json-validator.jpg"],
   },
 };
 
 export default function JSONValidatorPage() {
   const schemaData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: 'JSON Validator',
-    description: 'Validate JSON data and find syntax errors instantly. Perfect for API development and debugging.',
-    applicationCategory: 'Utility',
-    operatingSystem: 'All',
-    browserRequirements: 'Requires JavaScript',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "JSON Validator",
+    description:
+      "Validate JSON syntax and format valid JSON directly in your browser.",
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "All",
+    browserRequirements: "Requires JavaScript",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
   };
 
   return (
-    <div className="min-h-screen py-20 px-4 bg-gradient-to-br from-slate-50 via-white to-indigo-50/30">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl font-bold text-slate-900 text-center mb-4">Free JSON Validator – Validate JSON Data Instantly</h1>
-        <p className="text-center text-slate-600 max-w-2xl mx-auto mb-12">Free online JSON validator. Validate JSON data and find syntax errors instantly. Perfect for API development and debugging.</p>
+    <div className="min-h-screen bg-gray-50">
+      <section className="border-b border-gray-200 bg-white">
+        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+              Developer Tool
+            </p>
 
-        <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              JSON Validator
+            </h1>
+
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
+              Validate JSON syntax, identify parsing errors, and format valid
+              JSON directly in your browser.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
           <JSONValidator />
-        </div>
+        </section>
 
-        <div className="mt-12 prose prose-slate max-w-none">
-          <h2>How to Use the JSON Validator</h2>
-          <ol>
-            <li><strong>Paste your JSON:</strong> Enter JSON data in the text area</li>
-            <li><strong>Validate:</strong> Click the &quot;Validate&quot; button</li>
-            <li><strong>View results:</strong> See if your JSON is valid or find error details</li>
-            <li><strong>Format:</strong> Click &quot;Format&quot; to beautify valid JSON</li>
+        <section
+          aria-labelledby="how-to-use"
+          className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8"
+        >
+          <h2
+            id="how-to-use"
+            className="text-xl font-bold text-gray-900"
+          >
+            How to use the JSON Validator
+          </h2>
+
+          <ol className="mt-5 space-y-3 text-sm leading-7 text-gray-600">
+            <li>
+              <strong className="text-gray-900">1.</strong> Paste or type your
+              JSON into the input area.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">2.</strong> Select{" "}
+              <strong className="text-gray-900">Validate JSON</strong> to check
+              the syntax.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">3.</strong> If the JSON is
+              invalid, review the parser error and check your syntax.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">4.</strong> Use{" "}
+              <strong className="text-gray-900">Format JSON</strong> to make
+              valid JSON easier to read.
+            </li>
+
+            <li>
+              <strong className="text-gray-900">5.</strong> Use{" "}
+              <strong className="text-gray-900">Copy</strong> to copy the JSON
+              when needed.
+            </li>
           </ol>
-          <h2>Common JSON Syntax Errors</h2>
-          <ul>
-            <li>Trailing commas after last item</li>
-            <li>Missing quotes around keys</li>
-            <li>Single quotes instead of double quotes</li>
-            <li>Comma placement errors</li>
-          </ul>
-        </div>
+        </section>
 
-        <div className="mt-8 rounded-2xl bg-white/80 backdrop-blur-sm border border-slate-200/50 p-6 shadow-xl">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">FAQ About JSON Validator</h2>
-          <div className="space-y-4">
-            <div><h3 className="font-semibold text-slate-900">What does a JSON validator do?</h3><p className="text-slate-600">A JSON validator checks if your JSON data is properly formatted and follows JSON syntax rules. It tells you if there are errors and where they are.</p></div>
-            <div><h3 className="font-semibold text-slate-900">Why is valid JSON important?</h3><p className="text-slate-600">Invalid JSON can break APIs, cause data processing errors, and lead to application failures. Validating JSON helps catch these issues early.</p></div>
+        <section
+          aria-labelledby="common-errors"
+          className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8"
+        >
+          <h2
+            id="common-errors"
+            className="text-xl font-bold text-gray-900"
+          >
+            Common JSON syntax errors
+          </h2>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Trailing commas
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                JSON does not allow an extra comma after the final property in
+                an object or the final item in an array.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Incorrect quotation marks
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                JSON strings and property names use double quotation marks,
+                rather than single quotation marks.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Missing commas
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Properties and array items generally need commas between them.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-gray-50 p-4">
+              <h3 className="font-semibold text-gray-900">
+                Unclosed brackets
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Every JSON object and array needs its corresponding closing
+                bracket or brace.
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <div className="mt-8">
-          <h2 className="text-2xl font-bold text-slate-900 mb-4">Related Tools</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Link href="/tools/json-formatter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">JSON Formatter</span></Link>
-            <Link href="/tools/text-to-slug" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Text to Slug</span></Link>
-            <Link href="/tools/binary-converter" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Binary Converter</span></Link>
-            <Link href="/tools/color-picker" className="rounded-xl bg-white p-4 shadow-lg hover:shadow-xl transition-all border border-slate-200/50 text-center hover:border-indigo-200"><span className="text-sm font-medium text-slate-900">Color Picker</span></Link>
+        <section
+          aria-labelledby="what-is-json"
+          className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8"
+        >
+          <h2
+            id="what-is-json"
+            className="text-xl font-bold text-gray-900"
+          >
+            What is JSON?
+          </h2>
+
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            JSON stands for JavaScript Object Notation. It is a lightweight
+            text format used to represent structured data and is commonly used
+            by web applications, APIs, configuration files, and software
+            systems.
+          </p>
+
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            JSON supports objects, arrays, strings, numbers, booleans, and
+            null values. Because JSON follows strict syntax rules, even a small
+            punctuation or quotation error can make a document invalid.
+          </p>
+        </section>
+
+        <section
+          aria-labelledby="browser-processing"
+          className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8"
+        >
+          <h2
+            id="browser-processing"
+            className="text-xl font-bold text-gray-900"
+          >
+            Browser-based JSON validation
+          </h2>
+
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            JSON validation and formatting are performed directly in your
+            browser using JavaScript. The tool does not require an account or a
+            separate server-side JSON processing service.
+          </p>
+
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            Your JSON does not need to be uploaded to a remote JSON validation
+            service for these operations. As with any website, review the
+            ToolNoveHub Privacy Policy for information about site-level
+            analytics and other services.
+          </p>
+        </section>
+
+        <section
+          aria-labelledby="faq"
+          className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8"
+        >
+          <h2 id="faq" className="text-xl font-bold text-gray-900">
+            JSON Validator FAQ
+          </h2>
+
+          <div className="mt-5 space-y-5 text-sm leading-7 text-gray-600">
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                What does a JSON validator check?
+              </h3>
+
+              <p className="mt-1">
+                It parses the JSON and checks whether the document follows
+                valid JSON syntax.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Can the validator find every programming error?
+              </h3>
+
+              <p className="mt-1">
+                No. It checks JSON syntax and parsing validity. It does not
+                determine whether the data is logically correct for your
+                application or API.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Can I format valid JSON?
+              </h3>
+
+              <p className="mt-1">
+                Yes. After parsing valid JSON, the Format JSON button adds
+                indentation and line breaks to make the structure easier to
+                read.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Do I need to install anything?
+              </h3>
+
+              <p className="mt-1">
+                No. The tool works in a modern web browser with JavaScript
+                enabled.
+              </p>
+            </div>
           </div>
-        </div>
+        </section>
 
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }} />
-      </div>
+        <section
+          aria-labelledby="related-tools"
+          className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8"
+        >
+          <h2
+            id="related-tools"
+            className="text-xl font-bold text-gray-900"
+          >
+            Related Developer Tools
+          </h2>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 md:grid-cols-4">
+            <Link
+              href="/tools/json-formatter"
+              className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center text-sm font-semibold text-gray-900 transition hover:border-blue-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              JSON Formatter
+            </Link>
+
+            <Link
+              href="/tools/text-to-slug"
+              className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center text-sm font-semibold text-gray-900 transition hover:border-blue-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Text to Slug
+            </Link>
+
+            <Link
+              href="/tools/binary-converter"
+              className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center text-sm font-semibold text-gray-900 transition hover:border-blue-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Binary Converter
+            </Link>
+
+            <Link
+              href="/tools/color-picker"
+              className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-center text-sm font-semibold text-gray-900 transition hover:border-blue-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Color Picker
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schemaData),
+        }}
+      />
     </div>
   );
 }
