@@ -3,26 +3,27 @@ import Link from "next/link";
 import PasswordGenerator from "./PasswordGenerator";
 
 export const metadata: Metadata = {
-  title: "Password Generator - Create Strong, Secure Passwords | ToolNoveHub",
+  title: "Password Generator - Create Strong, Secure Passwords",
   description:
-    "Generate strong, secure passwords instantly. Customize length, include uppercase, lowercase, numbers, and symbols. Free browser-based password generator.",
+    "Generate strong random passwords online with customizable length, uppercase letters, lowercase letters, numbers, and symbols. Browser-based and free to use.",
   keywords: [
     "password generator",
-    "strong password",
-    "random password",
-    "secure password",
+    "strong password generator",
+    "random password generator",
+    "secure password generator",
     "password creator",
     "online password generator",
     "password maker",
-    "random password generator",
+    "random password",
   ],
   alternates: {
-    canonical: "https://toolnovehub.tools/tools/password-generator",
+    canonical:
+      "https://toolnovehub.tools/tools/password-generator",
   },
   openGraph: {
-    title: "Password Generator - Create Strong, Secure Passwords | ToolNoveHub",
+    title: "Password Generator - Create Strong, Secure Passwords",
     description:
-      "Generate strong, secure passwords instantly. Customize length and character types.",
+      "Generate strong random passwords with customizable length and character types.",
     url: "https://toolnovehub.tools/tools/password-generator",
     type: "website",
     images: [
@@ -30,146 +31,343 @@ export const metadata: Metadata = {
         url: "https://toolnovehub.tools/og-password-generator.jpg",
         width: 1200,
         height: 630,
-        alt: "Password Generator - Free Online Tool",
+        alt: "Password Generator - ToolNoveHub",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Password Generator - Create Strong, Secure Passwords | ToolNoveHub",
-    description: "Generate strong, secure passwords instantly.",
-    images: ["https://toolnovehub.tools/og-password-generator.jpg"],
+    title: "Password Generator - Create Strong, Secure Passwords",
+    description:
+      "Generate strong random passwords with customizable length and character types.",
+    images: [
+      "https://toolnovehub.tools/og-password-generator.jpg",
+    ],
+  },
+};
+
+const schemaData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Password Generator",
+  description:
+    "Generate strong random passwords with customizable length and character types.",
+  applicationCategory: "SecurityApplication",
+  operatingSystem: "All",
+  browserRequirements: "Requires JavaScript",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
   },
 };
 
 export default function PasswordGeneratorPage() {
-  const schemaData = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "Password Generator",
-    description:
-      "Generate strong, secure passwords instantly. Customize length and character types.",
-    applicationCategory: "Utility",
-    operatingSystem: "All",
-    browserRequirements: "Requires JavaScript",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 px-4 py-20">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 px-4 py-12 sm:py-16">
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-4 text-center text-4xl font-bold text-slate-900">
-          Password Generator – Create Strong, Secure Passwords
-        </h1>
 
-        <p className="mx-auto mb-12 max-w-2xl text-center text-slate-600">
-          Generate strong passwords instantly. Customize length and character
-          types. No signup, browser-based.
-        </p>
+        {/* Header */}
+        <header className="mb-10 text-center">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Password Generator – Create Strong, Secure Passwords
+          </h1>
 
-        <div className="rounded-2xl border border-slate-200/50 bg-white/80 p-6 shadow-xl backdrop-blur-sm">
-          <PasswordGenerator />
-        </div>
+          <p className="mx-auto mt-4 max-w-2xl text-slate-600">
+            Generate random passwords with a customizable length
+            and character set. The password generation logic runs
+            directly in your browser.
+          </p>
+        </header>
 
-        <div className="prose prose-slate mt-12 max-w-none">
-          <h2>How to Use the Password Generator</h2>
-
-          <ol>
-            <li>
-              <strong>Choose your options:</strong> Select the character types
-              you want to include.
-            </li>
-            <li>
-              <strong>Set password length:</strong> Use the slider to choose
-              between 4 and 64 characters.
-            </li>
-            <li>
-              <strong>Generate:</strong> Click the &quot;Generate
-              Password&quot; button.
-            </li>
-            <li>
-              <strong>Copy:</strong> Click the copy button to use your new
-              password.
-            </li>
-          </ol>
-
-          <h2>Why Use a Password Generator?</h2>
-
-          <ul>
-            <li>
-              <strong>Strong passwords:</strong> Random passwords are harder to
-              guess or crack.
-            </li>
-            <li>
-              <strong>Unique passwords:</strong> Use different passwords for
-              different accounts.
-            </li>
-            <li>
-              <strong>Save time:</strong> No more thinking of passwords.
-            </li>
-            <li>
-              <strong>Privacy first:</strong> Password generation happens in
-              your browser.
-            </li>
-          </ul>
-
-          <h2>Password Strength Tips</h2>
-
-          <ul>
-            <li>Use at least 12 characters.</li>
-            <li>
-              Include uppercase, lowercase, numbers, and symbols.
-            </li>
-            <li>
-              Don&apos;t use personal information such as your name or
-              birthday.
-            </li>
-            <li>Use different passwords for each account.</li>
-            <li>Consider using a password manager.</li>
-          </ul>
-        </div>
-
-        <div className="mt-8 rounded-2xl border border-slate-200/50 bg-white/80 p-6 shadow-xl backdrop-blur-sm">
-          <h2 className="mb-4 text-2xl font-bold text-slate-900">
-            Frequently Asked Questions About Password Generators
+        {/* Generator */}
+        <section
+          aria-labelledby="password-generator-heading"
+          className="rounded-2xl border border-slate-200/70 bg-white/90 p-6 shadow-xl backdrop-blur-sm sm:p-8"
+        >
+          <h2
+            id="password-generator-heading"
+            className="sr-only"
+          >
+            Password generator controls
           </h2>
 
-          <div className="space-y-4">
-            <div>
+          <PasswordGenerator />
+        </section>
+
+        {/* How to use */}
+        <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 className="text-2xl font-bold text-slate-900">
+            How to use the Password Generator
+          </h2>
+
+          <ol className="mt-5 list-decimal space-y-3 pl-5 text-sm leading-7 text-slate-600">
+            <li>
+              <strong className="text-slate-900">
+                Choose the character types
+              </strong>{" "}
+              you want to include, such as uppercase letters,
+              lowercase letters, numbers, and symbols.
+            </li>
+
+            <li>
+              <strong className="text-slate-900">
+                Choose the password length
+              </strong>{" "}
+              using the length slider.
+            </li>
+
+            <li>
+              <strong className="text-slate-900">
+                Generate the password
+              </strong>{" "}
+              using the Generate Password button.
+            </li>
+
+            <li>
+              <strong className="text-slate-900">
+                Copy the result
+              </strong>{" "}
+              when you are ready to use or save it.
+            </li>
+          </ol>
+        </section>
+
+        {/* Why use one */}
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 className="text-2xl font-bold text-slate-900">
+            Why use a password generator?
+          </h2>
+
+          <p className="mt-4 text-sm leading-7 text-slate-600">
+            Creating a different random password for every account
+            can be difficult to do manually. A password generator
+            can quickly create strings that are longer and less
+            predictable than passwords based on common words,
+            names, dates, or other personal information.
+          </p>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-xl bg-slate-50 p-5">
               <h3 className="font-semibold text-slate-900">
-                How secure is the generated password?
+                Longer passwords
               </h3>
-              <p className="text-slate-600">
-                Our password generator uses a cryptographically secure random
-                number generator. The strength depends on your settings.
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Increasing password length generally increases the
+                number of possible combinations an attacker must
+                consider.
               </p>
             </div>
 
-            <div>
+            <div className="rounded-xl bg-slate-50 p-5">
               <h3 className="font-semibold text-slate-900">
-                Is my password stored or shared?
+                Random characters
               </h3>
-              <p className="text-slate-600">
-                The password generation happens in your browser and the
-                generated password is not sent to our server by this tool.
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Randomly selected characters avoid many predictable
+                patterns found in manually created passwords.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-slate-50 p-5">
+              <h3 className="font-semibold text-slate-900">
+                Unique passwords
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Using separate passwords for different services
+                helps limit the impact of a compromised account.
+              </p>
+            </div>
+
+            <div className="rounded-xl bg-slate-50 p-5">
+              <h3 className="font-semibold text-slate-900">
+                Easy to customize
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Some websites have character requirements, so
+                customizable length and character types can be
+                useful when creating a password.
               </p>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="mt-8">
+        {/* Password strength */}
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 className="text-2xl font-bold text-slate-900">
+            Password strength tips
+          </h2>
+
+          <ul className="mt-5 list-disc space-y-3 pl-5 text-sm leading-7 text-slate-600">
+            <li>
+              Prefer longer passwords, especially for important
+              accounts.
+            </li>
+
+            <li>
+              Avoid names, birthdays, addresses, dictionary words,
+              and predictable patterns.
+            </li>
+
+            <li>
+              Use a different password for every important account.
+            </li>
+
+            <li>
+              Consider using a reputable password manager to store
+              unique passwords.
+            </li>
+
+            <li>
+              Enable multi-factor authentication when a service
+              provides it.
+            </li>
+          </ul>
+
+          <p className="mt-5 text-sm leading-7 text-slate-600">
+            The strength indicator in this tool is an estimate based
+            on password length and selected character categories.
+            It should not be treated as a complete password-security
+            audit.
+          </p>
+        </section>
+
+        {/* Randomness */}
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 className="text-2xl font-bold text-slate-900">
+            How password generation works
+          </h2>
+
+          <p className="mt-4 text-sm leading-7 text-slate-600">
+            This generator uses the browser&apos;s Web Crypto API
+            to obtain random values and uses those values to select
+            characters from the character sets you choose.
+          </p>
+
+          <p className="mt-4 text-sm leading-7 text-slate-600">
+            The generator also makes sure that each selected
+            character category contributes at least one character
+            when the password length allows it. The resulting
+            characters are then shuffled before the password is
+            displayed.
+          </p>
+
+          <p className="mt-4 text-sm leading-7 text-slate-600">
+            Randomness alone does not guarantee account security.
+            The security of an account also depends on password
+            length, uniqueness, storage practices, multi-factor
+            authentication, and the security of the service where
+            the password is used.
+          </p>
+        </section>
+
+        {/* Browser processing */}
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 className="text-2xl font-bold text-slate-900">
+            Browser-based password generation
+          </h2>
+
+          <p className="mt-4 text-sm leading-7 text-slate-600">
+            Password generation is performed directly in your
+            browser. The generated password is not submitted to a
+            password-generation API by this tool.
+          </p>
+
+          <p className="mt-4 text-sm leading-7 text-slate-600">
+            As with other website features, site-wide services such
+            as analytics may operate separately. Review the
+            ToolNoveHub Privacy Policy for information about how
+            website data is handled.
+          </p>
+        </section>
+
+        {/* FAQ */}
+        <section className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+          <h2 className="text-2xl font-bold text-slate-900">
+            Password Generator FAQ
+          </h2>
+
+          <div className="mt-6 space-y-6">
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Is the password generator secure?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                The generator uses the browser&apos;s Web Crypto
+                API for random-value generation rather than
+                Math.random(). Security also depends on how the
+                generated password is used and stored.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                How long should a password be?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Longer passwords generally provide a larger search
+                space. For many personal accounts, choosing 16 or
+                more characters is a practical starting point when
+                the service permits it.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Does the generator store my password?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                The password-generation function runs in your
+                browser and does not send the generated password to
+                a password-generation server.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Can I use the same generated password on multiple
+                websites?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                It is better to use a unique password for each
+                important account. Reusing a password can increase
+                the impact of a breach at another service.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-slate-900">
+                Does the strength indicator guarantee security?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                No. The indicator is only a simple estimate based on
+                length and character choices. It does not analyze
+                every property of a password or predict how a
+                particular service handles authentication.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Related tools */}
+        <section className="mt-8">
           <h2 className="mb-4 text-2xl font-bold text-slate-900">
             Related Tools
           </h2>
 
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
             <Link
               href="/tools/qr-code-generator"
-              className="rounded-xl border border-slate-200/50 bg-white p-4 text-center shadow-lg transition-all hover:border-indigo-200 hover:shadow-xl"
+              className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm transition hover:border-indigo-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <span className="text-sm font-medium text-slate-900">
                 QR Code Generator
@@ -178,7 +376,7 @@ export default function PasswordGeneratorPage() {
 
             <Link
               href="/tools/calculator"
-              className="rounded-xl border border-slate-200/50 bg-white p-4 text-center shadow-lg transition-all hover:border-indigo-200 hover:shadow-xl"
+              className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm transition hover:border-indigo-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <span className="text-sm font-medium text-slate-900">
                 Calculator
@@ -187,7 +385,7 @@ export default function PasswordGeneratorPage() {
 
             <Link
               href="/tools/percentage-calculator"
-              className="rounded-xl border border-slate-200/50 bg-white p-4 text-center shadow-lg transition-all hover:border-indigo-200 hover:shadow-xl"
+              className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm transition hover:border-indigo-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <span className="text-sm font-medium text-slate-900">
                 Percentage Calculator
@@ -196,15 +394,16 @@ export default function PasswordGeneratorPage() {
 
             <Link
               href="/tools/color-picker"
-              className="rounded-xl border border-slate-200/50 bg-white p-4 text-center shadow-lg transition-all hover:border-indigo-200 hover:shadow-xl"
+              className="rounded-xl border border-slate-200 bg-white p-4 text-center shadow-sm transition hover:border-indigo-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <span className="text-sm font-medium text-slate-900">
                 Color Picker
               </span>
             </Link>
           </div>
-        </div>
+        </section>
 
+        {/* Structured data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -212,6 +411,6 @@ export default function PasswordGeneratorPage() {
           }}
         />
       </div>
-    </div>
+    </main>
   );
 }
