@@ -4,30 +4,45 @@ import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 
 type QRType = "text" | "url" | "wifi";
+type WiFiSecurity = "WPA" | "WEP" | "nopass";
 
-function escapeWifiValue(value: string) {
+function escapeWifiValue(value: string): string {
   return value.replace(/([\\;,":])/g, "\\$1");
+}
+
+function buildWifiPayload(
+  ssid: string,
+  password: string,
+  security: WiFiSecurity,
+  hidden: boolean,
+): string {
+  return `WIFI:T:${security};S:${escapeWifiValue(ssid)};P:${escapeWifiValue(
+    password,
+  )};H:${hidden ? "true" : "false"};;`;
 }
 
 export default function QRCodeGeneratorPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [type, setType] = useState<QRType>("text");
+
   const [text, setText] = useState("");
+
   const [wifiSsid, setWifiSsid] = useState("");
   const [wifiPassword, setWifiPassword] = useState("");
-  const [wifiSecurity, setWifiSecurity] = useState<"WPA" | "WEP" | "nopass">(
-    "WPA",
-  );
+  const [wifiSecurity, setWifiSecurity] =
+    useState<WiFiSecurity>("WPA");
   const [wifiHidden, setWifiHidden] = useState(false);
 
   const [error, setError] = useState("");
   const [generated, setGenerated] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const getQRValue = () => {
+  const getQRValue = (): string => {
     if (type === "wifi") {
-      if (!wifiSsid.trim()) {
+      const ssid = wifiSsid.trim();
+
+      if (!ssid) {
         return "";
       }
 
@@ -35,45 +50,86 @@ export default function QRCodeGeneratorPage() {
         return "";
       }
 
-      return `WIFI:T:${wifiSecurity};S:${escapeWifiValue(
-        wifiSsid,
-      )};P:${escapeWifiValue(wifiPassword)};H:${wifiHidden ? "true" : "false"};;`;
+      return buildWifiPayload(
+        ssid,
+        wifiPassword,
+        wifiSecurity,
+        wifiHidden,
+      );
     }
 
     return text.trim();
+  };
+
+  const validateInput = (): boolean => {
+    if (type === "wifi") {
+      if (!wifiSsid.trim()) {
+        setError("Please enter the Wi-Fi network name.");
+        return false;
+      }
+
+      if (wifiSecurity !== "nopass" && !wifiPassword) {
+        setError("Please enter the Wi-Fi password.");
+        return false;
+      }
+
+      return true;
+    }
+
+    if (!text.trim()) {
+      setError(
+        type === "url"
+          ? "Please enter a website URL."
+          : "Please enter some text.",
+      );
+      return false;
+    }
+
+    if (type === "url") {
+      try {
+        const url = new URL(text.trim());
+
+        if (!["http:", "https:"].includes(url.protocol)) {
+          setError("Please enter a valid HTTP or HTTPS URL.");
+          return false;
+        }
+      } catch {
+        setError(
+          "Please enter a valid website URL, such as https://example.com.",
+        );
+        return false;
+      }
+    }
+
+    return true;
   };
 
   const generateQR = async () => {
     setError("");
     setCopied(false);
 
+    if (!validateInput()) {
+      setGenerated(false);
+      return;
+    }
+
     const value = getQRValue();
 
-    if (!value) {
+    if (!value || !canvasRef.current) {
       setGenerated(false);
-
-      if (type === "wifi") {
-        setError(
-          wifiSsid.trim()
-            ? "Please enter the Wi-Fi password."
-            : "Please enter the Wi-Fi network name.",
-        );
-      } else {
-        setError("Please enter some text or a URL.");
-      }
-
+      setError("Unable to generate the QR code. Please try again.");
       return;
     }
 
     try {
-      if (!canvasRef.current) {
-        return;
-      }
-
       await QRCode.toCanvas(canvasRef.current, value, {
         width: 320,
         margin: 3,
         errorCorrectionLevel: "M",
+        color: {
+          dark: "#111827",
+          light: "#ffffff",
+        },
       });
 
       setGenerated(true);
@@ -89,13 +145,24 @@ export default function QRCodeGeneratorPage() {
     }
 
     const link = document.createElement("a");
+
     link.download = "toolnovehub-qr-code.png";
     link.href = canvasRef.current.toDataURL("image/png");
+
+    document.body.appendChild(link);
     link.click();
+    link.remove();
   };
 
   const copyQR = async () => {
     if (!canvasRef.current || !generated) {
+      return;
+    }
+
+    if (!navigator.clipboard?.write || !("ClipboardItem" in window)) {
+      setError(
+        "Image copying is not supported by this browser. Please download the QR code instead.",
+      );
       return;
     }
 
@@ -105,23 +172,18 @@ export default function QRCodeGeneratorPage() {
       });
 
       if (!blob) {
-        setError("Unable to copy the QR code.");
+        setError("Unable to prepare the QR code for copying.");
         return;
       }
 
-      if ("ClipboardItem" in window && navigator.clipboard?.write) {
-        const item = new ClipboardItem({
-          "image/png": blob,
-        });
+      const item = new ClipboardItem({
+        "image/png": blob,
+      });
 
-        await navigator.clipboard.write([item]);
-        setCopied(true);
-        return;
-      }
+      await navigator.clipboard.write([item]);
 
-      setError(
-        "Image copying is not supported by this browser. Please download the QR code instead.",
-      );
+      setError("");
+      setCopied(true);
     } catch {
       setError(
         "Unable to copy the QR code. Please use the download button instead.",
@@ -129,10 +191,48 @@ export default function QRCodeGeneratorPage() {
     }
   };
 
-  useEffect(() => {
-    setGenerated(false);
+  const clearGenerator = () => {
+    setText("");
+    setWifiSsid("");
+    setWifiPassword("");
+    setWifiSecurity("WPA");
+    setWifiHidden(false);
+
     setError("");
+    setGenerated(false);
     setCopied(false);
+
+    if (canvasRef.current) {
+      const context = canvasRef.current.getContext("2d");
+
+      if (context) {
+        context.clearRect(
+          0,
+          0,
+          canvasRef.current.width,
+          canvasRef.current.height,
+        );
+      }
+    }
+  };
+
+  useEffect(() => {
+    setError("");
+    setGenerated(false);
+    setCopied(false);
+
+    if (canvasRef.current) {
+      const context = canvasRef.current.getContext("2d");
+
+      if (context) {
+        context.clearRect(
+          0,
+          0,
+          canvasRef.current.width,
+          canvasRef.current.height,
+        );
+      }
+    }
   }, [type]);
 
   return (
@@ -149,9 +249,9 @@ export default function QRCodeGeneratorPage() {
             </h1>
 
             <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
-              Create a free QR code for text, websites, or Wi-Fi networks.
-              Generate it directly in your browser and download it as a PNG
-              image.
+              Create free QR codes for text, websites, and Wi-Fi
+              networks. Generate your QR code directly in your browser,
+              then download it as a PNG image.
             </p>
           </div>
         </div>
@@ -160,16 +260,26 @@ export default function QRCodeGeneratorPage() {
       <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
           {/* Generator */}
-          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <section
+            aria-labelledby="qr-generator-heading"
+            className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+          >
+            <h2
+              id="qr-generator-heading"
+              className="sr-only"
+            >
+              QR code generator controls
+            </h2>
+
             <div
               className="grid grid-cols-3 rounded-xl bg-gray-100 p-1"
               role="tablist"
               aria-label="QR code type"
             >
               {[
-                { value: "text", label: "Text" },
-                { value: "url", label: "URL" },
-                { value: "wifi", label: "Wi-Fi" },
+                { value: "text" as QRType, label: "Text" },
+                { value: "url" as QRType, label: "URL" },
+                { value: "wifi" as QRType, label: "Wi-Fi" },
               ].map((item) => {
                 const selected = type === item.value;
 
@@ -179,8 +289,8 @@ export default function QRCodeGeneratorPage() {
                     type="button"
                     role="tab"
                     aria-selected={selected}
-                    onClick={() => setType(item.value as QRType)}
-                    className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition ${
+                    onClick={() => setType(item.value)}
+                    className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                       selected
                         ? "bg-white text-blue-600 shadow-sm"
                         : "text-gray-600 hover:text-gray-900"
@@ -210,6 +320,11 @@ export default function QRCodeGeneratorPage() {
                     rows={6}
                     className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   />
+
+                  <p className="mt-2 text-xs leading-5 text-gray-500">
+                    You can encode a short message, contact information,
+                    instructions, or other text.
+                  </p>
                 </div>
               )}
 
@@ -225,14 +340,16 @@ export default function QRCodeGeneratorPage() {
                   <input
                     id="qr-url"
                     type="url"
+                    inputMode="url"
+                    autoComplete="url"
                     value={text}
                     onChange={(event) => setText(event.target.value)}
                     placeholder="https://example.com"
                     className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                   />
 
-                  <p className="mt-2 text-xs text-gray-500">
-                    Include the full URL, such as https://example.com
+                  <p className="mt-2 text-xs leading-5 text-gray-500">
+                    Include the full URL, such as https://example.com.
                   </p>
                 </div>
               )}
@@ -250,8 +367,11 @@ export default function QRCodeGeneratorPage() {
                     <input
                       id="wifi-ssid"
                       type="text"
+                      autoComplete="off"
                       value={wifiSsid}
-                      onChange={(event) => setWifiSsid(event.target.value)}
+                      onChange={(event) =>
+                        setWifiSsid(event.target.value)
+                      }
                       placeholder="My Wi-Fi"
                       className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     />
@@ -270,12 +390,14 @@ export default function QRCodeGeneratorPage() {
                       value={wifiSecurity}
                       onChange={(event) =>
                         setWifiSecurity(
-                          event.target.value as "WPA" | "WEP" | "nopass",
+                          event.target.value as WiFiSecurity,
                         )
                       }
                       className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                     >
-                      <option value="WPA">WPA / WPA2 / WPA3</option>
+                      <option value="WPA">
+                        WPA / WPA2 / WPA3
+                      </option>
                       <option value="WEP">WEP</option>
                       <option value="nopass">No password</option>
                     </select>
@@ -293,6 +415,7 @@ export default function QRCodeGeneratorPage() {
                       <input
                         id="wifi-password"
                         type="password"
+                        autoComplete="off"
                         value={wifiPassword}
                         onChange={(event) =>
                           setWifiPassword(event.target.value)
@@ -303,15 +426,23 @@ export default function QRCodeGeneratorPage() {
                     </div>
                   )}
 
-                  <label className="flex items-center gap-3 text-sm text-gray-700">
+                  <label className="flex cursor-pointer items-center gap-3 text-sm text-gray-700">
                     <input
                       type="checkbox"
                       checked={wifiHidden}
-                      onChange={(event) => setWifiHidden(event.target.checked)}
+                      onChange={(event) =>
+                        setWifiHidden(event.target.checked)
+                      }
                       className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    Hidden Wi-Fi network
+
+                    <span>Hidden Wi-Fi network</span>
                   </label>
+
+                  <p className="text-xs leading-5 text-gray-500">
+                    The Wi-Fi details are encoded into the QR image so
+                    compatible devices can use the code to connect.
+                  </p>
                 </div>
               )}
             </div>
@@ -326,23 +457,40 @@ export default function QRCodeGeneratorPage() {
               </div>
             )}
 
-            <button
-              type="button"
-              onClick={generateQR}
-              className="mt-7 w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
-              Generate QR Code
-            </button>
+            <div className="mt-7 grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={generateQR}
+                className="rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Generate QR Code
+              </button>
 
-            <p className="mt-4 text-center text-xs text-gray-500">
-              Your QR content is processed in your browser.
+              <button
+                type="button"
+                onClick={clearGenerator}
+                className="rounded-xl border border-gray-300 bg-white px-5 py-3.5 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                Clear
+              </button>
+            </div>
+
+            <p className="mt-4 text-center text-xs leading-5 text-gray-500">
+              QR code generation is performed in your browser using
+              the information you enter.
             </p>
           </section>
 
           {/* Preview */}
-          <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <section
+            aria-labelledby="qr-preview-heading"
+            className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+          >
             <div className="text-center">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2
+                id="qr-preview-heading"
+                className="text-lg font-semibold text-gray-900"
+              >
                 QR Code Preview
               </h2>
 
@@ -365,7 +513,10 @@ export default function QRCodeGeneratorPage() {
 
                 {!generated && (
                   <div className="px-6">
-                    <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-100 text-3xl">
+                    <div
+                      aria-hidden="true"
+                      className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gray-100 text-3xl font-bold text-gray-500"
+                    >
                       QR
                     </div>
 
@@ -374,7 +525,8 @@ export default function QRCodeGeneratorPage() {
                     </p>
 
                     <p className="mt-1 text-xs leading-5 text-gray-500">
-                      Enter your content and click Generate QR Code.
+                      Enter your information and click Generate QR
+                      Code.
                     </p>
                   </div>
                 )}
@@ -386,7 +538,7 @@ export default function QRCodeGeneratorPage() {
                 <button
                   type="button"
                   onClick={downloadQR}
-                  className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-50"
+                  className="rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   Download PNG
                 </button>
@@ -394,65 +546,220 @@ export default function QRCodeGeneratorPage() {
                 <button
                   type="button"
                   onClick={copyQR}
-                  className="rounded-xl bg-gray-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
+                  className="rounded-xl bg-gray-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                   {copied ? "Copied!" : "Copy QR"}
                 </button>
               </div>
             )}
+
+            {generated && (
+              <p
+                className="mt-3 text-center text-xs text-gray-500"
+                aria-live="polite"
+              >
+                {copied
+                  ? "QR code copied to your clipboard."
+                  : "Your QR code is ready to download or copy."}
+              </p>
+            )}
           </section>
         </div>
 
-        {/* Information */}
+        {/* How to use */}
         <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
           <h2 className="text-xl font-bold text-gray-900">
             How to use the QR Code Generator
           </h2>
 
-          <ol className="mt-5 space-y-3 text-sm leading-6 text-gray-600">
+          <ol className="mt-5 space-y-4 text-sm leading-6 text-gray-600">
             <li>
-              <strong className="text-gray-900">1.</strong> Choose Text, URL,
-              or Wi-Fi.
+              <strong className="text-gray-900">1. Choose a type.</strong>{" "}
+              Select Text, URL, or Wi-Fi depending on the information
+              you want to encode.
             </li>
+
             <li>
-              <strong className="text-gray-900">2.</strong> Enter the
-              information you want to encode.
+              <strong className="text-gray-900">2. Enter your information.</strong>{" "}
+              Type your message, website address, or Wi-Fi details.
             </li>
+
             <li>
-              <strong className="text-gray-900">3.</strong> Click Generate QR
-              Code.
+              <strong className="text-gray-900">3. Generate the code.</strong>{" "}
+              Click Generate QR Code to create the QR image.
             </li>
+
             <li>
-              <strong className="text-gray-900">4.</strong> Download the QR
-              code as a PNG image or copy it when supported by your browser.
+              <strong className="text-gray-900">4. Save or copy it.</strong>{" "}
+              Download the QR code as a PNG image or copy the image when
+              your browser supports clipboard image copying.
             </li>
           </ol>
         </section>
 
+        {/* About */}
         <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
           <h2 className="text-xl font-bold text-gray-900">
-            Why use ToolNoveHub?
+            About QR codes
           </h2>
 
-          <div className="mt-5 grid gap-5 sm:grid-cols-3">
+          <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
+            <p>
+              A QR code is a two-dimensional barcode that can store
+              information such as text, website addresses, and network
+              connection details. A phone or other compatible device can
+              scan the pattern and interpret the encoded information.
+            </p>
+
+            <p>
+              QR codes are commonly used for websites, menus, event
+              information, contact details, product information, and
+              Wi-Fi access. The information stored in the QR code
+              depends on what you enter into the generator.
+            </p>
+
+            <p>
+              ToolNoveHub creates the QR image directly in your browser.
+              The generator does not require an account, and the QR
+              content is used by the browser to create the image.
+            </p>
+          </div>
+        </section>
+
+        {/* Use cases */}
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            Common QR code uses
+          </h2>
+
+          <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <h3 className="font-semibold text-gray-900">Free</h3>
+              <h3 className="font-semibold text-gray-900">
+                Websites
+              </h3>
+
               <p className="mt-1 text-sm leading-6 text-gray-600">
-                Create QR codes without needing an account.
+                Share a website or landing page without requiring users
+                to type the address manually.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Easy to use</h3>
+              <h3 className="font-semibold text-gray-900">
+                Wi-Fi access
+              </h3>
+
               <p className="mt-1 text-sm leading-6 text-gray-600">
-                Simple controls make QR generation quick and straightforward.
+                Create a Wi-Fi QR code that compatible devices can use
+                to connect to a network.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-gray-900">Browser-based</h3>
+              <h3 className="font-semibold text-gray-900">
+                Text and messages
+              </h3>
+
               <p className="mt-1 text-sm leading-6 text-gray-600">
-                QR code generation happens directly in your browser.
+                Encode short messages, instructions, contact details, or
+                other useful text.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Business materials
+              </h3>
+
+              <p className="mt-1 text-sm leading-6 text-gray-600">
+                Add QR codes to signs, printed materials, packaging,
+                menus, and promotional resources.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Privacy */}
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            Privacy and browser-based processing
+          </h2>
+
+          <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
+            <p>
+              This QR generator creates the QR image in your browser
+              using the information you enter into the tool. No account
+              is required to generate a QR code.
+            </p>
+
+            <p>
+              For important or sensitive information, review the
+              ToolNoveHub Privacy Policy and the behavior of your
+              browser before using any online tool.
+            </p>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+          <h2 className="text-xl font-bold text-gray-900">
+            QR Code Generator FAQ
+          </h2>
+
+          <div className="mt-5 space-y-6">
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Is the QR Code Generator free?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Yes. You can create QR codes with the ToolNoveHub
+                generator without creating an account.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Can I create a QR code for a website?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Yes. Select URL, enter a complete HTTP or HTTPS website
+                address, and generate the QR code.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Can I create a Wi-Fi QR code?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Yes. Select Wi-Fi and enter the network name, security
+                type, and password when required.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Can I download my QR code?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Yes. After generating a QR code, use Download PNG to
+                save the image to your device.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Can I copy the QR code?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                The Copy QR button uses the browser clipboard when
+                image copying is supported. If it is not supported,
+                download the PNG instead.
               </p>
             </div>
           </div>
