@@ -53,6 +53,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/age-calculator">Try the Age Calculator →</a></p>
     `,
   },
+
   {
     id: 1,
     title: "How to Create a QR Code for Wi-Fi in 30 Seconds",
@@ -71,7 +72,7 @@ export const blogPosts: BlogPost[] = [
       <p>Have your Wi-Fi network name, password, and security type ready. The network name is often called the SSID. If you are not sure about the security type, check your router settings or the information provided by your network administrator.</p>
 
       <h2>Step 1: Open the QR Code Generator</h2>
-      <p>Open the <a href="/tools/qr-code-generator">QR Code Generator</a> and choose the Wi-Fi option if the tool provides a Wi-Fi mode.</p>
+      <p>Open the <a href="/tools/qr-code-generator">QR Code Generator</a> and choose the Wi-Fi option.</p>
 
       <h2>Step 2: Enter Your Wi-Fi Details</h2>
       <p>Enter the network name, select the appropriate security type, and enter the Wi-Fi password carefully. A single incorrect character can prevent the connection from working, so double-check the details before generating the code.</p>
@@ -88,6 +89,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/qr-code-generator">Try the QR Code Generator →</a></p>
     `,
   },
+
   {
     id: 2,
     title: "QR Code Generator: The Ultimate Guide for 2026",
@@ -128,36 +130,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/qr-code-generator">Start generating QR codes →</a></p>
     `,
   },
-  {
-    id: 3,
-    title: "QR Code Scanner: How to Scan QR Codes with Your Phone",
-    slug: "qr-code-scanner-how-to-scan",
-    excerpt:
-      "Learn the simple steps for scanning QR codes on modern phones and what to do when a code is difficult to read.",
-    category: "Tutorial",
-    date: "2026-08-05",
-    readTime: "4 min read",
-    author: "ToolNoveHub Team",
-    tags: ["qr code", "scanner", "tutorial", "mobile"],
-    content: `
-      <p>QR codes are designed to make information easy to access. Instead of typing a long web address, you can scan the code with a compatible phone camera and open the information it contains.</p>
 
-      <h2>How to Scan a QR Code</h2>
-      <p>Open your phone's camera or QR scanning feature and point it toward the code. Keep the phone steady and make sure the complete QR code is visible on the screen. When the phone recognizes the code, a notification or link should appear.</p>
-
-      <h2>On iPhone</h2>
-      <p>Open the Camera app and point it at the QR code. When the code is recognized, tap the notification displayed on the screen to open the associated information.</p>
-
-      <h2>On Android</h2>
-      <p>Many modern Android phones can scan QR codes directly through the Camera app. Point the camera at the code and follow the link or notification that appears. The exact interface can vary by phone manufacturer and Android version.</p>
-
-      <h2>What If the Code Does Not Scan?</h2>
-      <p>Move the phone slightly closer or farther away and make sure the entire code is visible. Check that there is enough light and that the code is not badly blurred, damaged, or stretched.</p>
-
-      <h2>Scan Safely</h2>
-      <p>A QR code can lead to a website or other content, so treat unfamiliar codes like unfamiliar links. Before entering passwords, payment information, or other sensitive details, check that the destination is the website you intended to visit.</p>
-    `,
-  },
   {
     id: 4,
     title: "The Best Image Resizer Tools for Social Media in 2026",
@@ -190,6 +163,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/image-resizer">Try the Image Resizer →</a></p>
     `,
   },
+
   {
     id: 5,
     title: "How to Resize Images for Free Without Losing Quality",
@@ -222,6 +196,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/image-resizer">Resize an image now →</a></p>
     `,
   },
+
   {
     id: 6,
     title: "Image Cropper: How to Crop Images Perfectly",
@@ -254,6 +229,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/image-cropper">Try the Image Cropper →</a></p>
     `,
   },
+
   {
     id: 7,
     title: "Word Counter: Why You Need One for Content Writing",
@@ -288,6 +264,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/word-counter">Try the Word Counter →</a></p>
     `,
   },
+
   {
     id: 8,
     title: "Text to Slug Converter: Create SEO-Friendly URLs",
@@ -320,6 +297,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/text-to-slug">Create a clean URL slug →</a></p>
     `,
   },
+
   {
     id: 9,
     title: "Text to ASCII: Create Stunning ASCII Art",
@@ -352,6 +330,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/text-to-ascii">Try the Text to ASCII tool →</a></p>
     `,
   },
+
   {
     id: 10,
     title: "Percentage Calculator: 5 Ways to Use It in Daily Life",
@@ -387,6 +366,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/percentage-calculator">Try the Percentage Calculator →</a></p>
     `,
   },
+
   {
     id: 11,
     title: "Number to Words: Convert Numbers to Text Easily",
@@ -418,6 +398,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/number-to-words">Try the Number to Words Converter →</a></p>
     `,
   },
+
   {
     id: 12,
     title: "File Size Converter: Understand Storage Better",
@@ -447,6 +428,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/file-size-converter">Convert a file size →</a></p>
     `,
   },
+
   {
     id: 13,
     title: "JSON Formatter: Why Every Developer Needs One",
@@ -479,6 +461,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/json-formatter">Try the JSON Formatter →</a></p>
     `,
   },
+
   {
     id: 14,
     title: "JSON Validator: Avoid Common JSON Mistakes",
@@ -514,6 +497,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/json-validator">Try the JSON Validator →</a></p>
     `,
   },
+
   {
     id: 15,
     title: "Binary Converter: Understand Computer Language",
@@ -546,6 +530,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools/binary-converter">Try the Binary Converter →</a></p>
     `,
   },
+
   {
     id: 16,
     title: "Privacy First: What to Know About Browser-Based Tools",
@@ -583,6 +568,7 @@ export const blogPosts: BlogPost[] = [
       <p><a href="/tools">Browse all ToolNoveHub tools →</a></p>
     `,
   },
+
   {
     id: 17,
     title: "10 Free Online Tools Every Developer Needs in 2026",

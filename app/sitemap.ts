@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 const siteUrl = "https://toolnovehub.tools";
 
-const tools = [
+const toolSlugs = [
   "age-calculator",
   "binary-converter",
   "calculator",
@@ -23,27 +23,10 @@ const tools = [
   "word-counter",
 ];
 
-const categories = [
-  "calculators",
-  "developer",
-  "image",
-  "text",
-  "design",
-  "utility",
-];
-
-const docs = [
-  "getting-started",
-  "tool-guides",
-  "faq",
-  "privacy-security",
-];
-
-const blogPosts = [
+const blogSlugs = [
   "age-calculator-ultimate-guide",
   "how-to-create-qr-code-for-wifi",
   "qr-code-generator-ultimate-guide",
-  "qr-code-scanner-how-to-scan",
   "best-image-resizer-tools-social-media",
   "resize-images-free-without-losing-quality",
   "image-cropper-how-to-crop",
@@ -60,101 +43,89 @@ const blogPosts = [
   "10-free-online-tools-every-developer-needs",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
-  const mainPages: MetadataRoute.Sitemap = [
-    {
-      url: siteUrl,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${siteUrl}/tools`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${siteUrl}/about`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${siteUrl}/blog`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${siteUrl}/docs`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${siteUrl}/contact`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${siteUrl}/privacy`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${siteUrl}/terms`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${siteUrl}/developer`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-  ];
-
-  const categoryPages: MetadataRoute.Sitemap = categories.map(
-    (category) => ({
-      url: `${siteUrl}/tools/${category}`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    })
-  );
-
-  const docPages: MetadataRoute.Sitemap = docs.map((slug) => ({
-    url: `${siteUrl}/docs/${slug}`,
-    lastModified: now,
-    changeFrequency: "monthly",
+const mainPages = [
+  {
+    path: "",
+    changeFrequency: "weekly" as const,
+    priority: 1,
+  },
+  {
+    path: "/tools",
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
+  },
+  {
+    path: "/about",
+    changeFrequency: "monthly" as const,
     priority: 0.6,
-  }));
-
-  const toolPages: MetadataRoute.Sitemap = tools.map((tool) => ({
-    url: `${siteUrl}/tools/${tool}`,
-    lastModified: now,
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
-
-  const blogPages: MetadataRoute.Sitemap = blogPosts.map((slug) => ({
-    url: `${siteUrl}/blog/${slug}`,
-    lastModified: now,
-    changeFrequency: "monthly",
+  },
+  {
+    path: "/blog",
+    changeFrequency: "weekly" as const,
     priority: 0.7,
-  }));
+  },
+  {
+    path: "/docs",
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  },
+  {
+    path: "/contact",
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  },
+  {
+    path: "/privacy",
+    changeFrequency: "yearly" as const,
+    priority: 0.3,
+  },
+  {
+    path: "/terms",
+    changeFrequency: "yearly" as const,
+    priority: 0.3,
+  },
+  {
+    path: "/developer",
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  },
+];
 
-  return [
-    ...mainPages,
-    ...categoryPages,
-    ...docPages,
-    ...toolPages,
-    ...blogPages,
+const categoryPages = [
+  "/tools/calculators",
+  "/tools/developer",
+  "/tools/image",
+  "/tools/text",
+  "/tools/utility",
+  "/tools/design",
+];
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const pages: MetadataRoute.Sitemap = [
+    ...mainPages.map((page) => ({
+      url: `${siteUrl}${page.path}`,
+      changeFrequency: page.changeFrequency,
+      priority: page.priority,
+    })),
+
+    ...categoryPages.map((path) => ({
+      url: `${siteUrl}${path}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
+
+    ...toolSlugs.map((slug) => ({
+      url: `${siteUrl}/tools/${slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
+
+    ...blogSlugs.map((slug) => ({
+      url: `${siteUrl}/blog/${slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
+
+  return pages;
 }
