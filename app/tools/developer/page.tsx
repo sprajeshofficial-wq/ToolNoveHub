@@ -57,7 +57,7 @@ export default function DeveloperToolsPage() {
     <main className="min-h-screen bg-gray-50">
       {/* Hero */}
       <section className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl px-4 pt-28 pb-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
               <Code2 size={32} strokeWidth={2} />
