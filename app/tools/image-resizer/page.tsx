@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import ImageResizer from "./ImageResizer";
 
+const pageUrl =
+  "https://toolnovehub.tools/tools/image-resizer";
+
+const ogImage =
+  "https://toolnovehub.tools/og-image-resizer.jpg";
+
 export const metadata: Metadata = {
   title: "Image Resizer - Resize Images Online",
   description:
@@ -16,18 +22,18 @@ export const metadata: Metadata = {
     "resize WebP",
   ],
   alternates: {
-    canonical: "https://toolnovehub.tools/tools/image-resizer",
+    canonical: pageUrl,
   },
   openGraph: {
     title: "Image Resizer - Resize Images Online",
     description:
       "Resize images online with custom dimensions and download the result directly from your browser.",
-    url: "https://toolnovehub.tools/tools/image-resizer",
+    url: pageUrl,
     siteName: "ToolNoveHub",
     type: "website",
     images: [
       {
-        url: "https://toolnovehub.tools/og-image-resizer.jpg",
+        url: ogImage,
         width: 1200,
         height: 630,
         alt: "ToolNoveHub Image Resizer",
@@ -39,7 +45,7 @@ export const metadata: Metadata = {
     title: "Image Resizer - Resize Images Online",
     description:
       "Resize images online with custom dimensions and download the result directly from your browser.",
-    images: ["https://toolnovehub.tools/og-image-resizer.jpg"],
+    images: [ogImage],
   },
   robots: {
     index: true,
@@ -58,17 +64,33 @@ const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: "Image Resizer",
-  url: "https://toolnovehub.tools/tools/image-resizer",
+  url: pageUrl,
   description:
-    "A browser-based image resizer for changing image dimensions and exporting resized images.",
+    "A free browser-based image resizer for changing image dimensions and exporting resized images as PNG, JPEG, or WebP.",
   applicationCategory: "MultimediaApplication",
   operatingSystem: "Any",
-  browserRequirements: "Requires a modern web browser with Canvas support.",
+  browserRequirements:
+    "Requires a modern web browser with JavaScript and Canvas support.",
+  isAccessibleForFree: true,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": pageUrl,
+  },
   offers: {
     "@type": "Offer",
     price: "0",
     priceCurrency: "USD",
   },
+  featureList: [
+    "Resize images to custom dimensions",
+    "Keep image aspect ratio",
+    "Export PNG images",
+    "Export JPEG images",
+    "Export WebP images",
+    "Adjust JPEG and WebP quality",
+    "Download resized images",
+    "Browser-based image processing",
+  ],
 };
 
 export default function ImageResizerPage() {

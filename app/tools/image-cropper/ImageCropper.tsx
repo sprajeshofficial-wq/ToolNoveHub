@@ -28,25 +28,41 @@ type ImageInfo = {
   size: number;
 };
 
+type CropAction = {
+  type: "draw" | "move" | "resize";
+  startX: number;
+  startY: number;
+  originalX: number;
+  originalY: number;
+  originalWidth: number;
+  originalHeight: number;
+  direction?: ResizeDirection;
+};
+
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 const MIN_CROP_SIZE = 20;
 const MAX_OUTPUT_DIMENSION = 10000;
 
 function clamp(value: number, min: number, max: number) {
+  if (max < min) return min;
+
   return Math.min(Math.max(value, min), max);
 }
 
 function toInteger(value: string | number, fallback = 0) {
-  const parsed =
-    typeof value === "number" ? value : Number(value);
+  const parsed = typeof value === "number" ? value : Number(value);
 
-  if (!Number.isFinite(parsed)) return fallback;
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
 
   return Math.round(parsed);
 }
 
 function formatFileSize(bytes: number) {
-  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024) {
+    return `${bytes} B`;
+  }
 
   if (bytes < 1024 * 1024) {
     return `${(bytes / 1024).toFixed(1)} KB`;
@@ -72,9 +88,7 @@ function getMimeType(format: string) {
 function normalizeRotation(value: number) {
   const normalized = value % 360;
 
-  return normalized < 0
-    ? normalized + 360
-    : normalized;
+  return normalized < 0 ? normalized + 360 : normalized;
 }
 
 function getRotatedCanvasSize(
@@ -82,8 +96,9 @@ function getRotatedCanvasSize(
   height: number,
   rotation: number
 ) {
-  const radians =
-    (rotation * Math.PI) / 180;
+  const normalized = normalizeRotation(rotation);
+
+  const radians = (normalized * Math.PI) / 180;
 
   const sin = Math.abs(Math.sin(radians));
   const cos = Math.abs(Math.cos(radians));
@@ -106,11 +121,23 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 
     image.onload = () => resolve(image);
 
-    image.onerror = () =>
+    image.onerror = () => {
       reject(new Error("Unable to load image."));
+    };
 
     image.src = src;
   });
+}
+
+function getMinimumCropSize(
+  imageWidth: number,
+  imageHeight: number
+) {
+  return Math.min(
+    MIN_CROP_SIZE,
+    imageWidth,
+    imageHeight
+  );
 }
 
 export default function ImageCropper() {
@@ -124,6 +151,15 @@ export default function ImageCropper() {
   const objectUrlRef =
     useRef<string | null>(null);
 
+  const imageContainerRef =
+    useRef<HTMLDivElement | null>(null);
+
+  const cropActionRef =
+    useRef<CropAction | null>(null);
+
+  const croppedObjectUrlRef =
+    useRef<string | null>(null);
+
   const [cropMode, setCropMode] =
     useState<CropMode>("drag");
 
@@ -132,24 +168,8 @@ export default function ImageCropper() {
   const [cropWidth, setCropWidth] = useState(300);
   const [cropHeight, setCropHeight] = useState(300);
 
-  const imageContainerRef =
-    useRef<HTMLDivElement | null>(null);
-
-  const cropActionRef =
-    useRef<{
-      type: "draw" | "move" | "resize";
-      startX: number;
-      startY: number;
-      originalX: number;
-      originalY: number;
-      originalWidth: number;
-      originalHeight: number;
-      direction?: ResizeDirection;
-    } | null>(null);
-
-  const [croppedSrc, setCroppedSrc] = useState("");
-  const croppedObjectUrlRef =
-    useRef<string | null>(null);
+  const [croppedSrc, setCroppedSrc] =
+    useState("");
 
   const [croppedInfo, setCroppedInfo] =
     useState<ImageInfo | null>(null);
@@ -217,12 +237,69 @@ export default function ImageCropper() {
     setCroppedInfo(null);
   }
 
+  function getSafeCropValues() {
+    if (!imageInfo) {
+      return null;
+    }
+
+    const minimumCropSize =
+      getMinimumCropSize(
+        imageInfo.width,
+        imageInfo.height
+      );
+
+    const safeX = clamp(
+      toInteger(cropX),
+      0,
+      Math.max(
+        0,
+        imageInfo.width - minimumCropSize
+      )
+    );
+
+    const safeY = clamp(
+      toInteger(cropY),
+      0,
+      Math.max(
+        0,
+        imageInfo.height - minimumCropSize
+      )
+    );
+
+    const safeWidth = clamp(
+      toInteger(cropWidth),
+      minimumCropSize,
+      Math.max(
+        minimumCropSize,
+        imageInfo.width - safeX
+      )
+    );
+
+    const safeHeight = clamp(
+      toInteger(cropHeight),
+      minimumCropSize,
+      Math.max(
+        minimumCropSize,
+        imageInfo.height - safeY
+      )
+    );
+
+    return {
+      x: safeX,
+      y: safeY,
+      width: safeWidth,
+      height: safeHeight,
+    };
+  }
+
   function handleFileChange(
     event: ChangeEvent<HTMLInputElement>
   ) {
     const file = event.target.files?.[0];
 
-    if (!file) return;
+    if (!file) {
+      return;
+    }
 
     clearFeedback();
     clearCroppedImage();
@@ -231,6 +308,8 @@ export default function ImageCropper() {
       setError(
         "Please select a supported image file."
       );
+
+      event.target.value = "";
       return;
     }
 
@@ -238,6 +317,8 @@ export default function ImageCropper() {
       setError(
         "Please choose an image smaller than 20 MB."
       );
+
+      event.target.value = "";
       return;
     }
 
@@ -245,6 +326,8 @@ export default function ImageCropper() {
       URL.revokeObjectURL(
         objectUrlRef.current
       );
+
+      objectUrlRef.current = null;
     }
 
     const url =
@@ -258,6 +341,22 @@ export default function ImageCropper() {
       const width = image.naturalWidth;
       const height = image.naturalHeight;
 
+      if (width <= 0 || height <= 0) {
+        setError(
+          "The selected image has invalid dimensions."
+        );
+
+        URL.revokeObjectURL(url);
+
+        if (
+          objectUrlRef.current === url
+        ) {
+          objectUrlRef.current = null;
+        }
+
+        return;
+      }
+
       setImageSrc(url);
 
       setImageInfo({
@@ -267,8 +366,11 @@ export default function ImageCropper() {
         size: file.size,
       });
 
-      const initialWidth = Math.min(width, 860);
-      const initialHeight = Math.min(height, 573);
+      const initialWidth =
+        Math.min(width, 860);
+
+      const initialHeight =
+        Math.min(height, 573);
 
       const scale = Math.min(
         initialWidth / width,
@@ -277,20 +379,30 @@ export default function ImageCropper() {
 
       const cropW = Math.max(
         1,
-        Math.round(width * scale)
+        Math.min(
+          width,
+          Math.round(width * scale)
+        )
       );
 
       const cropH = Math.max(
         1,
-        Math.round(height * scale)
+        Math.min(
+          height,
+          Math.round(height * scale)
+        )
       );
 
       setCropX(
-        Math.round((width - cropW) / 2)
+        Math.round(
+          (width - cropW) / 2
+        )
       );
 
       setCropY(
-        Math.round((height - cropH) / 2)
+        Math.round(
+          (height - cropH) / 2
+        )
       );
 
       setCropWidth(cropW);
@@ -313,9 +425,14 @@ export default function ImageCropper() {
 
       URL.revokeObjectURL(url);
 
-      if (objectUrlRef.current === url) {
+      if (
+        objectUrlRef.current === url
+      ) {
         objectUrlRef.current = null;
       }
+
+      setImageSrc("");
+      setImageInfo(null);
     };
 
     image.src = url;
@@ -364,14 +481,23 @@ export default function ImageCropper() {
       imageContainerRef.current;
 
     if (!container || !imageInfo) {
-      return { x: 0, y: 0 };
+      return {
+        x: 0,
+        y: 0,
+      };
     }
 
     const rect =
       container.getBoundingClientRect();
 
-    if (rect.width <= 0 || rect.height <= 0) {
-      return { x: 0, y: 0 };
+    if (
+      rect.width <= 0 ||
+      rect.height <= 0
+    ) {
+      return {
+        x: 0,
+        y: 0,
+      };
     }
 
     const x = clamp(
@@ -390,6 +516,7 @@ export default function ImageCropper() {
       x:
         (x / rect.width) *
         imageInfo.width,
+
       y:
         (y / rect.height) *
         imageInfo.height,
@@ -419,8 +546,14 @@ export default function ImageCropper() {
       originalHeight: 1,
     };
 
-    setCropX(Math.round(point.x));
-    setCropY(Math.round(point.y));
+    setCropX(
+      Math.round(point.x)
+    );
+
+    setCropY(
+      Math.round(point.y)
+    );
+
     setCropWidth(1);
     setCropHeight(1);
 
@@ -448,11 +581,15 @@ export default function ImageCropper() {
 
     const inside =
       point.x >= cropX &&
-      point.x <= cropX + cropWidth &&
+      point.x <=
+        cropX + cropWidth &&
       point.y >= cropY &&
-      point.y <= cropY + cropHeight;
+      point.y <=
+        cropY + cropHeight;
 
-    if (!inside) return;
+    if (!inside) {
+      return;
+    }
 
     cropActionRef.current = {
       type: "move",
@@ -514,59 +651,84 @@ export default function ImageCropper() {
     const point =
       pointerToImage(event);
 
+    const minimumCropSize =
+      getMinimumCropSize(
+        imageInfo.width,
+        imageInfo.height
+      );
+
     if (action.type === "draw") {
-      const x = Math.min(
+      const rawX = Math.min(
         action.startX,
         point.x
       );
 
-      const y = Math.min(
+      const rawY = Math.min(
         action.startY,
         point.y
       );
 
-      const width = Math.abs(
+      const rawWidth = Math.abs(
         point.x - action.startX
       );
 
-      const height = Math.abs(
+      const rawHeight = Math.abs(
         point.y - action.startY
       );
 
       const safeX = clamp(
-        x,
+        rawX,
         0,
         Math.max(
           0,
-          imageInfo.width - MIN_CROP_SIZE
+          imageInfo.width -
+            minimumCropSize
         )
       );
 
       const safeY = clamp(
-        y,
+        rawY,
         0,
         Math.max(
           0,
-          imageInfo.height - MIN_CROP_SIZE
+          imageInfo.height -
+            minimumCropSize
         )
       );
 
       const safeWidth = clamp(
-        width,
-        MIN_CROP_SIZE,
-        imageInfo.width - safeX
+        rawWidth,
+        minimumCropSize,
+        Math.max(
+          minimumCropSize,
+          imageInfo.width - safeX
+        )
       );
 
       const safeHeight = clamp(
-        height,
-        MIN_CROP_SIZE,
-        imageInfo.height - safeY
+        rawHeight,
+        minimumCropSize,
+        Math.max(
+          minimumCropSize,
+          imageInfo.height - safeY
+        )
       );
 
-      setCropX(Math.round(safeX));
-      setCropY(Math.round(safeY));
-      setCropWidth(Math.round(safeWidth));
-      setCropHeight(Math.round(safeHeight));
+      setCropX(
+        Math.round(safeX)
+      );
+
+      setCropY(
+        Math.round(safeY)
+      );
+
+      setCropWidth(
+        Math.round(safeWidth)
+      );
+
+      setCropHeight(
+        Math.round(safeHeight)
+      );
 
       return;
     }
@@ -581,19 +743,30 @@ export default function ImageCropper() {
       const newX = clamp(
         action.originalX + dx,
         0,
-        imageInfo.width -
-          action.originalWidth
+        Math.max(
+          0,
+          imageInfo.width -
+            action.originalWidth
+        )
       );
 
       const newY = clamp(
         action.originalY + dy,
         0,
-        imageInfo.height -
-          action.originalHeight
+        Math.max(
+          0,
+          imageInfo.height -
+            action.originalHeight
+        )
       );
 
-      setCropX(Math.round(newX));
-      setCropY(Math.round(newY));
+      setCropX(
+        Math.round(newX)
+      );
+
+      setCropY(
+        Math.round(newY)
+      );
 
       return;
     }
@@ -621,18 +794,24 @@ export default function ImageCropper() {
       if (direction.includes("e")) {
         width = clamp(
           action.originalWidth + dx,
-          MIN_CROP_SIZE,
-          imageInfo.width -
-            action.originalX
+          minimumCropSize,
+          Math.max(
+            minimumCropSize,
+            imageInfo.width -
+              action.originalX
+          )
         );
       }
 
       if (direction.includes("s")) {
         height = clamp(
           action.originalHeight + dy,
-          MIN_CROP_SIZE,
-          imageInfo.height -
-            action.originalY
+          minimumCropSize,
+          Math.max(
+            minimumCropSize,
+            imageInfo.height -
+              action.originalY
+          )
         );
       }
 
@@ -640,9 +819,12 @@ export default function ImageCropper() {
         const newX = clamp(
           action.originalX + dx,
           0,
-          action.originalX +
-            action.originalWidth -
-            MIN_CROP_SIZE
+          Math.max(
+            0,
+            action.originalX +
+              action.originalWidth -
+              minimumCropSize
+          )
         );
 
         x = newX;
@@ -650,15 +832,23 @@ export default function ImageCropper() {
         width =
           action.originalWidth -
           (newX - action.originalX);
+
+        width = Math.max(
+          minimumCropSize,
+          width
+        );
       }
 
       if (direction.includes("n")) {
         const newY = clamp(
           action.originalY + dy,
           0,
-          action.originalY +
-            action.originalHeight -
-            MIN_CROP_SIZE
+          Math.max(
+            0,
+            action.originalY +
+              action.originalHeight -
+              minimumCropSize
+          )
         );
 
         y = newY;
@@ -666,12 +856,66 @@ export default function ImageCropper() {
         height =
           action.originalHeight -
           (newY - action.originalY);
+
+        height = Math.max(
+          minimumCropSize,
+          height
+        );
       }
 
-      setCropX(Math.round(x));
-      setCropY(Math.round(y));
-      setCropWidth(Math.round(width));
-      setCropHeight(Math.round(height));
+      x = clamp(
+        x,
+        0,
+        Math.max(
+          0,
+          imageInfo.width -
+            minimumCropSize
+        )
+      );
+
+      y = clamp(
+        y,
+        0,
+        Math.max(
+          0,
+          imageInfo.height -
+            minimumCropSize
+        )
+      );
+
+      width = clamp(
+        width,
+        minimumCropSize,
+        Math.max(
+          minimumCropSize,
+          imageInfo.width - x
+        )
+      );
+
+      height = clamp(
+        height,
+        minimumCropSize,
+        Math.max(
+          minimumCropSize,
+          imageInfo.height - y
+        )
+      );
+
+      setCropX(
+        Math.round(x)
+      );
+
+      setCropY(
+        Math.round(y)
+      );
+
+      setCropWidth(
+        Math.round(width)
+      );
+
+      setCropHeight(
+        Math.round(height)
+      );
     }
   }
 
@@ -690,15 +934,28 @@ export default function ImageCropper() {
   }
 
   function updateCropField(
-    field: "x" | "y" | "width" | "height",
+    field:
+      | "x"
+      | "y"
+      | "width"
+      | "height",
     value: number
   ) {
-    if (!imageInfo) return;
+    if (!imageInfo) {
+      return;
+    }
 
-    const safeValue = Math.max(
-      0,
-      toInteger(value)
-    );
+    const minimumCropSize =
+      getMinimumCropSize(
+        imageInfo.width,
+        imageInfo.height
+      );
+
+    const safeValue =
+      Math.max(
+        0,
+        toInteger(value)
+      );
 
     if (field === "x") {
       setCropX(
@@ -708,7 +965,7 @@ export default function ImageCropper() {
           Math.max(
             0,
             imageInfo.width -
-              MIN_CROP_SIZE
+              minimumCropSize
           )
         )
       );
@@ -724,7 +981,7 @@ export default function ImageCropper() {
           Math.max(
             0,
             imageInfo.height -
-              MIN_CROP_SIZE
+              minimumCropSize
           )
         )
       );
@@ -739,9 +996,9 @@ export default function ImageCropper() {
       setCropWidth(
         clamp(
           safeValue,
-          MIN_CROP_SIZE,
+          minimumCropSize,
           Math.max(
-            MIN_CROP_SIZE,
+            minimumCropSize,
             maxWidth
           )
         )
@@ -756,9 +1013,9 @@ export default function ImageCropper() {
     setCropHeight(
       clamp(
         safeValue,
-        MIN_CROP_SIZE,
+        minimumCropSize,
         Math.max(
-          MIN_CROP_SIZE,
+          minimumCropSize,
           maxHeight
         )
       )
@@ -766,12 +1023,16 @@ export default function ImageCropper() {
   }
 
   function resetCrop() {
-    if (!imageInfo) return;
+    if (!imageInfo) {
+      return;
+    }
 
     setCropX(0);
     setCropY(0);
     setCropWidth(imageInfo.width);
     setCropHeight(imageInfo.height);
+
+    setAspectRatio("custom");
 
     clearFeedback();
 
@@ -810,26 +1071,72 @@ export default function ImageCropper() {
     const ratioValue =
       ratios[ratio];
 
-    if (!ratioValue) return;
+    if (!ratioValue) {
+      return;
+    }
 
-    let width = cropWidth;
+    const minimumCropSize =
+      getMinimumCropSize(
+        imageInfo.width,
+        imageInfo.height
+      );
+
+    let width =
+      Math.max(
+        minimumCropSize,
+        Math.min(
+          cropWidth,
+          imageInfo.width
+        )
+      );
+
     let height =
       Math.round(
         width / ratioValue
       );
 
-    if (height > imageInfo.height) {
-      height = imageInfo.height;
+    if (
+      height < minimumCropSize
+    ) {
+      height =
+        minimumCropSize;
+
       width = Math.round(
         height * ratioValue
       );
     }
 
-    if (width > imageInfo.width) {
-      width = imageInfo.width;
+    if (
+      width > imageInfo.width
+    ) {
+      width =
+        imageInfo.width;
+
       height = Math.round(
         width / ratioValue
       );
+    }
+
+    if (
+      height > imageInfo.height
+    ) {
+      height =
+        imageInfo.height;
+
+      width = Math.round(
+        height * ratioValue
+      );
+    }
+
+    if (
+      width < minimumCropSize ||
+      height < minimumCropSize
+    ) {
+      setError(
+        "This aspect ratio cannot be applied to an image this small."
+      );
+
+      return;
     }
 
     width = Math.min(
@@ -842,74 +1149,69 @@ export default function ImageCropper() {
       imageInfo.height
     );
 
+    const x = Math.max(
+      0,
+      Math.round(
+        (imageInfo.width - width) /
+          2
+      )
+    );
+
+    const y = Math.max(
+      0,
+      Math.round(
+        (imageInfo.height - height) /
+          2
+      )
+    );
+
+    setCropX(x);
+    setCropY(y);
     setCropWidth(
-      Math.max(1, width)
+      Math.round(width)
     );
-
     setCropHeight(
-      Math.max(1, height)
-    );
-
-    setCropX(
-      Math.max(
-        0,
-        Math.round(
-          (imageInfo.width - width) / 2
-        )
-      )
-    );
-
-    setCropY(
-      Math.max(
-        0,
-        Math.round(
-          (imageInfo.height - height) / 2
-        )
-      )
+      Math.round(height)
     );
 
     clearFeedback();
+
+    setMessage(
+      `Crop area changed to ${ratio}.`
+    );
   }
 
   async function applyCrop() {
-    if (!imageSrc || !imageInfo) {
+    if (
+      !imageSrc ||
+      !imageInfo
+    ) {
       setError(
         "Please upload an image first."
       );
+
       return;
     }
 
-    const safeX = clamp(
-      cropX,
-      0,
-      imageInfo.width - 1
-    );
+    const crop =
+      getSafeCropValues();
 
-    const safeY = clamp(
-      cropY,
-      0,
-      imageInfo.height - 1
-    );
+    if (!crop) {
+      setError(
+        "Please select a valid crop area."
+      );
 
-    const safeWidth = clamp(
-      cropWidth,
-      1,
-      imageInfo.width - safeX
-    );
-
-    const safeHeight = clamp(
-      cropHeight,
-      1,
-      imageInfo.height - safeY
-    );
+      return;
+    }
 
     if (
-      safeWidth <= 0 ||
-      safeHeight <= 0
+      crop.width <= 0 ||
+      crop.height <= 0
     ) {
       setError(
         "Please select a valid crop area."
       );
+
       return;
     }
 
@@ -920,10 +1222,15 @@ export default function ImageCropper() {
         await loadImage(imageSrc);
 
       const canvas =
-        document.createElement("canvas");
+        document.createElement(
+          "canvas"
+        );
 
-      canvas.width = safeWidth;
-      canvas.height = safeHeight;
+      canvas.width =
+        crop.width;
+
+      canvas.height =
+        crop.height;
 
       const context =
         canvas.getContext("2d");
@@ -942,23 +1249,24 @@ export default function ImageCropper() {
 
       context.drawImage(
         image,
-        safeX,
-        safeY,
-        safeWidth,
-        safeHeight,
+        crop.x,
+        crop.y,
+        crop.width,
+        crop.height,
         0,
         0,
-        safeWidth,
-        safeHeight
+        crop.width,
+        crop.height
       );
 
       const blob =
         await new Promise<Blob | null>(
-          (resolve) =>
+          (resolve) => {
             canvas.toBlob(
               resolve,
               "image/png"
-            )
+            );
+          }
         );
 
       if (!blob) {
@@ -978,14 +1286,19 @@ export default function ImageCropper() {
       setCroppedSrc(url);
 
       setCroppedInfo({
-        width: safeWidth,
-        height: safeHeight,
+        width: crop.width,
+        height: crop.height,
         type: "image/png",
         size: blob.size,
       });
 
-      setOutputWidth(safeWidth);
-      setOutputHeight(safeHeight);
+      setOutputWidth(
+        crop.width
+      );
+
+      setOutputHeight(
+        crop.height
+      );
 
       resetAdjustments();
 
@@ -1013,26 +1326,32 @@ export default function ImageCropper() {
   function changeOutputWidth(
     value: number
   ) {
-    const safeValue = clamp(
-      toInteger(value, 1),
-      1,
-      MAX_OUTPUT_DIMENSION
-    );
+    const safeValue =
+      clamp(
+        toInteger(value, 1),
+        1,
+        MAX_OUTPUT_DIMENSION
+      );
 
-    setOutputWidth(safeValue);
+    setOutputWidth(
+      safeValue
+    );
 
     if (
       lockAspectRatio &&
       croppedInfo &&
       croppedInfo.width > 0
     ) {
+      const calculatedHeight =
+        Math.round(
+          safeValue *
+            (croppedInfo.height /
+              croppedInfo.width)
+        );
+
       setOutputHeight(
         clamp(
-          Math.round(
-            safeValue *
-              (croppedInfo.height /
-                croppedInfo.width)
-          ),
+          calculatedHeight,
           1,
           MAX_OUTPUT_DIMENSION
         )
@@ -1043,26 +1362,32 @@ export default function ImageCropper() {
   function changeOutputHeight(
     value: number
   ) {
-    const safeValue = clamp(
-      toInteger(value, 1),
-      1,
-      MAX_OUTPUT_DIMENSION
-    );
+    const safeValue =
+      clamp(
+        toInteger(value, 1),
+        1,
+        MAX_OUTPUT_DIMENSION
+      );
 
-    setOutputHeight(safeValue);
+    setOutputHeight(
+      safeValue
+    );
 
     if (
       lockAspectRatio &&
       croppedInfo &&
       croppedInfo.height > 0
     ) {
+      const calculatedWidth =
+        Math.round(
+          safeValue *
+            (croppedInfo.width /
+              croppedInfo.height)
+        );
+
       setOutputWidth(
         clamp(
-          Math.round(
-            safeValue *
-              (croppedInfo.width /
-                croppedInfo.height)
-          ),
+          calculatedWidth,
           1,
           MAX_OUTPUT_DIMENSION
         )
@@ -1078,12 +1403,14 @@ export default function ImageCropper() {
           contrast(${contrast}%)
           saturate(${saturation}%)
         `,
+
         transform: `
           scale(${zoom / 100})
           rotate(${rotation}deg)
           scaleX(${flipHorizontal ? -1 : 1})
           scaleY(${flipVertical ? -1 : 1})
         `,
+
         transition:
           "transform 0.15s ease, filter 0.15s ease",
       }),
@@ -1098,56 +1425,114 @@ export default function ImageCropper() {
       ]
     );
 
+  function applyCanvasFilter(
+    context: CanvasRenderingContext2D
+  ) {
+    context.filter = `
+      brightness(${brightness}%)
+      contrast(${contrast}%)
+      saturate(${saturation}%)
+    `;
+  }
+
   async function downloadFinalImage() {
-    if (!croppedSrc || !croppedInfo) {
+    if (
+      !croppedSrc ||
+      !croppedInfo
+    ) {
       setError(
         "Please apply a crop before downloading."
       );
+
       return;
     }
 
-    const safeWidth = clamp(
-      toInteger(outputWidth),
-      1,
-      MAX_OUTPUT_DIMENSION
-    );
+    const safeWidth =
+      clamp(
+        toInteger(outputWidth, 1),
+        1,
+        MAX_OUTPUT_DIMENSION
+      );
 
-    const safeHeight = clamp(
-      toInteger(outputHeight),
-      1,
-      MAX_OUTPUT_DIMENSION
-    );
+    const safeHeight =
+      clamp(
+        toInteger(outputHeight, 1),
+        1,
+        MAX_OUTPUT_DIMENSION
+      );
+
+    const safeQuality =
+      clamp(
+        quality,
+        0.1,
+        1
+      );
 
     clearFeedback();
 
     try {
       const image =
-        await loadImage(croppedSrc);
+        await loadImage(
+          croppedSrc
+        );
 
-      const radians =
-        (rotation * Math.PI) / 180;
-
-      const baseWidth =
-        safeWidth;
-
-      const baseHeight =
-        safeHeight;
-
-      const rotatedSize =
-        getRotatedCanvasSize(
-          baseWidth,
-          baseHeight,
+      const normalizedRotation =
+        normalizeRotation(
           rotation
         );
 
+      const radians =
+        (normalizedRotation *
+          Math.PI) /
+        180;
+
+      const zoomScale =
+        clamp(
+          zoom / 100,
+          0.5,
+          2
+        );
+
+      const drawWidth =
+        safeWidth *
+        zoomScale;
+
+      const drawHeight =
+        safeHeight *
+        zoomScale;
+
+      const rotatedSize =
+        getRotatedCanvasSize(
+          drawWidth,
+          drawHeight,
+          normalizedRotation
+        );
+
       const canvas =
-        document.createElement("canvas");
+        document.createElement(
+          "canvas"
+        );
 
       canvas.width =
-        rotatedSize.width;
+        Math.min(
+          rotatedSize.width,
+          MAX_OUTPUT_DIMENSION
+        );
 
       canvas.height =
-        rotatedSize.height;
+        Math.min(
+          rotatedSize.height,
+          MAX_OUTPUT_DIMENSION
+        );
+
+      if (
+        canvas.width <= 0 ||
+        canvas.height <= 0
+      ) {
+        throw new Error(
+          "Invalid output dimensions."
+        );
+      }
 
       const context =
         canvas.getContext("2d");
@@ -1164,6 +1549,30 @@ export default function ImageCropper() {
       context.imageSmoothingQuality =
         "high";
 
+      /*
+       * JPEG does not support transparency.
+       * Use white as the background for JPEG output.
+       */
+      const mimeType =
+        getMimeType(
+          outputFormat
+        );
+
+      if (
+        mimeType ===
+        "image/jpeg"
+      ) {
+        context.fillStyle =
+          "#ffffff";
+
+        context.fillRect(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+      }
+
       context.save();
 
       context.translate(
@@ -1171,26 +1580,32 @@ export default function ImageCropper() {
         canvas.height / 2
       );
 
-      context.rotate(radians);
-
-      context.scale(
-        flipHorizontal ? -1 : 1,
-        flipVertical ? -1 : 1
+      context.rotate(
+        radians
       );
 
-      context.filter = `
-        brightness(${brightness}%)
-        contrast(${contrast}%)
-        saturate(${saturation}%)
-      `;
+      context.scale(
+        flipHorizontal
+          ? -1
+          : 1,
+        flipVertical
+          ? -1
+          : 1
+      );
 
-      const drawWidth =
-        baseWidth *
-        (zoom / 100);
-
-      const drawHeight =
-        baseHeight *
-        (zoom / 100);
+      /*
+       * Canvas filter is supported by modern browsers.
+       * If the browser does not support it, the image
+       * is still exported without the filter rather
+       * than failing completely.
+       */
+      try {
+        applyCanvasFilter(
+          context
+        );
+      } catch {
+        // Continue without canvas filtering.
+      }
 
       context.drawImage(
         image,
@@ -1202,33 +1617,35 @@ export default function ImageCropper() {
 
       context.restore();
 
-      const mimeType =
-        getMimeType(outputFormat);
-
       const blob =
         await new Promise<Blob | null>(
-          (resolve) =>
+          (resolve) => {
             canvas.toBlob(
               resolve,
               mimeType,
               mimeType ===
-              "image/png"
+                "image/png"
                 ? undefined
-                : quality
-            )
+                : safeQuality
+            );
+          }
         );
 
       if (!blob) {
         throw new Error(
-          "Unable to create output."
+          "Unable to create output image."
         );
       }
 
       const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+          blob
+        );
 
       const link =
-        document.createElement("a");
+        document.createElement(
+          "a"
+        );
 
       link.href = url;
 
@@ -1237,14 +1654,20 @@ export default function ImageCropper() {
           mimeType
         )}`;
 
-      document.body.appendChild(link);
+      document.body.appendChild(
+        link
+      );
 
       link.click();
 
       link.remove();
 
       window.setTimeout(
-        () => URL.revokeObjectURL(url),
+        () => {
+          URL.revokeObjectURL(
+            url
+          );
+        },
         1000
       );
 
@@ -1266,16 +1689,19 @@ export default function ImageCropper() {
               imageInfo.width) *
             100
           }%`,
+
           top: `${
             (cropY /
               imageInfo.height) *
             100
           }%`,
+
           width: `${
             (cropWidth /
               imageInfo.width) *
             100
           }%`,
+
           height: `${
             (cropHeight /
               imageInfo.height) *
@@ -1286,7 +1712,9 @@ export default function ImageCropper() {
 
   useEffect(() => {
     return () => {
-      if (objectUrlRef.current) {
+      if (
+        objectUrlRef.current
+      ) {
         URL.revokeObjectURL(
           objectUrlRef.current
         );
@@ -1339,14 +1767,18 @@ export default function ImageCropper() {
               id="image-upload"
               type="file"
               accept="image/*"
-              onChange={handleFileChange}
+              onChange={
+                handleFileChange
+              }
               className="block flex-1 rounded-lg border border-gray-300 bg-white text-sm text-gray-700 file:mr-4 file:border-0 file:bg-blue-600 file:px-5 file:py-3 file:font-semibold file:text-white hover:file:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
 
             {imageSrc && (
               <button
                 type="button"
-                onClick={resetAll}
+                onClick={
+                  resetAll
+                }
                 className="rounded-lg border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 Reset All
@@ -1355,8 +1787,9 @@ export default function ImageCropper() {
           </div>
 
           <p className="mt-2 text-xs text-gray-500">
-            Maximum file size: 20 MB. Supported
-            formats depend on your browser.
+            Maximum file size: 20 MB.
+            Supported formats depend
+            on your browser.
           </p>
         </section>
 
@@ -1390,9 +1823,11 @@ export default function ImageCropper() {
             </h2>
 
             <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-gray-600">
-              Select an image, choose a crop area,
-              make optional adjustments, and download
-              the result in your preferred format.
+              Select an image, choose
+              a crop area, make optional
+              adjustments, and download
+              the result in your preferred
+              format.
             </p>
           </section>
         ) : (
@@ -1409,8 +1844,9 @@ export default function ImageCropper() {
                   </h2>
 
                   <p className="text-sm text-gray-600">
-                    Use the interactive crop area or
-                    enter exact pixel values.
+                    Use the interactive
+                    crop area or enter
+                    exact pixel values.
                   </p>
                 </div>
               </div>
@@ -1419,13 +1855,17 @@ export default function ImageCropper() {
                 <button
                   type="button"
                   aria-pressed={
-                    cropMode === "drag"
+                    cropMode ===
+                    "drag"
                   }
                   onClick={() =>
-                    setCropMode("drag")
+                    setCropMode(
+                      "drag"
+                    )
                   }
                   className={`rounded-xl border p-5 text-left transition focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    cropMode === "drag"
+                    cropMode ===
+                    "drag"
                       ? "border-blue-600 bg-blue-50 ring-2 ring-blue-100"
                       : "border-gray-200 hover:bg-gray-50"
                   }`}
@@ -1435,7 +1875,8 @@ export default function ImageCropper() {
                   </h3>
 
                   <p className="mt-2 text-sm leading-6 text-gray-600">
-                    Draw, move, and resize the crop
+                    Draw, move, and
+                    resize the crop
                     area interactively.
                   </p>
 
@@ -1447,13 +1888,17 @@ export default function ImageCropper() {
                 <button
                   type="button"
                   aria-pressed={
-                    cropMode === "precise"
+                    cropMode ===
+                    "precise"
                   }
                   onClick={() =>
-                    setCropMode("precise")
+                    setCropMode(
+                      "precise"
+                    )
                   }
                   className={`rounded-xl border p-5 text-left transition focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    cropMode === "precise"
+                    cropMode ===
+                    "precise"
                       ? "border-blue-600 bg-blue-50 ring-2 ring-blue-100"
                       : "border-gray-200 hover:bg-gray-50"
                   }`}
@@ -1463,7 +1908,8 @@ export default function ImageCropper() {
                   </h3>
 
                   <p className="mt-2 text-sm leading-6 text-gray-600">
-                    Enter exact X, Y, width, and height
+                    Enter exact X, Y,
+                    width, and height
                     pixel values.
                   </p>
 
@@ -1487,16 +1933,24 @@ export default function ImageCropper() {
                     </h2>
 
                     <p className="text-sm text-gray-600">
-                      Select the portion of the image
-                      you want to keep.
+                      Select the portion
+                      of the image you
+                      want to keep.
                     </p>
                   </div>
                 </div>
 
                 {imageInfo && (
                   <div className="text-sm text-gray-500">
-                    Original: {imageInfo.width} ×{" "}
-                    {imageInfo.height} px ·{" "}
+                    Original:{" "}
+                    {
+                      imageInfo.width
+                    }{" "}
+                    ×{" "}
+                    {
+                      imageInfo.height
+                    }{" "}
+                    px ·{" "}
                     {formatFileSize(
                       imageInfo.size
                     )}
@@ -1513,7 +1967,8 @@ export default function ImageCropper() {
                       }
                       className="relative mx-auto w-fit max-w-full select-none touch-none"
                       onPointerDown={
-                        cropMode === "drag"
+                        cropMode ===
+                        "drag"
                           ? startDrawing
                           : undefined
                       }
@@ -1531,33 +1986,45 @@ export default function ImageCropper() {
                         src={imageSrc}
                         alt="Selected image for cropping"
                         className="block max-h-[650px] max-w-full object-contain"
-                        draggable={false}
+                        draggable={
+                          false
+                        }
                       />
 
                       <div className="pointer-events-none absolute inset-0 bg-black/35" />
 
                       <div
                         className="absolute border-2 border-blue-500 bg-transparent"
-                        style={cropStyle}
+                        style={
+                          cropStyle
+                        }
                         onPointerDown={
-                          cropMode === "drag"
+                          cropMode ===
+                          "drag"
                             ? startMoving
                             : undefined
                         }
                       >
                         <div className="pointer-events-none absolute inset-0">
                           <div className="absolute left-1/3 top-0 h-full border-l border-white/60" />
+
                           <div className="absolute left-2/3 top-0 h-full border-l border-white/60" />
+
                           <div className="absolute left-0 top-1/3 w-full border-t border-white/60" />
+
                           <div className="absolute left-0 top-2/3 w-full border-t border-white/60" />
                         </div>
 
                         <div className="absolute left-1/2 top-1 -translate-x-1/2 whitespace-nowrap rounded bg-blue-600 px-2 py-1 text-xs font-bold text-white shadow">
-                          {cropWidth} ×{" "}
-                          {cropHeight}
+                          {cropWidth}{" "}
+                          ×{" "}
+                          {
+                            cropHeight
+                          }
                         </div>
 
-                        {cropMode === "drag" && (
+                        {cropMode ===
+                          "drag" && (
                           <>
                             <div
                               className="absolute inset-4 cursor-move"
@@ -1636,17 +2103,30 @@ export default function ImageCropper() {
                   </div>
 
                   <div className="mt-3 rounded-lg border border-blue-100 bg-blue-50 px-4 py-3 text-xs leading-5 text-blue-700">
-                    {cropMode === "drag" ? (
+                    {cropMode ===
+                    "drag" ? (
                       <>
-                        <strong>Tip:</strong> Drag inside
-                        the selected area to move it. Use
-                        the corners or edges to resize it.
+                        <strong>
+                          Tip:
+                        </strong>{" "}
+                        Drag inside
+                        the selected
+                        area to move
+                        it. Use the
+                        corners or
+                        edges to resize
+                        it.
                       </>
                     ) : (
                       <>
-                        <strong>Precise mode:</strong> Use
-                        the X, Y, width, and height fields
-                        to define the crop area.
+                        <strong>
+                          Precise mode:
+                        </strong>{" "}
+                        Use the X, Y,
+                        width, and
+                        height fields
+                        to define the
+                        crop area.
                       </>
                     )}
                   </div>
@@ -1661,9 +2141,13 @@ export default function ImageCropper() {
                     <NumberField
                       id="crop-x"
                       label="X"
-                      value={cropX}
+                      value={
+                        cropX
+                      }
                       min={0}
-                      onChange={(value) =>
+                      onChange={(
+                        value
+                      ) =>
                         updateCropField(
                           "x",
                           value
@@ -1675,9 +2159,13 @@ export default function ImageCropper() {
                     <NumberField
                       id="crop-y"
                       label="Y"
-                      value={cropY}
+                      value={
+                        cropY
+                      }
                       min={0}
-                      onChange={(value) =>
+                      onChange={(
+                        value
+                      ) =>
                         updateCropField(
                           "y",
                           value
@@ -1689,9 +2177,20 @@ export default function ImageCropper() {
                     <NumberField
                       id="crop-width"
                       label="Width"
-                      value={cropWidth}
-                      min={MIN_CROP_SIZE}
-                      onChange={(value) =>
+                      value={
+                        cropWidth
+                      }
+                      min={
+                        getMinimumCropSize(
+                          imageInfo?.width ??
+                            MIN_CROP_SIZE,
+                          imageInfo?.height ??
+                            MIN_CROP_SIZE
+                        )
+                      }
+                      onChange={(
+                        value
+                      ) =>
                         updateCropField(
                           "width",
                           value
@@ -1703,9 +2202,20 @@ export default function ImageCropper() {
                     <NumberField
                       id="crop-height"
                       label="Height"
-                      value={cropHeight}
-                      min={MIN_CROP_SIZE}
-                      onChange={(value) =>
+                      value={
+                        cropHeight
+                      }
+                      min={
+                        getMinimumCropSize(
+                          imageInfo?.width ??
+                            MIN_CROP_SIZE,
+                          imageInfo?.height ??
+                            MIN_CROP_SIZE
+                        )
+                      }
+                      onChange={(
+                        value
+                      ) =>
                         updateCropField(
                           "height",
                           value
@@ -1718,7 +2228,9 @@ export default function ImageCropper() {
                   <div className="mt-5 grid gap-3">
                     <button
                       type="button"
-                      onClick={resetCrop}
+                      onClick={
+                        resetCrop
+                      }
                       className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       ↶ Reset Crop
@@ -1726,7 +2238,9 @@ export default function ImageCropper() {
 
                     <button
                       type="button"
-                      onClick={fitToImage}
+                      onClick={
+                        fitToImage
+                      }
                       className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       ⛶ Fit to Image
@@ -1739,8 +2253,14 @@ export default function ImageCropper() {
                     </p>
 
                     <p className="mt-2 text-lg font-bold text-gray-900">
-                      {cropWidth} ×{" "}
-                      {cropHeight} px
+                      {
+                        cropWidth
+                      }{" "}
+                      ×{" "}
+                      {
+                        cropHeight
+                      }{" "}
+                      px
                     </p>
                   </div>
                 </div>
@@ -1748,7 +2268,9 @@ export default function ImageCropper() {
 
               <button
                 type="button"
-                onClick={applyCrop}
+                onClick={
+                  applyCrop
+                }
                 className="mt-6 w-full rounded-lg bg-blue-600 px-5 py-4 text-sm font-bold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 Apply Crop & Continue →
@@ -1773,7 +2295,9 @@ export default function ImageCropper() {
                         </h2>
 
                         <p className="text-sm text-gray-600">
-                          Fine-tune the cropped image before
+                          Fine-tune the
+                          cropped image
+                          before
                           downloading.
                         </p>
                       </div>
@@ -1787,89 +2311,153 @@ export default function ImageCropper() {
 
                         <div className="mt-4 flex min-h-[300px] items-center justify-center overflow-hidden rounded-lg bg-gray-100">
                           <img
-                            src={croppedSrc}
+                            src={
+                              croppedSrc
+                            }
                             alt="Preview of adjusted cropped image"
-                            style={previewStyle}
+                            style={
+                              previewStyle
+                            }
                             className="max-h-[280px] max-w-full object-contain"
                           />
                         </div>
 
                         <p className="mt-3 text-center text-xs text-gray-500">
                           Source crop:{" "}
-                          {croppedInfo.width} ×{" "}
-                          {croppedInfo.height} px
+                          {
+                            croppedInfo.width
+                          }{" "}
+                          ×{" "}
+                          {
+                            croppedInfo.height
+                          }{" "}
+                          px
                         </p>
                       </div>
 
                       <div className="rounded-xl border border-gray-200 p-5">
                         <AdjustmentSlider
                           label="Zoom"
-                          value={zoom}
-                          min={50}
-                          max={200}
-                          step={1}
+                          value={
+                            zoom
+                          }
+                          min={
+                            50
+                          }
+                          max={
+                            200
+                          }
+                          step={
+                            1
+                          }
                           display={`${zoom}%`}
-                          onChange={setZoom}
+                          onChange={
+                            setZoom
+                          }
                           onReset={() =>
-                            setZoom(100)
+                            setZoom(
+                              100
+                            )
                           }
                         />
 
                         <AdjustmentSlider
                           label="Brightness"
-                          value={brightness}
-                          min={0}
-                          max={200}
-                          step={1}
+                          value={
+                            brightness
+                          }
+                          min={
+                            0
+                          }
+                          max={
+                            200
+                          }
+                          step={
+                            1
+                          }
                           display={`${brightness}%`}
                           onChange={
                             setBrightness
                           }
                           onReset={() =>
-                            setBrightness(100)
+                            setBrightness(
+                              100
+                            )
                           }
                         />
 
                         <AdjustmentSlider
                           label="Contrast"
-                          value={contrast}
-                          min={0}
-                          max={200}
-                          step={1}
+                          value={
+                            contrast
+                          }
+                          min={
+                            0
+                          }
+                          max={
+                            200
+                          }
+                          step={
+                            1
+                          }
                           display={`${contrast}%`}
                           onChange={
                             setContrast
                           }
                           onReset={() =>
-                            setContrast(100)
+                            setContrast(
+                              100
+                            )
                           }
                         />
 
                         <AdjustmentSlider
                           label="Saturation"
-                          value={saturation}
-                          min={0}
-                          max={200}
-                          step={1}
+                          value={
+                            saturation
+                          }
+                          min={
+                            0
+                          }
+                          max={
+                            200
+                          }
+                          step={
+                            1
+                          }
                           display={`${saturation}%`}
                           onChange={
                             setSaturation
                           }
                           onReset={() =>
-                            setSaturation(100)
+                            setSaturation(
+                              100
+                            )
                           }
                         />
 
                         <AdjustmentSlider
                           label="Rotate"
-                          value={rotation}
-                          min={-180}
-                          max={180}
-                          step={1}
+                          value={
+                            rotation
+                          }
+                          min={
+                            -180
+                          }
+                          max={
+                            180
+                          }
+                          step={
+                            1
+                          }
                           display={`${rotation}°`}
-                          onChange={setRotation}
+                          onChange={
+                            setRotation
+                          }
                           onReset={() =>
-                            setRotation(0)
+                            setRotation(
+                              0
+                            )
                           }
                         />
 
@@ -1886,7 +2474,9 @@ export default function ImageCropper() {
                               }
                               onClick={() =>
                                 setFlipHorizontal(
-                                  (value) =>
+                                  (
+                                    value
+                                  ) =>
                                     !value
                                 )
                               }
@@ -1906,7 +2496,9 @@ export default function ImageCropper() {
                               }
                               onClick={() =>
                                 setFlipVertical(
-                                  (value) =>
+                                  (
+                                    value
+                                  ) =>
                                     !value
                                 )
                               }
@@ -1928,10 +2520,16 @@ export default function ImageCropper() {
                         </h3>
 
                         <select
-                          value={aspectRatio}
-                          onChange={(event) =>
+                          value={
+                            aspectRatio
+                          }
+                          onChange={(
+                            event
+                          ) =>
                             applyAspectRatio(
-                              event.target.value
+                              event
+                                .target
+                                .value
                             )
                           }
                           className="mt-3 h-11 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
@@ -1939,18 +2537,23 @@ export default function ImageCropper() {
                           <option value="custom">
                             Custom
                           </option>
+
                           <option value="1:1">
                             1:1 Square
                           </option>
+
                           <option value="4:3">
                             4:3
                           </option>
+
                           <option value="3:2">
                             3:2
                           </option>
+
                           <option value="16:9">
                             16:9
                           </option>
+
                           <option value="9:16">
                             9:16
                           </option>
@@ -1967,7 +2570,9 @@ export default function ImageCropper() {
                             value={
                               outputWidth
                             }
-                            min={1}
+                            min={
+                              1
+                            }
                             max={
                               MAX_OUTPUT_DIMENSION
                             }
@@ -1983,7 +2588,9 @@ export default function ImageCropper() {
                             value={
                               outputHeight
                             }
-                            min={1}
+                            min={
+                              1
+                            }
                             max={
                               MAX_OUTPUT_DIMENSION
                             }
@@ -2000,15 +2607,20 @@ export default function ImageCropper() {
                             checked={
                               lockAspectRatio
                             }
-                            onChange={(event) =>
+                            onChange={(
+                              event
+                            ) =>
                               setLockAspectRatio(
-                                event.target
+                                event
+                                  .target
                                   .checked
                               )
                             }
                             className="h-4 w-4 accent-blue-600"
                           />
-                          Lock aspect ratio
+
+                          Lock aspect
+                          ratio
                         </label>
 
                         <button
@@ -2018,7 +2630,8 @@ export default function ImageCropper() {
                           }
                           className="mt-6 w-full rounded-lg border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                          ↶ Reset Adjustments
+                          ↶ Reset
+                          Adjustments
                         </button>
                       </div>
                     </div>
@@ -2036,7 +2649,9 @@ export default function ImageCropper() {
                         </h2>
 
                         <p className="text-sm text-gray-600">
-                          Choose the image format and quality.
+                          Choose the image
+                          format and
+                          quality.
                         </p>
                       </div>
                     </div>
@@ -2055,9 +2670,12 @@ export default function ImageCropper() {
                           value={
                             outputFormat
                           }
-                          onChange={(event) =>
+                          onChange={(
+                            event
+                          ) =>
                             setOutputFormat(
-                              event.target
+                              event
+                                .target
                                 .value
                             )
                           }
@@ -2066,9 +2684,11 @@ export default function ImageCropper() {
                           <option value="image/png">
                             PNG
                           </option>
+
                           <option value="image/jpeg">
                             JPEG
                           </option>
+
                           <option value="image/webp">
                             WebP
                           </option>
@@ -2082,7 +2702,8 @@ export default function ImageCropper() {
                         >
                           Quality:{" "}
                           {Math.round(
-                            quality * 100
+                            quality *
+                              100
                           )}
                           %
                         </label>
@@ -2093,15 +2714,20 @@ export default function ImageCropper() {
                           min="0.1"
                           max="1"
                           step="0.05"
-                          value={quality}
+                          value={
+                            quality
+                          }
                           disabled={
                             outputFormat ===
                             "image/png"
                           }
-                          onChange={(event) =>
+                          onChange={(
+                            event
+                          ) =>
                             setQuality(
                               Number(
-                                event.target
+                                event
+                                  .target
                                   .value
                               )
                             )
@@ -2110,8 +2736,11 @@ export default function ImageCropper() {
                         />
 
                         <p className="mt-2 text-xs text-gray-500">
-                          Quality affects JPEG and WebP
-                          output. PNG uses lossless encoding.
+                          Quality affects
+                          JPEG and WebP
+                          output. PNG
+                          uses lossless
+                          encoding.
                         </p>
                       </div>
                     </div>
@@ -2129,7 +2758,9 @@ export default function ImageCropper() {
                         </h2>
 
                         <p className="text-sm text-gray-600">
-                          Create and download the final image.
+                          Create and
+                          download the
+                          final image.
                         </p>
                       </div>
                     </div>
@@ -2244,19 +2875,26 @@ export default function ImageCropper() {
           </h2>
 
           <p className="mt-4 text-sm leading-7 text-gray-600">
-            This tool performs the main image cropping and
-            adjustment work in your browser using browser
-            image and canvas capabilities. The selected image
-            does not need to be uploaded to a ToolNoveHub
-            image-processing server for these operations.
+            This tool performs the
+            main image cropping and
+            adjustment work in your
+            browser using browser image
+            and canvas capabilities. The
+            selected image does not need
+            to be uploaded to a ToolNoveHub
+            image-processing server for
+            these operations.
           </p>
 
           <p className="mt-3 text-sm leading-7 text-gray-600">
-            Your browser, extensions, network configuration,
-            and other software can affect how local files are
-            handled. For site-wide information about data,
-            analytics, and privacy, review the ToolNoveHub
-            Privacy Policy.
+            Your browser, extensions,
+            network configuration, and
+            other software can affect how
+            local files are handled. For
+            site-wide information about
+            data, analytics, and privacy,
+            review the ToolNoveHub Privacy
+            Policy.
           </p>
         </section>
 
@@ -2272,9 +2910,11 @@ export default function ImageCropper() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Yes. Precise Crop mode lets you enter
-                the crop X and Y coordinates together
-                with the exact width and height in pixels.
+                Yes. Precise Crop mode
+                lets you enter the crop
+                X and Y coordinates
+                together with the exact
+                width and height in pixels.
               </p>
             </div>
 
@@ -2284,8 +2924,9 @@ export default function ImageCropper() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Yes. Presets include 1:1, 4:3, 3:2,
-                16:9, and 9:16.
+                Yes. Presets include
+                1:1, 4:3, 3:2, 16:9,
+                and 9:16.
               </p>
             </div>
 
@@ -2295,9 +2936,10 @@ export default function ImageCropper() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Yes. You can rotate the image from -180°
-                to 180° and flip it horizontally or
-                vertically.
+                Yes. You can rotate the
+                image from -180° to 180°
+                and flip it horizontally
+                or vertically.
               </p>
             </div>
 
@@ -2307,8 +2949,10 @@ export default function ImageCropper() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                Yes. The selected zoom level is applied
-                when the final image is rendered for download.
+                Yes. The selected zoom
+                level is applied when the
+                final image is rendered
+                for download.
               </p>
             </div>
 
@@ -2318,8 +2962,24 @@ export default function ImageCropper() {
               </h3>
 
               <p className="mt-2 text-sm leading-6 text-gray-600">
-                You can download the final image as PNG,
-                JPEG, or WebP.
+                You can download the final
+                image as PNG, JPEG, or WebP.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-bold text-gray-900">
+                Is my image uploaded to a server?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                The main cropping and
+                adjustment operations are
+                performed locally in your
+                browser. The tool does not
+                require sending the selected
+                image to a ToolNoveHub
+                image-processing server.
               </p>
             </div>
           </div>
@@ -2331,9 +2991,11 @@ export default function ImageCropper() {
           </h2>
 
           <p className="mx-auto mt-2 max-w-2xl text-sm leading-6 text-gray-600">
-            Cropping and image adjustments are performed
-            in your browser rather than requiring the image
-            to be uploaded to a ToolNoveHub processing server.
+            Cropping and image adjustments
+            are performed in your browser
+            rather than requiring the image
+            to be uploaded to a ToolNoveHub
+            processing server.
           </p>
         </section>
       </main>
@@ -2370,8 +3032,11 @@ function ResizeHandle({
   return (
     <div
       role="presentation"
+      aria-hidden="true"
       className={`absolute z-20 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-sm border-2 border-blue-600 bg-white ${position} ${cursorMap[direction]}`}
-      onPointerDown={(event) =>
+      onPointerDown={(
+        event
+      ) =>
         onPointerDown(
           event,
           direction
@@ -2395,7 +3060,9 @@ function NumberField({
   value: number;
   min?: number;
   max?: number;
-  onChange: (value: number) => void;
+  onChange: (
+    value: number
+  ) => void;
   suffix?: string;
 }) {
   return (
@@ -2416,17 +3083,22 @@ function NumberField({
           max={max}
           step="1"
           inputMode="numeric"
-          onChange={(event) =>
+          onChange={(
+            event
+          ) => {
+            const numericValue =
+              Number(
+                event.target.value
+              );
+
             onChange(
               Number.isFinite(
-                Number(event.target.value)
+                numericValue
               )
-                ? Number(
-                    event.target.value
-                  )
+                ? numericValue
                 : min
-            )
-          }
+            );
+          }}
           className="h-11 min-w-0 flex-1 rounded-l-lg border border-gray-300 px-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
         />
 
@@ -2456,11 +3128,15 @@ function AdjustmentSlider({
   max: number;
   step: number;
   display: string;
-  onChange: (value: number) => void;
+  onChange: (
+    value: number
+  ) => void;
   onReset: () => void;
 }) {
   const id =
-    `adjustment-${label.toLowerCase()}`;
+    `adjustment-${label
+      .toLowerCase()
+      .replace(/\s+/g, "-")}`;
 
   return (
     <div className="border-b border-gray-100 py-4 last:border-0">
@@ -2479,9 +3155,13 @@ function AdjustmentSlider({
           max={max}
           step={step}
           value={value}
-          onChange={(event) =>
+          onChange={(
+            event
+          ) =>
             onChange(
-              Number(event.target.value)
+              Number(
+                event.target.value
+              )
             )
           }
           className="w-full accent-blue-600 focus:outline-none"
@@ -2496,7 +3176,9 @@ function AdjustmentSlider({
 
         <button
           type="button"
-          onClick={onReset}
+          onClick={
+            onReset
+          }
           className="rounded p-1 text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           title={`Reset ${label}`}
           aria-label={`Reset ${label}`}

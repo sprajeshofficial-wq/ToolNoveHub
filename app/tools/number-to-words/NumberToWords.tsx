@@ -48,7 +48,7 @@ const SCALES = [
   "Quadrillion",
 ];
 
-const MAX_INTEGER = 999999999999999;
+const MAX_INTEGER = 999_999_999_999_999;
 
 const EXAMPLES = [
   {
@@ -100,7 +100,7 @@ function convertHundreds(value: number): string {
 }
 
 function integerToWords(value: number): string {
-  if (!Number.isSafeInteger(value)) {
+  if (!Number.isSafeInteger(value) || value > MAX_INTEGER) {
     return "Number is too large.";
   }
 
@@ -110,10 +110,6 @@ function integerToWords(value: number): string {
 
   if (value < 0) {
     return `Negative ${integerToWords(Math.abs(value))}`;
-  }
-
-  if (value > MAX_INTEGER) {
-    return "Number is too large.";
   }
 
   let remaining = value;
@@ -160,10 +156,21 @@ function convertNumber(input: string): {
     };
   }
 
-  if (!/^-?(?:\d+\.?\d*|\.\d+)$/.test(cleaned)) {
+  /*
+   * Supports:
+   * 125
+   * -250
+   * 123.45
+   * .75
+   * 100.
+   */
+  const numberPattern = /^-?(?:\d+(?:\.\d*)?|\.\d+)$/;
+
+  if (!numberPattern.test(cleaned)) {
     return {
       result: "",
-      error: "Enter a valid number, such as 125, -250, or 123.45.",
+      error:
+        "Enter a valid number, such as 125, -250, 123.45, or .75.",
     };
   }
 
@@ -205,7 +212,10 @@ export default function NumberToWords() {
   const [input, setInput] = useState("");
   const [copied, setCopied] = useState(false);
 
-  const conversion = useMemo(() => convertNumber(input), [input]);
+  const conversion = useMemo(
+    () => convertNumber(input),
+    [input]
+  );
 
   useEffect(() => {
     setCopied(false);
@@ -218,6 +228,7 @@ export default function NumberToWords() {
 
     try {
       await navigator.clipboard.writeText(conversion.result);
+
       setCopied(true);
 
       window.setTimeout(() => {
@@ -239,398 +250,515 @@ export default function NumberToWords() {
   }
 
   function loadExampleValue(value: string) {
-    setInput(value);
+    setInput(value.replace(/,/g, ""));
     setCopied(false);
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Number to Words Converter
-          </h1>
-
-          <p className="mx-auto mt-3 max-w-2xl text-gray-600">
-            Convert numbers into English words with support for decimals,
-            negative numbers, commas, and large values.
-          </p>
-        </header>
-
-        <section
-          aria-labelledby="converter-heading"
-          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
-        >
-          <h2 id="converter-heading" className="sr-only">
-            Number to Words Converter
+    <div className="space-y-8">
+      {/* Converter */}
+      <section
+        aria-labelledby="number-converter-heading"
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      >
+        <div className="mb-6">
+          <h2
+            id="number-converter-heading"
+            className="text-xl font-bold text-gray-900 sm:text-2xl"
+          >
+            Convert a number to words
           </h2>
 
-          <div>
+          <p className="mt-2 text-sm leading-6 text-gray-600">
+            Enter a number below and the converter will automatically
+            write it in English words.
+          </p>
+        </div>
+
+        {/* Input */}
+        <div>
+          <label
+            htmlFor="number-input"
+            className="mb-2 block text-sm font-semibold text-gray-900"
+          >
+            Enter a number
+          </label>
+
+          <input
+            id="number-input"
+            type="text"
+            inputMode="decimal"
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            placeholder="Example: 1234567.89"
+            aria-describedby="number-help"
+            aria-invalid={Boolean(conversion.error)}
+            className={`w-full rounded-xl border bg-white px-4 py-3 text-lg text-gray-900 outline-none transition placeholder:text-gray-400 focus:ring-2 ${
+              conversion.error
+                ? "border-red-300 focus:border-red-500 focus:ring-red-100"
+                : "border-gray-300 focus:border-blue-500 focus:ring-blue-100"
+            }`}
+          />
+
+          <p
+            id="number-help"
+            className="mt-2 text-xs leading-5 text-gray-500"
+          >
+            Examples: 1000, 1,234,567, -250, 123.45, or .75.
+          </p>
+        </div>
+
+        {/* Error */}
+        {conversion.error && (
+          <div
+            role="alert"
+            className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700"
+          >
+            {conversion.error}
+          </div>
+        )}
+
+        {/* Result */}
+        <div className="mt-6">
+          <div className="mb-2 flex items-center justify-between gap-4">
             <label
-              htmlFor="number-input"
-              className="mb-2 block text-sm font-semibold text-gray-900"
+              htmlFor="words-output"
+              className="text-sm font-semibold text-gray-900"
             >
-              Enter a number
+              Number in words
             </label>
 
-            <input
-              id="number-input"
-              type="text"
-              inputMode="decimal"
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              placeholder="Example: 1234567.89"
-              aria-describedby="number-help number-error"
-              className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-lg text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
-
-            <p id="number-help" className="mt-2 text-xs leading-5 text-gray-500">
-              Examples: 1000, 1,234,567, -250, 123.45, or .75.
-            </p>
+            {conversion.result && (
+              <span className="text-xs text-gray-500">
+                {conversion.result.length} characters
+              </span>
+            )}
           </div>
 
-          {conversion.error && (
-            <div
-              id="number-error"
-              role="alert"
-              className="mt-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700"
-            >
-              {conversion.error}
-            </div>
-          )}
-
-          <div className="mt-6">
-            <div className="mb-2 flex items-center justify-between gap-4">
-              <label
-                htmlFor="words-output"
-                className="text-sm font-semibold text-gray-900"
-              >
-                Number in words
-              </label>
-
-              {conversion.result && (
-                <span className="text-xs text-gray-500">
-                  {conversion.result.length} characters
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <textarea
-                id="words-output"
-                value={conversion.result}
-                readOnly
-                rows={5}
-                placeholder="Your number in words will appear here..."
-                aria-live="polite"
-                className="min-w-0 flex-1 resize-none rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 outline-none"
-              />
-
-              <button
-                type="button"
-                onClick={handleCopy}
-                disabled={!conversion.result || Boolean(conversion.error)}
-                className="inline-flex h-fit items-center justify-center rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-300"
-              >
-                {copied ? (
-                  <>
-                    <Check className="mr-2 h-4 w-4" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="mr-2 h-4 w-4" />
-                    Copy
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {copied && (
-            <div
-              role="status"
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <textarea
+              id="words-output"
+              value={conversion.result}
+              readOnly
+              rows={5}
+              placeholder="Your number in words will appear here..."
               aria-live="polite"
-              className="mt-5 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
-            >
-              Result copied to your clipboard.
-            </div>
-          )}
-
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              onClick={loadExample}
-              className="inline-flex flex-1 items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Load Example
-            </button>
+              className="min-w-0 flex-1 resize-none rounded-xl border border-gray-300 bg-gray-50 px-4 py-3 text-gray-900 outline-none"
+            />
 
             <button
               type="button"
-              onClick={handleClear}
-              disabled={!input}
-              className="inline-flex flex-1 items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={handleCopy}
+              disabled={
+                !conversion.result || Boolean(conversion.error)
+              }
+              className="inline-flex h-fit items-center justify-center rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-300"
             >
-              <RotateCcw className="mr-2 h-4 w-4" />
-              Clear
+              {copied ? (
+                <>
+                  <Check
+                    className="mr-2 h-4 w-4"
+                    aria-hidden="true"
+                  />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy
+                    className="mr-2 h-4 w-4"
+                    aria-hidden="true"
+                  />
+                  Copy
+                </>
+              )}
             </button>
           </div>
-        </section>
+        </div>
 
-        <section
-          aria-labelledby="examples-heading"
-          className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
-        >
-          <h2
-            id="examples-heading"
-            className="text-2xl font-bold text-gray-900"
+        {/* Copy status */}
+        {copied && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="mt-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
           >
-            Number to words examples
-          </h2>
+            Result copied to your clipboard.
+          </div>
+        )}
 
-          <p className="mt-2 text-gray-600">
-            Select an example to load it into the converter.
+        {/* Actions */}
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+          <button
+            type="button"
+            onClick={loadExample}
+            className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Load Example
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClear}
+            disabled={!input}
+            className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-3 font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <RotateCcw
+              className="mr-2 h-4 w-4"
+              aria-hidden="true"
+            />
+            Clear
+          </button>
+        </div>
+
+        {/* Processing note */}
+        <div className="mt-6 rounded-xl border border-blue-100 bg-blue-50 p-4">
+          <p className="text-sm leading-6 text-gray-600">
+            <span className="font-semibold text-blue-700">
+              Browser-based conversion:
+            </span>{" "}
+            The number-to-words calculation is performed directly in
+            your browser. No file upload is required.
           </p>
+        </div>
+      </section>
 
-          <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200">
-            <table className="w-full min-w-[600px] border-collapse text-left text-sm">
-              <thead>
-                <tr className="bg-gray-50">
-                  <th
-                    scope="col"
-                    className="px-4 py-3 font-semibold text-gray-900"
-                  >
-                    Number
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 font-semibold text-gray-900"
-                  >
-                    Words
-                  </th>
+      {/* Examples */}
+      <section
+        aria-labelledby="examples-heading"
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      >
+        <h2
+          id="examples-heading"
+          className="text-2xl font-bold text-gray-900"
+        >
+          Number to words examples
+        </h2>
+
+        <p className="mt-2 text-gray-600">
+          Select an example to load it into the converter.
+        </p>
+
+        <div className="mt-6 overflow-x-auto rounded-xl border border-gray-200">
+          <table className="w-full min-w-[600px] border-collapse text-left text-sm">
+            <thead>
+              <tr className="bg-gray-50">
+                <th
+                  scope="col"
+                  className="px-4 py-3 font-semibold text-gray-900"
+                >
+                  Number
+                </th>
+
+                <th
+                  scope="col"
+                  className="px-4 py-3 font-semibold text-gray-900"
+                >
+                  Words
+                </th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200">
+              {EXAMPLES.map((example) => (
+                <tr key={example.number}>
+                  <td className="px-4 py-4 align-top">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        loadExampleValue(example.number)
+                      }
+                      className="font-mono text-blue-700 underline underline-offset-2 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    >
+                      {example.number}
+                    </button>
+                  </td>
+
+                  <td className="px-4 py-4 leading-6 text-gray-700">
+                    {example.words}
+                  </td>
                 </tr>
-              </thead>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-              <tbody className="divide-y divide-gray-200">
-                {EXAMPLES.map((example) => (
-                  <tr key={example.number}>
-                    <td className="px-4 py-4 align-top">
-                      <button
-                        type="button"
-                        onClick={() => loadExampleValue(example.number)}
-                        className="font-mono text-blue-700 underline underline-offset-2 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                      >
-                        {example.number}
-                      </button>
-                    </td>
-
-                    <td className="px-4 py-4 text-gray-700">
-                      {example.words}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section
-          aria-labelledby="how-to-use-heading"
-          className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      {/* How to use */}
+      <section
+        aria-labelledby="how-to-use-heading"
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      >
+        <h2
+          id="how-to-use-heading"
+          className="text-2xl font-bold text-gray-900"
         >
-          <h2
-            id="how-to-use-heading"
-            className="text-2xl font-bold text-gray-900"
-          >
-            How to use the Number to Words Converter
-          </h2>
+          How to use the Number to Words Converter
+        </h2>
 
-          <ol className="mt-6 space-y-4">
-            <Step
-              number="1"
-              title="Enter a number"
-              text="Type a whole number, decimal, negative number, or comma-separated value into the input field."
-            />
+        <ol className="mt-6 space-y-5">
+          <Step
+            number="1"
+            title="Enter a number"
+            text="Type a whole number, decimal, negative number, or comma-separated value into the input field."
+          />
 
-            <Step
-              number="2"
-              title="Review the result"
-              text="The converter automatically changes the numerical value into English words."
-            />
+          <Step
+            number="2"
+            title="Review the result"
+            text="The converter automatically changes the numerical value into English words."
+          />
 
-            <Step
-              number="3"
-              title="Check decimals if included"
-              text="Digits after a decimal point are read individually after the word Point."
-            />
+          <Step
+            number="3"
+            title="Check decimal digits"
+            text="Digits after a decimal point are read individually after the word Point."
+          />
 
-            <Step
-              number="4"
-              title="Copy the result"
-              text="Click Copy to place the generated words on your clipboard."
-            />
-          </ol>
-        </section>
+          <Step
+            number="4"
+            title="Copy the result"
+            text="Click Copy to place the generated words on your clipboard."
+          />
+        </ol>
+      </section>
 
-        <section
-          aria-labelledby="how-it-works-heading"
-          className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      {/* How it works */}
+      <section
+        aria-labelledby="how-it-works-heading"
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      >
+        <h2
+          id="how-it-works-heading"
+          className="text-2xl font-bold text-gray-900"
         >
-          <h2
-            id="how-it-works-heading"
-            className="text-2xl font-bold text-gray-900"
-          >
-            How number-to-words conversion works
-          </h2>
+          How number-to-words conversion works
+        </h2>
 
-          <p className="mt-4 leading-7 text-gray-600">
-            Large numbers are separated into groups of three digits. Each group
-            is converted into words and assigned a scale such as Thousand,
-            Million, Billion, Trillion, or Quadrillion.
+        <p className="mt-4 leading-7 text-gray-600">
+          Large numbers are separated into groups of three digits.
+          Each group is converted into words and assigned a scale such
+          as Thousand, Million, Billion, Trillion, or Quadrillion.
+        </p>
+
+        <p className="mt-4 leading-7 text-gray-600">
+          For example, 1,234,567 is divided into the groups 1, 234,
+          and 567. These groups become One Million, Two Hundred Thirty
+          Four Thousand, and Five Hundred Sixty Seven.
+        </p>
+
+        <p className="mt-4 leading-7 text-gray-600">
+          Decimal digits are handled separately. For example, 12.34
+          becomes Twelve Point Three Four.
+        </p>
+
+        <div className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-5">
+          <h3 className="font-semibold text-gray-900">
+            Supported number range
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-gray-600">
+            Whole numbers can be converted up to
+            {" "}
+            <strong className="text-gray-900">
+              999,999,999,999,999
+            </strong>
+            . Decimal digits are handled separately from the whole
+            number portion.
           </p>
+        </div>
+      </section>
 
-          <p className="mt-4 leading-7 text-gray-600">
-            For example, 1,234,567 is divided into the groups 1, 234, and 567.
-            These groups become One Million, Two Hundred Thirty Four Thousand,
-            and Five Hundred Sixty Seven.
-          </p>
-
-          <p className="mt-4 leading-7 text-gray-600">
-            Decimal digits are handled separately. For example, 12.34 becomes
-            Twelve Point Three Four.
-          </p>
-        </section>
-
-        <section
-          aria-labelledby="features-heading"
-          className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      {/* Features */}
+      <section
+        aria-labelledby="features-heading"
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      >
+        <h2
+          id="features-heading"
+          className="text-2xl font-bold text-gray-900"
         >
-          <h2
-            id="features-heading"
-            className="text-2xl font-bold text-gray-900"
-          >
-            Number to Words Converter features
-          </h2>
+          Number to Words Converter features
+        </h2>
 
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <FeatureCard
-              title="Large number support"
-              text="Convert values using standard English scale names up to the supported Quadrillion range."
-            />
-
-            <FeatureCard
-              title="Decimal support"
-              text="Convert digits after the decimal point individually using the word Point."
-            />
-
-            <FeatureCard
-              title="Negative numbers"
-              text="Negative values are represented by adding Negative before the number in words."
-            />
-
-            <FeatureCard
-              title="Comma support"
-              text="Values such as 1,234,567 can be entered with comma separators."
-            />
-          </div>
-        </section>
-
-        <section
-          aria-labelledby="uses-heading"
-          className="mt-8 grid gap-6 md:grid-cols-2"
-        >
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
           <FeatureCard
-            title="Documents and forms"
-            text="Convert numerical amounts into words when preparing documents, forms, or written records."
+            title="Large number support"
+            text="Convert whole-number values using standard English scale names up to the supported Quadrillion range."
           />
 
           <FeatureCard
-            title="Education"
-            text="Use the converter to check how numbers are written in English words."
+            title="Decimal support"
+            text="Convert digits after the decimal point individually using the word Point."
           />
 
           <FeatureCard
-            title="Business work"
-            text="Convert figures into written form when drafting reports, notes, or other business documents."
+            title="Negative numbers"
+            text="Negative values are represented by placing Negative before the corresponding number in words."
           />
 
           <FeatureCard
-            title="Quick checks"
-            text="Instantly verify the written form of a number without performing the conversion manually."
+            title="Comma support"
+            text="Values such as 1,234,567 can be entered with comma separators."
           />
-        </section>
 
-        <section
-          aria-labelledby="browser-processing-heading"
-          className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+          <FeatureCard
+            title="One-click copying"
+            text="Copy the generated text directly to your clipboard for use in documents and other applications."
+          />
+
+          <FeatureCard
+            title="No file upload"
+            text="The converter works with the number entered into the browser and does not require uploading a document."
+          />
+        </div>
+      </section>
+
+      {/* Use cases */}
+      <section
+        aria-labelledby="uses-heading"
+        className="grid gap-6 md:grid-cols-2"
+      >
+        <FeatureCard
+          title="Documents and forms"
+          text="Convert numerical values into words when preparing documents, forms, written records, or other text-based materials."
+        />
+
+        <FeatureCard
+          title="Education"
+          text="Use the converter to check how numbers are written in English and understand large-number naming."
+        />
+
+        <FeatureCard
+          title="Business work"
+          text="Convert figures into written form when drafting reports, notes, records, or business documents."
+        />
+
+        <FeatureCard
+          title="Quick verification"
+          text="Instantly check the written form of a number without manually spelling out every number group."
+        />
+      </section>
+
+      {/* Practical tips */}
+      <section
+        aria-labelledby="tips-heading"
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      >
+        <h2
+          id="tips-heading"
+          className="text-2xl font-bold text-gray-900"
         >
-          <h2
-            id="browser-processing-heading"
-            className="text-2xl font-bold text-gray-900"
+          Tips for entering numbers
+        </h2>
+
+        <ul className="mt-5 space-y-3 text-gray-600">
+          <li>
+            • You can enter commas, such as 1,234,567.
+          </li>
+
+          <li>
+            • Negative numbers can begin with a minus sign, such as -250.
+          </li>
+
+          <li>
+            • Decimal numbers can be entered using a period, such as 123.45.
+          </li>
+
+          <li>
+            • A decimal can begin with a period, such as .75.
+          </li>
+
+          <li>
+            • Avoid currency symbols and other text in the number field.
+          </li>
+        </ul>
+      </section>
+
+      {/* Privacy */}
+      <section
+        aria-labelledby="privacy-heading"
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      >
+        <h2
+          id="privacy-heading"
+          className="text-2xl font-bold text-gray-900"
+        >
+          Privacy and browser processing
+        </h2>
+
+        <p className="mt-4 leading-7 text-gray-600">
+          The number conversion is performed directly in your browser
+          using the value you enter. No file upload is needed to use
+          this tool.
+        </p>
+
+        <p className="mt-4 leading-7 text-gray-600">
+          Site-wide services, such as analytics, may operate
+          separately according to the{" "}
+          <a
+            href="/privacy"
+            className="font-medium text-blue-600 underline underline-offset-2 hover:text-blue-700"
           >
-            Browser-based processing
-          </h2>
+            Privacy Policy
+          </a>
+          .
+        </p>
+      </section>
 
-          <p className="mt-4 leading-7 text-gray-600">
-            The conversion is performed directly in your browser using the
-            number you enter. No file upload is required for this tool.
-          </p>
-
-          <p className="mt-4 leading-7 text-gray-600">
-            Site-wide services such as analytics may operate separately
-            according to the{" "}
-            <a
-              href="/privacy"
-              className="font-medium text-blue-600 underline underline-offset-2 hover:text-blue-700"
-            >
-              Privacy Policy
-            </a>
-            .
-          </p>
-        </section>
-
-        <section
-          aria-labelledby="faq-heading"
-          className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      {/* FAQ */}
+      <section
+        aria-labelledby="faq-heading"
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+      >
+        <h2
+          id="faq-heading"
+          className="text-2xl font-bold text-gray-900"
         >
-          <h2 id="faq-heading" className="text-2xl font-bold text-gray-900">
-            Number to Words Converter FAQ
-          </h2>
+          Number to Words Converter FAQ
+        </h2>
 
-          <div className="mt-6 divide-y divide-gray-200">
-            <Faq
-              question="Can I convert a negative number?"
-              answer="Yes. Negative numbers are converted by placing Negative before the corresponding number in words."
-            />
+        <div className="mt-6 divide-y divide-gray-200">
+          <Faq
+            question="Can I convert a negative number?"
+            answer="Yes. Negative numbers are converted by placing Negative before the corresponding number in words."
+          />
 
-            <Faq
-              question="Can I convert decimal numbers?"
-              answer="Yes. Digits after the decimal point are read individually after the word Point."
-            />
+          <Faq
+            question="Can I convert decimal numbers?"
+            answer="Yes. Digits after the decimal point are read individually after the word Point."
+          />
 
-            <Faq
-              question="Can I enter commas?"
-              answer="Yes. Commas are ignored during conversion, so values such as 1,234,567 are supported."
-            />
+          <Faq
+            question="Can I enter commas?"
+            answer="Yes. Commas are ignored during conversion, so values such as 1,234,567 are supported."
+          />
 
-            <Faq
-              question="What is the largest number supported?"
-              answer="The converter supports whole-number values up to 999,999,999,999,999."
-            />
+          <Faq
+            question="What is the largest whole number supported?"
+            answer="The converter supports whole-number values up to 999,999,999,999,999."
+          />
 
-            <Faq
-              question="How is 0 converted?"
-              answer="The number 0 is converted to Zero."
-            />
+          <Faq
+            question="How is zero converted?"
+            answer="The number 0 is converted to Zero."
+          />
 
-            <Faq
-              question="Does the tool upload my number?"
-              answer="The conversion itself happens directly in your browser and does not require a server upload."
-            />
-          </div>
-        </section>
-      </div>
+          <Faq
+            question="How are decimal digits handled?"
+            answer="Each digit after the decimal point is read separately after the word Point. For example, 12.34 becomes Twelve Point Three Four."
+          />
+
+          <Faq
+            question="Does the tool require a file upload?"
+            answer="No. You only need to enter the number into the converter."
+          />
+
+          <Faq
+            question="Can I copy the result?"
+            answer="Yes. Use the Copy button next to the generated result to copy the text to your clipboard."
+          />
+        </div>
+      </section>
     </div>
   );
 }
@@ -651,8 +779,13 @@ function Step({
       </span>
 
       <div>
-        <h3 className="font-semibold text-gray-900">{title}</h3>
-        <p className="mt-1 leading-6 text-gray-600">{text}</p>
+        <h3 className="font-semibold text-gray-900">
+          {title}
+        </h3>
+
+        <p className="mt-1 leading-6 text-gray-600">
+          {text}
+        </p>
       </div>
     </li>
   );
@@ -667,9 +800,13 @@ function FeatureCard({
 }) {
   return (
     <article className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-      <h3 className="text-lg font-bold text-gray-900">{title}</h3>
+      <h3 className="text-lg font-bold text-gray-900">
+        {title}
+      </h3>
 
-      <p className="mt-3 text-sm leading-6 text-gray-600">{text}</p>
+      <p className="mt-3 text-sm leading-6 text-gray-600">
+        {text}
+      </p>
     </article>
   );
 }
@@ -683,9 +820,13 @@ function Faq({
 }) {
   return (
     <div className="py-5 first:pt-0 last:pb-0">
-      <h3 className="font-semibold text-gray-900">{question}</h3>
+      <h3 className="font-semibold text-gray-900">
+        {question}
+      </h3>
 
-      <p className="mt-2 leading-6 text-gray-600">{answer}</p>
+      <p className="mt-2 leading-6 text-gray-600">
+        {answer}
+      </p>
     </div>
   );
 }

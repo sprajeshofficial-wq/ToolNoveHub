@@ -1,620 +1,560 @@
-"use client";
+import type { Metadata } from "next";
+import PercentageCalculator from "./PercentageCalculator";
 
-import { useState } from "react";
+const siteUrl = "https://toolnovehub.tools";
 
-type CalculationType = "percentage" | "change" | "value";
+export const metadata: Metadata = {
+  title: "Percentage Calculator - Calculate Percentages Online",
+  description:
+    "Use this free percentage calculator to find a percentage of a number, calculate percentage increases and decreases, compare percentage changes, and find what percentage one value is of another.",
+  keywords: [
+    "percentage calculator",
+    "percent calculator",
+    "percentage calculator online",
+    "calculate percentage",
+    "percentage increase calculator",
+    "percentage decrease calculator",
+    "percentage change calculator",
+    "what percentage calculator",
+    "percent increase",
+    "percent decrease",
+  ],
+  alternates: {
+    canonical: `${siteUrl}/tools/percentage-calculator`,
+  },
+  openGraph: {
+    title:
+      "Percentage Calculator - Calculate Percentages Online | ToolNoveHub",
+    description:
+      "Calculate percentages, percentage increases, decreases, and percentage changes with this free online calculator.",
+    url: `${siteUrl}/tools/percentage-calculator`,
+    siteName: "ToolNoveHub",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title:
+      "Percentage Calculator - Calculate Percentages Online | ToolNoveHub",
+    description:
+      "Free online percentage calculator for percentage-of-number, increase, decrease, and percentage-change calculations.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+};
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "ToolNoveHub Percentage Calculator",
+  url: `${siteUrl}/tools/percentage-calculator`,
+  description:
+    "A free online percentage calculator for calculating percentages, percentage increases, decreases, percentage changes, and proportions.",
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any",
+  browserRequirements:
+    "Requires a modern web browser with JavaScript enabled.",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  featureList: [
+    "Calculate a percentage of a number",
+    "Calculate percentage increases",
+    "Calculate percentage decreases",
+    "Calculate percentage change",
+    "Find what percentage one value is of another",
+    "Browser-based calculations",
+    "No account required",
+  ],
+};
+
+const faqStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How do I calculate a percentage of a number?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Multiply the number by the percentage and divide by 100. For example, 25% of 200 is 50.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I calculate a percentage increase?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Multiply the original value by the percentage divided by 100, then add that amount to the original value. For example, increasing 200 by 10% gives 220.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I calculate a percentage decrease?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Multiply the original value by the percentage divided by 100, then subtract that amount from the original value. For example, decreasing 200 by 10% gives 180.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I calculate percentage change?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Subtract the original value from the new value, divide by the original value, and multiply by 100.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What percentage is one number of another?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Divide the value by the total and multiply by 100. For example, 25 is 12.5% of 200.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is the percentage calculator free?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Yes. The ToolNoveHub percentage calculator is available for free in a web browser.",
+      },
+    },
+  ],
+};
 
 export default function PercentageCalculatorPage() {
-  const [type, setType] = useState<CalculationType>("percentage");
-
-  const [percentage, setPercentage] = useState("");
-  const [number, setNumber] = useState("");
-
-  const [oldValue, setOldValue] = useState("");
-  const [newValue, setNewValue] = useState("");
-
-  const [value, setValue] = useState("");
-  const [total, setTotal] = useState("");
-
-  const [result, setResult] = useState<number | null>(null);
-  const [error, setError] = useState("");
-
-  const calculate = () => {
-    setError("");
-    setResult(null);
-
-    if (type === "percentage") {
-      const percent = Number(percentage);
-      const amount = Number(number);
-
-      if (
-        percentage.trim() === "" ||
-        number.trim() === "" ||
-        !Number.isFinite(percent) ||
-        !Number.isFinite(amount)
-      ) {
-        setError("Please enter valid numbers in both fields.");
-        return;
-      }
-
-      const calculatedResult = (percent / 100) * amount;
-
-      if (!Number.isFinite(calculatedResult)) {
-        setError("The calculation result is too large to display.");
-        return;
-      }
-
-      setResult(calculatedResult);
-      return;
-    }
-
-    if (type === "change") {
-      const original = Number(oldValue);
-      const current = Number(newValue);
-
-      if (
-        oldValue.trim() === "" ||
-        newValue.trim() === "" ||
-        !Number.isFinite(original) ||
-        !Number.isFinite(current)
-      ) {
-        setError("Please enter valid numbers in both fields.");
-        return;
-      }
-
-      if (original === 0) {
-        setError("The original value cannot be zero.");
-        return;
-      }
-
-      const calculatedResult = ((current - original) / original) * 100;
-
-      if (!Number.isFinite(calculatedResult)) {
-        setError("The calculation result is too large to display.");
-        return;
-      }
-
-      setResult(calculatedResult);
-      return;
-    }
-
-    const part = Number(value);
-    const whole = Number(total);
-
-    if (
-      value.trim() === "" ||
-      total.trim() === "" ||
-      !Number.isFinite(part) ||
-      !Number.isFinite(whole)
-    ) {
-      setError("Please enter valid numbers in both fields.");
-      return;
-    }
-
-    if (whole === 0) {
-      setError("The total value cannot be zero.");
-      return;
-    }
-
-    const calculatedResult = (part / whole) * 100;
-
-    if (!Number.isFinite(calculatedResult)) {
-      setError("The calculation result is too large to display.");
-      return;
-    }
-
-    setResult(calculatedResult);
-  };
-
-  const reset = () => {
-    setPercentage("");
-    setNumber("");
-    setOldValue("");
-    setNewValue("");
-    setValue("");
-    setTotal("");
-    setResult(null);
-    setError("");
-  };
-
-  const changeType = (newType: CalculationType) => {
-    setType(newType);
-    setResult(null);
-    setError("");
-  };
-
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("en-US", {
-      maximumFractionDigits: 10,
-    }).format(num);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <section className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
-              ToolNoveHub Tool
-            </p>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData),
+        }}
+      />
 
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqStructuredData),
+        }}
+      />
+
+      <main className="min-h-screen bg-gray-50">
+        {/* Hero */}
+        <section className="border-b border-gray-200 bg-white">
+          <div className="mx-auto max-w-5xl px-4 py-12 text-center sm:px-6 lg:px-8 lg:py-16">
+            <span className="inline-flex rounded-full bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
+              Free Percentage Tool
+            </span>
+
+            <h1 className="mt-4 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
               Percentage Calculator
             </h1>
 
-            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
-              Calculate percentages, percentage changes, and what percentage
-              one number is of another with this free online calculator.
+            <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-gray-600">
+              Calculate percentages, percentage increases and decreases,
+              percentage changes, and what percentage one number is of another.
             </p>
-          </div>
-        </div>
-      </section>
-
-      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-        {/* Calculator */}
-        <section
-          className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-8"
-          aria-labelledby="calculator-heading"
-        >
-          <h2 id="calculator-heading" className="sr-only">
-            Percentage calculator
-          </h2>
-
-          {/* Calculation type */}
-          <div
-            className="grid gap-2 rounded-xl bg-gray-100 p-1 sm:grid-cols-3"
-            role="tablist"
-            aria-label="Percentage calculation type"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={type === "percentage"}
-              onClick={() => changeType("percentage")}
-              className={`rounded-lg px-3 py-3 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
-                type === "percentage"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:bg-white/70 hover:text-gray-900"
-              }`}
-            >
-              Percentage of a Number
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={type === "change"}
-              onClick={() => changeType("change")}
-              className={`rounded-lg px-3 py-3 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
-                type === "change"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:bg-white/70 hover:text-gray-900"
-              }`}
-            >
-              Percentage Change
-            </button>
-
-            <button
-              type="button"
-              role="tab"
-              aria-selected={type === "value"}
-              onClick={() => changeType("value")}
-              className={`rounded-lg px-3 py-3 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
-                type === "value"
-                  ? "bg-white text-blue-600 shadow-sm"
-                  : "text-gray-600 hover:bg-white/70 hover:text-gray-900"
-              }`}
-            >
-              What Percentage?
-            </button>
-          </div>
-
-          <div className="mx-auto mt-8 max-w-xl">
-            {/* Percentage of a number */}
-            {type === "percentage" && (
-              <div className="space-y-5">
-                <div>
-                  <label
-                    htmlFor="percentage"
-                    className="block text-sm font-semibold text-gray-900"
-                  >
-                    Percentage
-                  </label>
-
-                  <div className="relative mt-2">
-                    <input
-                      id="percentage"
-                      type="number"
-                      inputMode="decimal"
-                      step="any"
-                      value={percentage}
-                      onChange={(event) =>
-                        setPercentage(event.target.value)
-                      }
-                      placeholder="25"
-                      aria-describedby="percentage-example"
-                      className="w-full rounded-xl border border-gray-300 px-4 py-3 pr-12 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                    />
-
-                    <span
-                      className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-500"
-                      aria-hidden="true"
-                    >
-                      %
-                    </span>
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="number"
-                    className="block text-sm font-semibold text-gray-900"
-                  >
-                    Number
-                  </label>
-
-                  <input
-                    id="number"
-                    type="number"
-                    inputMode="decimal"
-                    step="any"
-                    value={number}
-                    onChange={(event) => setNumber(event.target.value)}
-                    placeholder="200"
-                    aria-describedby="percentage-example"
-                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-
-                <p
-                  id="percentage-example"
-                  className="text-sm text-gray-500"
-                >
-                  Example: What is 25% of 200? The answer is 50.
-                </p>
-              </div>
-            )}
-
-            {/* Percentage change */}
-            {type === "change" && (
-              <div className="space-y-5">
-                <div>
-                  <label
-                    htmlFor="old-value"
-                    className="block text-sm font-semibold text-gray-900"
-                  >
-                    Original value
-                  </label>
-
-                  <input
-                    id="old-value"
-                    type="number"
-                    inputMode="decimal"
-                    step="any"
-                    value={oldValue}
-                    onChange={(event) => setOldValue(event.target.value)}
-                    placeholder="100"
-                    aria-describedby="change-example"
-                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="new-value"
-                    className="block text-sm font-semibold text-gray-900"
-                  >
-                    New value
-                  </label>
-
-                  <input
-                    id="new-value"
-                    type="number"
-                    inputMode="decimal"
-                    step="any"
-                    value={newValue}
-                    onChange={(event) => setNewValue(event.target.value)}
-                    placeholder="125"
-                    aria-describedby="change-example"
-                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-
-                <p id="change-example" className="text-sm text-gray-500">
-                  Example: A change from 100 to 125 is a 25% increase.
-                </p>
-              </div>
-            )}
-
-            {/* What percentage */}
-            {type === "value" && (
-              <div className="space-y-5">
-                <div>
-                  <label
-                    htmlFor="part-value"
-                    className="block text-sm font-semibold text-gray-900"
-                  >
-                    Value
-                  </label>
-
-                  <input
-                    id="part-value"
-                    type="number"
-                    inputMode="decimal"
-                    step="any"
-                    value={value}
-                    onChange={(event) => setValue(event.target.value)}
-                    placeholder="25"
-                    aria-describedby="value-example"
-                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="total-value"
-                    className="block text-sm font-semibold text-gray-900"
-                  >
-                    Total
-                  </label>
-
-                  <input
-                    id="total-value"
-                    type="number"
-                    inputMode="decimal"
-                    step="any"
-                    value={total}
-                    onChange={(event) => setTotal(event.target.value)}
-                    placeholder="200"
-                    aria-describedby="value-example"
-                    className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                  />
-                </div>
-
-                <p id="value-example" className="text-sm text-gray-500">
-                  Example: 25 is 12.5% of 200.
-                </p>
-              </div>
-            )}
-
-            {/* Error */}
-            {error && (
-              <div
-                className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-                role="alert"
-                aria-live="polite"
-              >
-                {error}
-              </div>
-            )}
-
-            {/* Buttons */}
-            <div className="mt-7 grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={calculate}
-                className="rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
-                Calculate
-              </button>
-
-              <button
-                type="button"
-                onClick={reset}
-                className="rounded-xl border border-gray-300 bg-white px-5 py-3.5 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
-                Reset
-              </button>
-            </div>
           </div>
         </section>
 
-        {/* Result */}
-        {result !== null && (
-          <section
-            className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6 sm:p-8"
-            aria-live="polite"
-            aria-labelledby="result-heading"
-          >
-            <div className="text-center">
-              <p
-                id="result-heading"
-                className="text-sm font-semibold text-blue-700"
-              >
-                Result
+        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+          <PercentageCalculator />
+
+          {/* About */}
+          <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              What is a percentage?
+            </h2>
+
+            <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
+              <p>
+                A percentage expresses a number as a fraction of 100. The word
+                percent means &quot;per hundred,&quot; so 25% means 25 parts out
+                of 100.
               </p>
 
-              <div className="mt-3 break-words text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-                {formatNumber(result)}
-                {type !== "percentage" && "%"}
-              </div>
+              <p>
+                Percentages are used in many everyday situations, including
+                shopping discounts, price changes, test scores, budgets,
+                business reports, statistics, and financial calculations.
+              </p>
 
-              <p className="mt-4 text-sm leading-6 text-gray-600">
-                {type === "percentage" &&
-                  `${formatNumber(Number(percentage))}% of ${formatNumber(
-                    Number(number),
-                  )} is ${formatNumber(result)}.`}
-
-                {type === "change" &&
-                  `The percentage change from ${formatNumber(
-                    Number(oldValue),
-                  )} to ${formatNumber(Number(newValue))} is ${formatNumber(
-                    result,
-                  )}%.`}
-
-                {type === "value" &&
-                  `${formatNumber(Number(value))} is ${formatNumber(
-                    result,
-                  )}% of ${formatNumber(Number(total))}.`}
+              <p>
+                This calculator provides several common percentage calculations
+                so you can choose the method that matches the problem you are
+                solving.
               </p>
             </div>
           </section>
-        )}
 
-        {/* About */}
-        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            About the Percentage Calculator
-          </h2>
+          {/* Calculation types */}
+          <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Types of percentage calculations
+            </h2>
 
-          <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
-            <p>
-              This free percentage calculator helps you solve common percentage
-              problems quickly. You can calculate a percentage of a number,
-              find the percentage change between two values, or determine what
-              percentage one value represents of a total.
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
+              <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                <h3 className="font-semibold text-gray-900">
+                  Percentage of a number
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-gray-600">
+                  Find a percentage of a given number.
+                </p>
+
+                <p className="mt-3 rounded-lg bg-white p-3 font-mono text-sm text-gray-800">
+                  25% of 200 = 50
+                </p>
+              </article>
+
+              <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                <h3 className="font-semibold text-gray-900">
+                  Percentage increase
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-gray-600">
+                  Add a percentage to an original value.
+                </p>
+
+                <p className="mt-3 rounded-lg bg-white p-3 font-mono text-sm text-gray-800">
+                  200 + 10% = 220
+                </p>
+              </article>
+
+              <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                <h3 className="font-semibold text-gray-900">
+                  Percentage decrease
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-gray-600">
+                  Subtract a percentage from an original value.
+                </p>
+
+                <p className="mt-3 rounded-lg bg-white p-3 font-mono text-sm text-gray-800">
+                  200 − 10% = 180
+                </p>
+              </article>
+
+              <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+                <h3 className="font-semibold text-gray-900">
+                  Percentage change
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-gray-600">
+                  Compare an original value with a new value.
+                </p>
+
+                <p className="mt-3 rounded-lg bg-white p-3 font-mono text-sm text-gray-800">
+                  100 → 125 = 25% increase
+                </p>
+              </article>
+
+              <article className="rounded-xl border border-gray-200 bg-gray-50 p-5 md:col-span-2">
+                <h3 className="font-semibold text-gray-900">
+                  What percentage?
+                </h3>
+
+                <p className="mt-2 text-sm leading-6 text-gray-600">
+                  Find the percentage that one value represents of a total.
+                </p>
+
+                <p className="mt-3 rounded-lg bg-white p-3 font-mono text-sm text-gray-800">
+                  25 ÷ 200 × 100 = 12.5%
+                </p>
+              </article>
+            </div>
+          </section>
+
+          {/* Formulas */}
+          <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Percentage formulas
+            </h2>
+
+            <div className="mt-6 space-y-5">
+              <FormulaBlock
+                title="Percentage of a number"
+                formula="Percentage ÷ 100 × Number"
+                example="25 ÷ 100 × 200 = 50"
+              />
+
+              <FormulaBlock
+                title="Percentage increase"
+                formula="Original + (Original × Percentage ÷ 100)"
+                example="200 + (200 × 10 ÷ 100) = 220"
+              />
+
+              <FormulaBlock
+                title="Percentage decrease"
+                formula="Original − (Original × Percentage ÷ 100)"
+                example="200 − (200 × 10 ÷ 100) = 180"
+              />
+
+              <FormulaBlock
+                title="Percentage change"
+                formula="(New − Original) ÷ Original × 100"
+                example="(125 − 100) ÷ 100 × 100 = 25%"
+              />
+
+              <FormulaBlock
+                title="What percentage?"
+                formula="Value ÷ Total × 100"
+                example="25 ÷ 200 × 100 = 12.5%"
+              />
+            </div>
+          </section>
+
+          {/* Real-world uses */}
+          <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Common uses for percentage calculations
+            </h2>
+
+            <div className="mt-6 grid gap-5 sm:grid-cols-2">
+              <UseCase
+                title="Shopping discounts"
+                text="Calculate how much a discount reduces the original price and estimate the final amount."
+              />
+
+              <UseCase
+                title="Price increases"
+                text="Calculate the new price after a percentage increase."
+              />
+
+              <UseCase
+                title="Test scores"
+                text="Convert marks into percentages to understand performance."
+              />
+
+              <UseCase
+                title="Business calculations"
+                text="Compare changes in sales, costs, revenue, quantities, or other business figures."
+              />
+
+              <UseCase
+                title="Budgets"
+                text="Calculate what portion of a budget is represented by a particular expense."
+              />
+
+              <UseCase
+                title="Statistics"
+                text="Express a value as a percentage of a total when analyzing groups or categories."
+              />
+            </div>
+          </section>
+
+          {/* How to use */}
+          <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              How to use this percentage calculator
+            </h2>
+
+            <ol className="mt-6 space-y-4 text-sm leading-7 text-gray-600">
+              <li>
+                <strong className="text-gray-900">1.</strong>{" "}
+                Choose the type of percentage calculation you need.
+              </li>
+
+              <li>
+                <strong className="text-gray-900">2.</strong>{" "}
+                Enter the numbers requested by that calculation.
+              </li>
+
+              <li>
+                <strong className="text-gray-900">3.</strong>{" "}
+                Select <strong className="text-gray-900">Calculate</strong>.
+              </li>
+
+              <li>
+                <strong className="text-gray-900">4.</strong>{" "}
+                Review the result and the calculation explanation.
+              </li>
+
+              <li>
+                <strong className="text-gray-900">5.</strong>{" "}
+                Select <strong className="text-gray-900">Reset</strong> to
+                start a new calculation.
+              </li>
+            </ol>
+          </section>
+
+          {/* Tips */}
+          <section className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Percentage calculation tips
+            </h2>
+
+            <ul className="mt-5 space-y-3 text-sm leading-7 text-gray-600">
+              <li>
+                • A percentage is always based on a reference or total value.
+              </li>
+
+              <li>
+                • A percentage increase and percentage decrease are calculated
+                relative to the original value.
+              </li>
+
+              <li>
+                • Percentage change can be positive or negative depending on
+                whether the value increased or decreased.
+              </li>
+
+              <li>
+                • When finding what percentage one value represents of another,
+                the total cannot be zero.
+              </li>
+
+              <li>
+                • For financial or business decisions, verify important results
+                against the underlying source data.
+              </li>
+            </ul>
+          </section>
+
+          {/* Privacy */}
+          <section className="mt-6 rounded-2xl border border-blue-100 bg-blue-50 p-6 sm:p-8">
+            <h2 className="text-xl font-bold text-blue-900">
+              Browser-based percentage calculations
+            </h2>
+
+            <p className="mt-3 text-sm leading-7 text-blue-800">
+              The calculations on this page are performed directly in your web
+              browser. No account is required, and the numbers entered into the
+              calculator do not need to be uploaded to a server for the
+              calculation itself.
             </p>
+          </section>
 
-            <p>
-              It can be useful for everyday calculations such as discounts,
-              price changes, increases and decreases, test scores, business
-              figures, budgets, and other situations where percentages are
-              needed.
-            </p>
-          </div>
-        </section>
+          {/* FAQ */}
+          <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Frequently asked questions
+            </h2>
 
-        {/* How to use */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            How to use the Percentage Calculator
-          </h2>
+            <div className="mt-6 space-y-4">
+              <Faq
+                question="How do I calculate a percentage of a number?"
+                answer="Multiply the number by the percentage and divide by 100. For example, 25% of 200 is 50."
+              />
 
-          <ol className="mt-5 space-y-4 text-sm leading-6 text-gray-600">
-            <li>
-              <strong className="text-gray-900">1.</strong>{" "}
-              Choose the type of percentage calculation you need.
-            </li>
+              <Faq
+                question="How do I calculate a percentage increase?"
+                answer="Multiply the original value by the percentage divided by 100, then add the result to the original value. For example, increasing 200 by 10% gives 220."
+              />
 
-            <li>
-              <strong className="text-gray-900">2.</strong>{" "}
-              Enter the required values into the calculator fields.
-            </li>
+              <Faq
+                question="How do I calculate a percentage decrease?"
+                answer="Multiply the original value by the percentage divided by 100, then subtract the result from the original value. For example, decreasing 200 by 10% gives 180."
+              />
 
-            <li>
-              <strong className="text-gray-900">3.</strong>{" "}
-              Select <strong className="text-gray-900">Calculate</strong> to
-              process the numbers.
-            </li>
+              <Faq
+                question="How do I calculate percentage change?"
+                answer="Subtract the original value from the new value, divide by the original value, and multiply by 100."
+              />
 
-            <li>
-              <strong className="text-gray-900">4.</strong>{" "}
-              Review the calculated result and explanation.
-            </li>
+              <Faq
+                question="What percentage is one number of another?"
+                answer="Divide the value by the total and multiply by 100. For example, 25 is 12.5% of 200."
+              />
 
-            <li>
-              <strong className="text-gray-900">5.</strong>{" "}
-              Select <strong className="text-gray-900">Reset</strong> when you
-              want to start another calculation.
-            </li>
-          </ol>
-        </section>
+              <Faq
+                question="Is this percentage calculator free?"
+                answer="Yes. The ToolNoveHub percentage calculator is available for free in a web browser."
+              />
 
-        {/* Calculation types */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            Percentage calculations
-          </h2>
-
-          <div className="mt-5 grid gap-4 sm:grid-cols-3">
-            <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-              <h3 className="font-semibold text-gray-900">
-                Percentage of a number
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-gray-600">
-                Find a specific percentage of a number.
-              </p>
-
-              <p className="mt-3 text-sm font-medium text-gray-900">
-                Example: 25% of 200 = 50
-              </p>
-            </article>
-
-            <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-              <h3 className="font-semibold text-gray-900">
-                Percentage change
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-gray-600">
-                Calculate the percentage increase or decrease between two
-                values.
-              </p>
-
-              <p className="mt-3 text-sm font-medium text-gray-900">
-                Example: 100 → 125 = 25% increase
-              </p>
-            </article>
-
-            <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-              <h3 className="font-semibold text-gray-900">
-                What percentage?
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-gray-600">
-                Find what percentage one value represents of another value.
-              </p>
-
-              <p className="mt-3 text-sm font-medium text-gray-900">
-                Example: 25 of 200 = 12.5%
-              </p>
-            </article>
-          </div>
-        </section>
-
-        {/* Formulas */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            Percentage formulas
-          </h2>
-
-          <div className="mt-5 space-y-5 text-sm leading-7 text-gray-600">
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Percentage of a number
-              </h3>
-
-              <p className="mt-1">
-                Percentage ÷ 100 × Number
-              </p>
+              <Faq
+                question="Can I use this calculator on a phone?"
+                answer="Yes. The calculator is designed to work across desktop, tablet, and mobile browsers."
+              />
             </div>
-
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Percentage change
-              </h3>
-
-              <p className="mt-1">
-                (New Value − Original Value) ÷ Original Value × 100
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                What percentage
-              </h3>
-
-              <p className="mt-1">
-                Value ÷ Total × 100
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Privacy */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            Privacy and browser-based calculations
-          </h2>
-
-          <p className="mt-4 text-sm leading-7 text-gray-600">
-            Percentage calculations are performed directly in your browser.
-            No account is required, and the values entered into this calculator
-            do not need to be uploaded to a server for the calculation.
-          </p>
-        </section>
+          </section>
+        </div>
       </main>
+    </>
+  );
+}
+
+function FormulaBlock({
+  title,
+  formula,
+  example,
+}: {
+  title: string;
+  formula: string;
+  example: string;
+}) {
+  return (
+    <div className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+      <h3 className="font-semibold text-gray-900">
+        {title}
+      </h3>
+
+      <p className="mt-3 font-mono text-sm text-gray-800">
+        {formula}
+      </p>
+
+      <p className="mt-2 text-sm leading-6 text-gray-600">
+        Example: {example}
+      </p>
     </div>
+  );
+}
+
+function UseCase({
+  title,
+  text,
+}: {
+  title: string;
+  text: string;
+}) {
+  return (
+    <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+      <h3 className="font-semibold text-gray-900">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-gray-600">
+        {text}
+      </p>
+    </article>
+  );
+}
+
+function Faq({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) {
+  return (
+    <details className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+      <summary className="cursor-pointer font-semibold text-gray-900">
+        {question}
+      </summary>
+
+      <p className="mt-3 text-sm leading-7 text-gray-600">
+        {answer}
+      </p>
+    </details>
   );
 }

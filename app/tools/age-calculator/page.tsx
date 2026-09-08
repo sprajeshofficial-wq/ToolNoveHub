@@ -1,412 +1,291 @@
-"use client";
+import type { Metadata } from "next";
+import AgeCalculator from "./AgeCalculator";
 
-import { useState } from "react";
+const siteUrl = "https://toolnovehub.tools";
+const pageUrl = `${siteUrl}/tools/age-calculator`;
 
-type AgeResult = {
-  years: number;
-  months: number;
-  days: number;
-  totalDays: number;
+export const metadata: Metadata = {
+  title: "Age Calculator - Calculate Your Exact Age",
+  description:
+    "Calculate your exact age in years, months, and days, see total elapsed days, and find your next birthday with ToolNoveHub's free online age calculator.",
+  keywords: [
+    "age calculator",
+    "calculate age",
+    "exact age calculator",
+    "age calculator online",
+    "birthday calculator",
+    "date of birth calculator",
+    "how old am I",
+    "age in years months days",
+    "age in days",
+    "next birthday calculator",
+  ],
+  alternates: {
+    canonical: pageUrl,
+  },
+  openGraph: {
+    title: "Age Calculator - Calculate Your Exact Age | ToolNoveHub",
+    description:
+      "Calculate your age in years, months, and days, total elapsed days, and next birthday.",
+    url: pageUrl,
+    siteName: "ToolNoveHub",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Age Calculator - Calculate Your Exact Age | ToolNoveHub",
+    description:
+      "Free online age calculator for calculating age in years, months, days, total elapsed days, and next birthday.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
-function getTodayDate() {
-  const today = new Date();
+const webApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "ToolNoveHub Age Calculator",
+  url: pageUrl,
+  description:
+    "A free online age calculator that calculates age in years, months, days, total elapsed days, and next birthday information.",
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any",
+  browserRequirements:
+    "Requires a modern web browser with JavaScript enabled.",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  featureList: [
+    "Calculate age in years",
+    "Calculate age in months",
+    "Calculate age in days",
+    "Calculate total elapsed calendar days",
+    "Calculate next birthday",
+    "Handle leap-year dates",
+    "Reject future dates",
+    "Validate calendar dates",
+    "Browser-based calculation",
+    "No account required",
+  ],
+};
 
-  return new Date(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
-  );
-}
-
-function calculateAge(dateOfBirth: string): AgeResult | null {
-  if (!dateOfBirth) {
-    return null;
-  }
-
-  const [year, month, day] = dateOfBirth.split("-").map(Number);
-
-  if (
-    !Number.isInteger(year) ||
-    !Number.isInteger(month) ||
-    !Number.isInteger(day)
-  ) {
-    return null;
-  }
-
-  const birthDate = new Date(year, month - 1, day);
-  const today = getTodayDate();
-
-  // Prevent invalid dates such as 2026-02-31.
-  if (
-    birthDate.getFullYear() !== year ||
-    birthDate.getMonth() !== month - 1 ||
-    birthDate.getDate() !== day
-  ) {
-    return null;
-  }
-
-  if (birthDate > today) {
-    return null;
-  }
-
-  let years = today.getFullYear() - birthDate.getFullYear();
-  let months = today.getMonth() - birthDate.getMonth();
-  let days = today.getDate() - birthDate.getDate();
-
-  if (days < 0) {
-    months--;
-
-    const daysInPreviousMonth = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      0,
-    ).getDate();
-
-    days += daysInPreviousMonth;
-  }
-
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
-
-  const totalMilliseconds = today.getTime() - birthDate.getTime();
-
-  const totalDays = Math.floor(
-    totalMilliseconds / (1000 * 60 * 60 * 24),
-  );
-
-  return {
-    years,
-    months,
-    days,
-    totalDays,
-  };
-}
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How does the age calculator work?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "The calculator compares your date of birth with today's local calendar date and calculates the difference in complete years, months, and days.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I calculate my exact age in years, months, and days?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Yes. Enter your date of birth and the calculator displays your age as complete years, remaining months, and remaining days.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does the calculator handle leap years?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Yes. The calculator validates calendar dates and handles leap years when calculating elapsed calendar days. February 29 birth dates are also supported.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What happens if I was born on February 29?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "A February 29 birth date is treated as February 28 for the birthday in a non-leap year so that the birthday remains a valid calendar date.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I enter a future date?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "No. Future dates are rejected because a future date cannot be used as a completed date of birth for the age calculation.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Does the calculator show total days?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Yes. The calculator shows the total number of elapsed calendar days between the date of birth and today's date.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Can I see my next birthday?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Yes. The calculator shows the date of the next birthday and the number of calendar days remaining until it.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is the age calculator free?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "Yes. The ToolNoveHub Age Calculator is free to use in a modern web browser and does not require an account.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Is my date of birth uploaded to a server?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text:
+          "The age calculation itself is performed directly in the browser. The entered date does not need to be uploaded to a server for the calculation.",
+      },
+    },
+  ],
+};
 
 export default function AgeCalculatorPage() {
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [result, setResult] = useState<AgeResult | null>(null);
-  const [error, setError] = useState("");
-
-  const today = getTodayDate();
-  const maxDate = [
-    today.getFullYear(),
-    String(today.getMonth() + 1).padStart(2, "0"),
-    String(today.getDate()).padStart(2, "0"),
-  ].join("-");
-
-  const calculate = () => {
-    setError("");
-    setResult(null);
-
-    if (!dateOfBirth) {
-      setError("Please select your date of birth.");
-      return;
-    }
-
-    const calculatedAge = calculateAge(dateOfBirth);
-
-    if (!calculatedAge) {
-      setError("Please enter a valid date of birth.");
-      return;
-    }
-
-    setResult(calculatedAge);
-  };
-
-  const reset = () => {
-    setDateOfBirth("");
-    setResult(null);
-    setError("");
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <section className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
-              ToolNoveHub Tool
-            </p>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webApplicationSchema),
+        }}
+      />
 
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Age Calculator
-            </h1>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
 
-            <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
-              Calculate your age in years, months, and days using your date of
-              birth and today&apos;s date.
-            </p>
-          </div>
-        </div>
-      </section>
+      <main className="min-h-screen bg-gray-50">
+        {/* Hero */}
+        <section className="border-b border-gray-200 bg-white">
+          <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+            <div className="text-center">
+              <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">
+                Free online calculator
+              </p>
 
-      <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-        {/* Calculator */}
-        <section
-          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
-          aria-labelledby="calculator-heading"
-        >
-          <h2 id="calculator-heading" className="sr-only">
-            Age calculator
-          </h2>
+              <h1 className="mt-3 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+                Age Calculator
+              </h1>
 
-          <div className="mx-auto max-w-xl">
-            <label
-              htmlFor="date-of-birth"
-              className="block text-sm font-semibold text-gray-900"
-            >
-              Date of birth
-            </label>
-
-            <input
-              id="date-of-birth"
-              type="date"
-              value={dateOfBirth}
-              max={maxDate}
-              onChange={(event) => {
-                setDateOfBirth(event.target.value);
-                setResult(null);
-                setError("");
-              }}
-              aria-describedby="date-help"
-              className="mt-2 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-            />
-
-            <p
-              id="date-help"
-              className="mt-2 text-sm leading-6 text-gray-500"
-            >
-              Select your birth date. Future dates cannot be used.
-            </p>
-
-            {error && (
-              <div
-                className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
-                role="alert"
-                aria-live="polite"
-              >
-                {error}
-              </div>
-            )}
-
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                onClick={calculate}
-                className="rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
-                Calculate Age
-              </button>
-
-              <button
-                type="button"
-                onClick={reset}
-                className="rounded-xl border border-gray-300 bg-white px-5 py-3.5 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-              >
-                Reset
-              </button>
+              <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-gray-600">
+                Calculate your exact age in years, months, and days from
+                your date of birth, with total elapsed days and your next
+                birthday.
+              </p>
             </div>
           </div>
         </section>
 
-        {/* Result */}
-        {result && (
-          <section
-            className="mt-8 rounded-2xl border border-blue-100 bg-blue-50 p-6 sm:p-8"
-            aria-labelledby="result-heading"
-            aria-live="polite"
-          >
-            <div className="text-center">
-              <p
-                id="result-heading"
-                className="text-sm font-semibold text-blue-700"
-              >
-                Your current age
-              </p>
+        {/* Main content */}
+        <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+          <AgeCalculator />
 
-              <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="rounded-xl bg-white px-5 py-5 shadow-sm">
-                  <div className="text-3xl font-bold text-gray-900">
-                    {result.years}
-                  </div>
+          {/* FAQ */}
+          <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+            <h2 className="text-xl font-bold text-gray-900">
+              Frequently asked questions
+            </h2>
 
-                  <div className="mt-1 text-xs font-medium uppercase tracking-wide text-gray-500">
-                    Years
-                  </div>
-                </div>
+            <div className="mt-6 space-y-4">
+              <Faq
+                question="How do I calculate my age?"
+                answer="Select your date of birth and choose Calculate Age. The calculator compares your birth date with today's local calendar date and displays your age in years, months, and days."
+              />
 
-                <div className="rounded-xl bg-white px-5 py-5 shadow-sm">
-                  <div className="text-3xl font-bold text-gray-900">
-                    {result.months}
-                  </div>
+              <Faq
+                question="What does the age result mean?"
+                answer="The result shows complete years followed by the remaining months and days. For example, 25 years, 4 months, and 12 days means 25 complete years have passed, followed by another 4 months and 12 days."
+              />
 
-                  <div className="mt-1 text-xs font-medium uppercase tracking-wide text-gray-500">
-                    Months
-                  </div>
-                </div>
+              <Faq
+                question="Does the calculator account for leap years?"
+                answer="Yes. The calculator validates calendar dates and uses calendar-day calculations, including leap years. February 29 birth dates are supported."
+              />
 
-                <div className="rounded-xl bg-white px-5 py-5 shadow-sm">
-                  <div className="text-3xl font-bold text-gray-900">
-                    {result.days}
-                  </div>
+              <Faq
+                question="What happens if I was born on February 29?"
+                answer="February 29 is accepted as a valid date of birth. In a non-leap year, the next birthday is treated as February 28 so that the birthday remains a valid calendar date."
+              />
 
-                  <div className="mt-1 text-xs font-medium uppercase tracking-wide text-gray-500">
-                    Days
-                  </div>
-                </div>
-              </div>
+              <Faq
+                question="Does the calculator show my next birthday?"
+                answer="Yes. The result includes the date of your next birthday and the number of calendar days remaining until it."
+              />
 
-              <p className="mt-6 text-sm leading-6 text-gray-600">
-                That is approximately{" "}
-                <strong className="text-gray-900">
-                  {result.totalDays.toLocaleString("en-US")}
-                </strong>{" "}
-                days old.
-              </p>
+              <Faq
+                question="Why is total age in days different from dividing by 365?"
+                answer="A calendar year can contain 365 or 366 days. The calculator therefore counts actual calendar-day differences rather than assuming every year contains exactly 365 days."
+              />
+
+              <Faq
+                question="Can I use the calculator on a phone?"
+                answer="Yes. The calculator is designed to work in modern desktop and mobile web browsers."
+              />
+
+              <Faq
+                question="Is this age calculator free?"
+                answer="Yes. The ToolNoveHub Age Calculator is free to use and does not require an account."
+              />
+
+              <Faq
+                question="Is my date of birth uploaded to a server?"
+                answer="The age calculation itself is performed directly in your browser. The entered date does not need to be uploaded to a server for the calculation."
+              />
             </div>
           </section>
-        )}
-
-        {/* About */}
-        <section className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            About the Age Calculator
-          </h2>
-
-          <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
-            <p>
-              The ToolNoveHub Age Calculator calculates the elapsed age from
-              your date of birth to today. It displays the result as a
-              combination of complete years, months, and days.
-            </p>
-
-            <p>
-              The calculator can be useful when you need to quickly determine
-              someone&apos;s age for everyday planning, forms, school
-              activities, birthdays, eligibility checks, or general
-              date-related calculations.
-            </p>
-          </div>
-        </section>
-
-        {/* How to use */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            How to use the Age Calculator
-          </h2>
-
-          <ol className="mt-5 space-y-4 text-sm leading-6 text-gray-600">
-            <li>
-              <strong className="text-gray-900">1.</strong>{" "}
-              Select your date of birth from the date field.
-            </li>
-
-            <li>
-              <strong className="text-gray-900">2.</strong>{" "}
-              Select <strong className="text-gray-900">Calculate Age</strong>.
-            </li>
-
-            <li>
-              <strong className="text-gray-900">3.</strong>{" "}
-              Review your age in years, months, and days.
-            </li>
-
-            <li>
-              <strong className="text-gray-900">4.</strong>{" "}
-              The calculator also displays the approximate total number of
-              elapsed days.
-            </li>
-
-            <li>
-              <strong className="text-gray-900">5.</strong>{" "}
-              Select <strong className="text-gray-900">Reset</strong> to start
-              another calculation.
-            </li>
-          </ol>
-        </section>
-
-        {/* How the calculation works */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            How age is calculated
-          </h2>
-
-          <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
-            <p>
-              Age is calculated by comparing the selected date of birth with
-              today&apos;s calendar date. The calculator first determines the
-              difference in years, then adjusts the month and day values when
-              the current date occurs before the corresponding birthday
-              components.
-            </p>
-
-            <p>
-              The result is presented as complete years, remaining months, and
-              remaining days. A separate total-days figure gives an approximate
-              count of the elapsed calendar days between the two dates.
-            </p>
-          </div>
-        </section>
-
-        {/* Examples */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            Age calculation examples
-          </h2>
-
-          <div className="mt-5 grid gap-4 sm:grid-cols-3">
-            <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-              <h3 className="font-semibold text-gray-900">
-                Birthday already passed
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-gray-600">
-                If your birthday has already occurred this year, the calculator
-                counts the completed years and the remaining months and days.
-              </p>
-            </article>
-
-            <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-              <h3 className="font-semibold text-gray-900">
-                Birthday coming later
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-gray-600">
-                If your birthday has not yet occurred this year, the completed
-                year count is adjusted accordingly.
-              </p>
-            </article>
-
-            <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
-              <h3 className="font-semibold text-gray-900">
-                Total days
-              </h3>
-
-              <p className="mt-2 text-sm leading-6 text-gray-600">
-                The result also includes the approximate total number of days
-                elapsed since the selected birth date.
-              </p>
-            </article>
-          </div>
-        </section>
-
-        {/* Privacy */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            Privacy and browser-based calculation
-          </h2>
-
-          <p className="mt-4 text-sm leading-7 text-gray-600">
-            The age calculation is performed directly in your browser. No
-            account is required, and the date entered into this calculator does
-            not need to be uploaded to a server to calculate the result.
-          </p>
-        </section>
+        </div>
       </main>
-    </div>
+    </>
+  );
+}
+
+function Faq({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) {
+  return (
+    <details className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+      <summary className="cursor-pointer font-semibold text-gray-900">
+        {question}
+      </summary>
+
+      <p className="mt-3 text-sm leading-7 text-gray-600">
+        {answer}
+      </p>
+    </details>
   );
 }

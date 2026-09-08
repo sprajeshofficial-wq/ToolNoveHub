@@ -1,12 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowRightLeft } from "lucide-react";
+import { ArrowRightLeft, RotateCcw } from "lucide-react";
 
 type Unit = {
   label: string;
   value: string;
-  factor: number;
+  factor?: number;
 };
 
 type Category = {
@@ -45,9 +45,9 @@ const CATEGORIES: Record<string, Category> = {
   temperature: {
     name: "Temperature",
     units: [
-      { label: "Celsius", value: "celsius", factor: 0 },
-      { label: "Fahrenheit", value: "fahrenheit", factor: 0 },
-      { label: "Kelvin", value: "kelvin", factor: 0 },
+      { label: "Celsius", value: "celsius" },
+      { label: "Fahrenheit", value: "fahrenheit" },
+      { label: "Kelvin", value: "kelvin" },
     ],
   },
 
@@ -91,11 +91,31 @@ const CATEGORIES: Record<string, Category> = {
   speed: {
     name: "Speed",
     units: [
-      { label: "Kilometers per hour", value: "kmh", factor: 1 },
-      { label: "Miles per hour", value: "mph", factor: 1.609344 },
-      { label: "Meters per second", value: "ms", factor: 3.6 },
-      { label: "Knots", value: "knots", factor: 1.852 },
-      { label: "Feet per second", value: "fts", factor: 1.09728 },
+      {
+        label: "Kilometers per hour",
+        value: "kmh",
+        factor: 1,
+      },
+      {
+        label: "Miles per hour",
+        value: "mph",
+        factor: 1.609344,
+      },
+      {
+        label: "Meters per second",
+        value: "ms",
+        factor: 3.6,
+      },
+      {
+        label: "Knots",
+        value: "knots",
+        factor: 1.852,
+      },
+      {
+        label: "Feet per second",
+        value: "fts",
+        factor: 1.09728,
+      },
     ],
   },
 };
@@ -145,7 +165,12 @@ function convertValue(
   const fromUnit = units.find((unit) => unit.value === from);
   const toUnit = units.find((unit) => unit.value === to);
 
-  if (!fromUnit || !toUnit) {
+  if (
+    !fromUnit ||
+    !toUnit ||
+    typeof fromUnit.factor !== "number" ||
+    typeof toUnit.factor !== "number"
+  ) {
     return NaN;
   }
 
@@ -164,7 +189,9 @@ function formatNumber(value: number): string {
   const absolute = Math.abs(value);
 
   if (absolute !== 0 && (absolute < 0.000001 || absolute >= 1e12)) {
-    return value.toExponential(8).replace(/\.?0+e/, "e");
+    return value
+      .toExponential(8)
+      .replace(/\.?0+e/, "e");
   }
 
   return Number(value.toPrecision(12)).toLocaleString("en-US", {
@@ -213,7 +240,7 @@ export default function UnitConverter() {
   function changeCategory(nextCategory: string) {
     const units = CATEGORIES[nextCategory]?.units;
 
-    if (!units) {
+    if (!units || units.length === 0) {
       return;
     }
 
@@ -231,8 +258,20 @@ export default function UnitConverter() {
     setValue("");
   }
 
+  function resetConverter() {
+    setCategory("length");
+    setFromUnit("meter");
+    setToUnit("kilometer");
+    setValue("1");
+  }
+
+  const numericInput = Number(value);
+  const hasValidValue =
+    value.trim() !== "" && Number.isFinite(numericInput);
+
   return (
     <div className="space-y-6">
+      {/* Category */}
       <div>
         <label
           htmlFor="unit-category"
@@ -245,7 +284,7 @@ export default function UnitConverter() {
           id="unit-category"
           value={category}
           onChange={(event) => changeCategory(event.target.value)}
-          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
         >
           {Object.entries(CATEGORIES).map(([key, item]) => (
             <option key={key} value={key}>
@@ -255,6 +294,7 @@ export default function UnitConverter() {
         </select>
       </div>
 
+      {/* Value */}
       <div>
         <label
           htmlFor="unit-value"
@@ -271,19 +311,20 @@ export default function UnitConverter() {
           value={value}
           onChange={(event) => setValue(event.target.value)}
           placeholder="Enter a value"
-          className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           aria-describedby="unit-value-help"
+          className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-lg text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
         />
 
         <p
           id="unit-value-help"
-          className="mt-2 text-xs text-slate-500"
+          className="mt-2 text-xs leading-5 text-slate-500"
         >
-          Enter positive or negative values where the selected unit supports
-          them, such as negative temperatures.
+          Enter a number to convert. Negative values are supported for
+          measurements where they make sense, such as temperature.
         </p>
       </div>
 
+      {/* Unit selection */}
       <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-end">
         <div>
           <label
@@ -297,7 +338,7 @@ export default function UnitConverter() {
             id="from-unit"
             value={fromUnit}
             onChange={(event) => setFromUnit(event.target.value)}
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           >
             {currentUnits.map((unit) => (
               <option key={unit.value} value={unit.value}>
@@ -310,11 +351,14 @@ export default function UnitConverter() {
         <button
           type="button"
           onClick={swapUnits}
-          className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           aria-label={`Swap ${fromLabel} and ${toLabel}`}
-          title="Swap units"
+          title={`Swap ${fromLabel} and ${toLabel}`}
+          className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-slate-600 shadow-sm transition hover:bg-slate-100 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
-          <ArrowRightLeft className="h-5 w-5" aria-hidden="true" />
+          <ArrowRightLeft
+            className="h-5 w-5"
+            aria-hidden="true"
+          />
         </button>
 
         <div>
@@ -329,7 +373,7 @@ export default function UnitConverter() {
             id="to-unit"
             value={toUnit}
             onChange={(event) => setToUnit(event.target.value)}
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           >
             {currentUnits.map((unit) => (
               <option key={unit.value} value={unit.value}>
@@ -340,46 +384,81 @@ export default function UnitConverter() {
         </div>
       </div>
 
-      {result !== null ? (
-        <div
-          className="rounded-2xl border border-indigo-200 bg-gradient-to-r from-indigo-50 to-purple-50 p-5"
-          aria-live="polite"
-        >
-          <p className="text-sm text-slate-600">
-            {formatNumber(Number(value))} {fromLabel}
-          </p>
-
-          <p className="mt-1 break-words text-2xl font-bold text-indigo-700">
-            {formatNumber(result)} {toLabel}
-          </p>
-        </div>
-      ) : (
-        <div
-          className="rounded-2xl border border-slate-200 bg-slate-50 p-5"
-          aria-live="polite"
-        >
-          <p className="text-sm text-slate-500">
-            Enter a valid number to see the converted result.
-          </p>
-        </div>
-      )}
-
-      <button
-        type="button"
-        onClick={clearAll}
-        disabled={value === ""}
-        className="w-full rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+      {/* Result */}
+      <div
+        className={`rounded-2xl border p-5 transition ${
+          result !== null
+            ? "border-indigo-200 bg-gradient-to-r from-indigo-50 to-purple-50"
+            : "border-slate-200 bg-slate-50"
+        }`}
+        aria-live="polite"
+        aria-atomic="true"
       >
-        Clear
-      </button>
+        {result !== null && hasValidValue ? (
+          <>
+            <p className="text-sm font-medium text-slate-600">
+              {formatNumber(numericInput)} {fromLabel}
+            </p>
 
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <span className="text-3xl font-bold tracking-tight text-indigo-700">
+                {formatNumber(result)}
+              </span>
+
+              <span className="text-base font-medium text-slate-700">
+                {toLabel}
+              </span>
+            </div>
+
+            <p className="mt-2 text-xs text-slate-500">
+              Converted from {fromLabel} to {toLabel}.
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="text-sm font-semibold text-slate-700">
+              Conversion result
+            </p>
+
+            <p className="mt-1 text-sm text-slate-500">
+              Enter a valid number to see the converted value.
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Actions */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={clearAll}
+          disabled={value === ""}
+          className="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
+        >
+          Clear value
+        </button>
+
+        <button
+          type="button"
+          onClick={resetConverter}
+          className="flex items-center justify-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          <RotateCcw
+            className="h-4 w-4"
+            aria-hidden="true"
+          />
+          Reset converter
+        </button>
+      </div>
+
+      {/* Conversion note */}
       <div className="rounded-2xl border border-indigo-100 bg-indigo-50 p-4">
         <p className="text-sm leading-6 text-slate-600">
           <span className="font-semibold text-indigo-700">
             Conversion note:
           </span>{" "}
-          Results are calculated locally in your browser using standard unit
-          conversion factors and temperature formulas. Displayed values may
+          Calculations are performed locally in your browser using standard
+          conversion factors and temperature formulas. Displayed results may
           be rounded for readability.
         </p>
       </div>

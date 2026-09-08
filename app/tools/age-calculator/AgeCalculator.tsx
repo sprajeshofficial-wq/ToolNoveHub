@@ -1,330 +1,771 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Calendar, Clock, RefreshCw, Copy, Check, Sparkles } from 'lucide-react';
+import { useState } from "react";
+import { Calendar, Calculator, RotateCcw } from "lucide-react";
 
-interface AgeResult {
+type AgeResult = {
   years: number;
   months: number;
   days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
   totalDays: number;
-  totalHours: number;
-  totalMinutes: number;
-  totalSeconds: number;
   nextBirthday: Date;
-  daysUntilNextBirthday: number;
-  zodiacSign: string;
-  generation: string;
-  lifeExpectancy: string;
-  ageInDogYears: number;
-  ageInCatYears: number;
+  daysUntilBirthday: number;
+};
+
+function getTodayDate(): Date {
+  const today = new Date();
+
+  return new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+  );
+}
+
+function getDateString(date: Date): string {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0"),
+  ].join("-");
+}
+
+function isLeapYear(year: number): boolean {
+  return (
+    year % 4 === 0 &&
+    (year % 100 !== 0 || year % 400 === 0)
+  );
+}
+
+/**
+ * Returns the birthday date for a specific year.
+ *
+ * February 29 birthdays use February 28 during non-leap years
+ * so that the birthday is always represented by a valid date.
+ */
+function getBirthdayDate(
+  year: number,
+  birthMonth: number,
+  birthDay: number,
+): Date {
+  if (
+    birthMonth === 1 &&
+    birthDay === 29 &&
+    !isLeapYear(year)
+  ) {
+    return new Date(year, 1, 28);
+  }
+
+  return new Date(year, birthMonth, birthDay);
+}
+
+/**
+ * Calculates the number of calendar days between two dates.
+ *
+ * UTC is used here to avoid daylight-saving-time differences
+ * affecting the calendar-day calculation.
+ */
+function getCalendarDayDifference(
+  earlierDate: Date,
+  laterDate: Date,
+): number {
+  const earlierUTC = Date.UTC(
+    earlierDate.getFullYear(),
+    earlierDate.getMonth(),
+    earlierDate.getDate(),
+  );
+
+  const laterUTC = Date.UTC(
+    laterDate.getFullYear(),
+    laterDate.getMonth(),
+    laterDate.getDate(),
+  );
+
+  return Math.round(
+    (laterUTC - earlierUTC) /
+      (1000 * 60 * 60 * 24),
+  );
+}
+
+function calculateAge(
+  dateOfBirth: string,
+): AgeResult | null {
+  if (!dateOfBirth) {
+    return null;
+  }
+
+  const parts = dateOfBirth.split("-");
+
+  if (parts.length !== 3) {
+    return null;
+  }
+
+  const year = Number(parts[0]);
+  const month = Number(parts[1]);
+  const day = Number(parts[2]);
+
+  if (
+    !Number.isInteger(year) ||
+    !Number.isInteger(month) ||
+    !Number.isInteger(day)
+  ) {
+    return null;
+  }
+
+  if (
+    year < 1 ||
+    month < 1 ||
+    month > 12 ||
+    day < 1 ||
+    day > 31
+  ) {
+    return null;
+  }
+
+  const birthDate = new Date(
+    year,
+    month - 1,
+    day,
+  );
+
+  const today = getTodayDate();
+
+  /*
+   * JavaScript normalizes invalid dates such as
+   * February 31 into another month. Compare the
+   * resulting date components to reject such input.
+   */
+  if (
+    birthDate.getFullYear() !== year ||
+    birthDate.getMonth() !== month - 1 ||
+    birthDate.getDate() !== day
+  ) {
+    return null;
+  }
+
+  if (birthDate > today) {
+    return null;
+  }
+
+  /*
+   * Calculate complete calendar years, months and days.
+   */
+  let years =
+    today.getFullYear() -
+    birthDate.getFullYear();
+
+  let months =
+    today.getMonth() -
+    birthDate.getMonth();
+
+  let days =
+    today.getDate() -
+    birthDate.getDate();
+
+  /*
+   * If the current day is before the birth day,
+   * borrow days from the previous calendar month.
+   */
+  if (days < 0) {
+    months--;
+
+    const daysInPreviousMonth = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      0,
+    ).getDate();
+
+    days += daysInPreviousMonth;
+  }
+
+  /*
+   * If the current month is before the birth month,
+   * borrow one year.
+   */
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  const totalDays = getCalendarDayDifference(
+    birthDate,
+    today,
+  );
+
+  const birthMonth = birthDate.getMonth();
+  const birthDay = birthDate.getDate();
+
+  /*
+   * Determine the next birthday.
+   */
+  let nextBirthdayYear =
+    today.getFullYear();
+
+  let nextBirthday = getBirthdayDate(
+    nextBirthdayYear,
+    birthMonth,
+    birthDay,
+  );
+
+  /*
+   * If today's date is after this year's birthday,
+   * use next year.
+   */
+  if (nextBirthday < today) {
+    nextBirthdayYear++;
+
+    nextBirthday = getBirthdayDate(
+      nextBirthdayYear,
+      birthMonth,
+      birthDay,
+    );
+  }
+
+  const daysUntilBirthday =
+    getCalendarDayDifference(
+      today,
+      nextBirthday,
+    );
+
+  return {
+    years,
+    months,
+    days,
+    totalDays,
+    nextBirthday,
+    daysUntilBirthday,
+  };
 }
 
 export default function AgeCalculator() {
-  const [birthDate, setBirthDate] = useState('');
-  const [result, setResult] = useState<AgeResult | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [dateOfBirth, setDateOfBirth] =
+    useState("");
 
-  // Real-time age update
-  useEffect(() => {
-    if (!birthDate) return;
-    
-    const interval = setInterval(() => {
-      calculateAge();
-    }, 1000);
+  const [result, setResult] =
+    useState<AgeResult | null>(null);
 
-    return () => clearInterval(interval);
-  }, [birthDate]);
+  const [error, setError] =
+    useState("");
 
-  const getZodiacSign = (month: number, day: number): string => {
-    const signs = [
-      { name: '♈ Aries', start: [3, 21], end: [4, 19] },
-      { name: '♉ Taurus', start: [4, 20], end: [5, 20] },
-      { name: '♊ Gemini', start: [5, 21], end: [6, 20] },
-      { name: '♋ Cancer', start: [6, 21], end: [7, 22] },
-      { name: '♌ Leo', start: [7, 23], end: [8, 22] },
-      { name: '♍ Virgo', start: [8, 23], end: [9, 22] },
-      { name: '♎ Libra', start: [9, 23], end: [10, 22] },
-      { name: '♏ Scorpio', start: [10, 23], end: [11, 21] },
-      { name: '♐ Sagittarius', start: [11, 22], end: [12, 21] },
-      { name: '♑ Capricorn', start: [12, 22], end: [1, 19] },
-      { name: '♒ Aquarius', start: [1, 20], end: [2, 18] },
-      { name: '♓ Pisces', start: [2, 19], end: [3, 20] },
-    ];
+  const today = getTodayDate();
 
-    for (const sign of signs) {
-      const [startMonth, startDay] = sign.start;
-      const [endMonth, endDay] = sign.end;
-      
-      if (
-        (month === startMonth && day >= startDay) ||
-        (month === endMonth && day <= endDay) ||
-        (month > startMonth && month < endMonth)
-      ) {
-        return sign.name;
-      }
-    }
-    return '♈ Aries';
-  };
+  const maxDate = getDateString(today);
 
-  const getGeneration = (year: number): string => {
-    if (year >= 2013) return 'Gen Alpha';
-    if (year >= 1997) return 'Gen Z';
-    if (year >= 1981) return 'Millennial';
-    if (year >= 1965) return 'Gen X';
-    if (year >= 1946) return 'Baby Boomer';
-    return 'Silent Generation';
-  };
+  function calculate() {
+    setError("");
+    setResult(null);
 
-  const getLifeExpectancy = (years: number): string => {
-    const avgLife = 78;
-    const remaining = Math.max(0, avgLife - years);
-    return `${Math.round(remaining)} years remaining`;
-  };
-
-  const calculateAge = () => {
-    if (!birthDate) return;
-
-    const birth = new Date(birthDate);
-    const now = new Date();
-
-    if (birth > now) {
-      alert('Date of birth cannot be in the future');
+    if (!dateOfBirth) {
+      setError(
+        "Please select your date of birth.",
+      );
       return;
     }
 
-    let years = now.getFullYear() - birth.getFullYear();
-    let months = now.getMonth() - birth.getMonth();
-    let days = now.getDate() - birth.getDate();
+    const calculatedAge =
+      calculateAge(dateOfBirth);
 
-    if (days < 0) {
-      months--;
-      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-      days += prevMonth.getDate();
+    if (!calculatedAge) {
+      setError(
+        "Please enter a valid date of birth that is not in the future.",
+      );
+      return;
     }
 
-    if (months < 0) {
-      years--;
-      months += 12;
-    }
+    setResult(calculatedAge);
+  }
 
-    const diffTime = now.getTime() - birth.getTime();
-    const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const totalHours = Math.floor(diffTime / (1000 * 60 * 60));
-    const totalMinutes = Math.floor(diffTime / (1000 * 60));
-    const totalSeconds = Math.floor(diffTime / 1000);
-
-    const nextBirthday = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
-    if (nextBirthday < now) {
-      nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-    }
-    const daysUntilNextBirthday = Math.ceil((nextBirthday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-
-    const zodiacSign = getZodiacSign(birth.getMonth() + 1, birth.getDate());
-    const generation = getGeneration(birth.getFullYear());
-    const lifeExpectancy = getLifeExpectancy(years);
-    const ageInDogYears = Math.round(years * 7);
-    const ageInCatYears = Math.round(years * 6.5);
-
-    setResult({
-      years,
-      months,
-      days,
-      hours: now.getHours(),
-      minutes: now.getMinutes(),
-      seconds: now.getSeconds(),
-      totalDays,
-      totalHours,
-      totalMinutes,
-      totalSeconds,
-      nextBirthday,
-      daysUntilNextBirthday,
-      zodiacSign,
-      generation,
-      lifeExpectancy,
-      ageInDogYears,
-      ageInCatYears,
-    });
-  };
-
-  const copyToClipboard = async () => {
-    if (!result) return;
-    const text = `Age: ${result.years} years, ${result.months} months, ${result.days} days\nTotal Days: ${result.totalDays.toLocaleString()}\nTotal Hours: ${result.totalHours.toLocaleString()}\nTotal Minutes: ${result.totalMinutes.toLocaleString()}\nTotal Seconds: ${result.totalSeconds.toLocaleString()}\nZodiac: ${result.zodiacSign}\nGeneration: ${result.generation}`;
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const clearAll = () => {
-    setBirthDate('');
+  function reset() {
+    setDateOfBirth("");
     setResult(null);
-  };
+    setError("");
+  }
 
-  const today = new Date().toISOString().split('T')[0];
+  function handleDateChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    setDateOfBirth(event.target.value);
+    setResult(null);
+    setError("");
+  }
 
-  const getFunFact = (years: number) => {
-    const facts = [
-      `You've lived through ${Math.floor(years / 4)} leap years!`,
-      `You've had approximately ${Math.floor(years * 365 * 8)} meals!`,
-      `Your heart has beaten about ${Math.floor(years * 365 * 24 * 60 * 72)} times!`,
-      `You've spent about ${Math.floor(years * 365 * 8)} hours sleeping!`,
-    ];
-    return facts[Math.floor(Math.random() * facts.length)];
-  };
+  function handleKeyDown(
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) {
+    if (event.key === "Enter") {
+      calculate();
+    }
+  }
+
+  const formattedBirthday = result
+    ? result.nextBirthday.toLocaleDateString(
+        "en-US",
+        {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        },
+      )
+    : "";
 
   return (
-    <div className="space-y-6">
-      {/* Input */}
-      <div>
-        <label className="text-sm font-medium text-slate-700">Date of Birth</label>
-        <div className="flex flex-col sm:flex-row gap-3 mt-1">
-          <div className="relative flex-1">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+    <div className="space-y-8">
+      {/* Calculator */}
+      <section
+        className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+        aria-labelledby="age-calculator-heading"
+      >
+        <h2
+          id="age-calculator-heading"
+          className="sr-only"
+        >
+          Age calculator
+        </h2>
+
+        <div className="mx-auto max-w-xl">
+          <label
+            htmlFor="date-of-birth"
+            className="block text-sm font-semibold text-gray-900"
+          >
+            Date of birth
+          </label>
+
+          <div className="relative mt-2">
+            <Calendar
+              className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+              aria-hidden="true"
+            />
+
             <input
+              id="date-of-birth"
               type="date"
-              value={birthDate}
-              onChange={(e) => setBirthDate(e.target.value)}
-              max={today}
-              className="w-full rounded-lg border border-slate-200 bg-white pl-10 pr-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              value={dateOfBirth}
+              max={maxDate}
+              onChange={handleDateChange}
+              onKeyDown={handleKeyDown}
+              aria-describedby="date-of-birth-help"
+              className="w-full rounded-xl border border-gray-300 bg-white py-3 pl-11 pr-4 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             />
           </div>
-          <button
-            onClick={calculateAge}
-            className="rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:scale-105 whitespace-nowrap"
+
+          <p
+            id="date-of-birth-help"
+            className="mt-2 text-sm leading-6 text-gray-500"
           >
-            <Clock className="mr-2 h-4 w-4 inline" />
-            Calculate Age
-          </button>
-          <button
-            onClick={clearAll}
-            className="rounded-lg bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700 transition-all hover:bg-slate-200 whitespace-nowrap"
-          >
-            <RefreshCw className="mr-2 h-4 w-4 inline" />
-            Clear
-          </button>
+            Select your birth date. Future dates
+            cannot be used.
+          </p>
+
+          {error && (
+            <div
+              className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm leading-6 text-red-700"
+              role="alert"
+              aria-live="polite"
+            >
+              {error}
+            </div>
+          )}
+
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={calculate}
+              className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            >
+              <Calculator
+                className="mr-2 h-4 w-4"
+                aria-hidden="true"
+              />
+              Calculate Age
+            </button>
+
+            <button
+              type="button"
+              onClick={reset}
+              className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-3.5 text-sm font-semibold text-gray-800 transition hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+            >
+              <RotateCcw
+                className="mr-2 h-4 w-4"
+                aria-hidden="true"
+              />
+              Reset
+            </button>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Result */}
       {result && (
-        <div className="space-y-4">
-          {/* Main Result */}
-          <div className="rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50 p-6 border border-indigo-200/50">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600">Your Age</p>
-                <p className="text-3xl font-bold text-slate-900">
-                  {result.years} years, {result.months} months, {result.days} days
-                </p>
-                <p className="text-xs text-slate-500 mt-1">
-                  🎂 Next birthday in {result.daysUntilNextBirthday} days
-                </p>
-              </div>
-              <button
-                onClick={copyToClipboard}
-                className="flex items-center gap-2 rounded-lg bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-600 transition-all hover:bg-indigo-200"
-              >
-                {copied ? (
-                  <>
-                    <Check className="h-4 w-4" />
-                    Copied!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4" />
-                    Copy
-                  </>
+        <section
+          className="rounded-2xl border border-blue-100 bg-blue-50 p-6 sm:p-8"
+          aria-labelledby="age-result-heading"
+          aria-live="polite"
+        >
+          <div className="text-center">
+            <p
+              id="age-result-heading"
+              className="text-sm font-semibold text-blue-700"
+            >
+              Your current age
+            </p>
+
+            <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+              <ResultCard
+                value={result.years.toLocaleString(
+                  "en-US",
                 )}
-              </button>
-            </div>
-          </div>
+                label="Years"
+              />
 
-          {/* Fun Facts */}
-          <div className="rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 p-4 border border-amber-200/50">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-amber-500" />
-              <p className="text-sm font-medium text-slate-700">Fun Fact:</p>
-              <p className="text-sm text-slate-600">{getFunFact(result.years)}</p>
-            </div>
-          </div>
+              <ResultCard
+                value={result.months.toLocaleString(
+                  "en-US",
+                )}
+                label="Months"
+              />
 
-          {/* Zodiac & Generation */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-2xl">{result.zodiacSign}</p>
-              <p className="text-xs text-slate-500">Zodiac Sign</p>
+              <ResultCard
+                value={result.days.toLocaleString(
+                  "en-US",
+                )}
+                label="Days"
+              />
             </div>
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-sm font-medium text-slate-900">{result.generation}</p>
-              <p className="text-xs text-slate-500">Generation</p>
-            </div>
-          </div>
 
-          {/* Animal Years */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-lg font-bold text-indigo-600">{result.ageInDogYears}</p>
-              <p className="text-xs text-slate-500">🐕 Dog Years</p>
-            </div>
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-lg font-bold text-purple-600">{result.ageInCatYears}</p>
-              <p className="text-xs text-slate-500">🐈 Cat Years</p>
-            </div>
-          </div>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <InfoResultCard
+                value={result.totalDays.toLocaleString(
+                  "en-US",
+                )}
+                label="Total elapsed days"
+              />
 
-          {/* Life Expectancy */}
-          <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-            <p className="text-sm font-medium text-slate-900">{result.lifeExpectancy}</p>
-            <p className="text-xs text-slate-500">⏳ Life Expectancy</p>
-          </div>
+              <InfoResultCard
+                value={
+                  result.daysUntilBirthday === 0
+                    ? "Today"
+                    : `${result.daysUntilBirthday.toLocaleString(
+                        "en-US",
+                      )} days`
+                }
+                label={
+                  result.daysUntilBirthday === 0
+                    ? "Next birthday"
+                    : "Until next birthday"
+                }
+              />
+            </div>
 
-          {/* Detailed Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-2xl font-bold text-indigo-600">{result.totalDays.toLocaleString()}</p>
-              <p className="text-xs text-slate-500">Total Days</p>
-            </div>
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-2xl font-bold text-indigo-600">{result.totalHours.toLocaleString()}</p>
-              <p className="text-xs text-slate-500">Total Hours</p>
-            </div>
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-2xl font-bold text-indigo-600">{result.totalMinutes.toLocaleString()}</p>
-              <p className="text-xs text-slate-500">Total Minutes</p>
-            </div>
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-2xl font-bold text-indigo-600">{result.totalSeconds.toLocaleString()}</p>
-              <p className="text-xs text-slate-500">Total Seconds</p>
-            </div>
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-2xl font-bold text-emerald-600">{result.daysUntilNextBirthday}</p>
-              <p className="text-xs text-slate-500">Days Until Birthday</p>
-            </div>
-            <div className="rounded-xl bg-white p-4 border border-slate-200/50 text-center shadow-sm">
-              <p className="text-sm font-medium text-slate-900">
-                {result.nextBirthday.toLocaleDateString('en-US', {
-                  month: 'long',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
+            <div className="mt-4 rounded-xl bg-white px-5 py-4 shadow-sm">
+              <p className="text-sm leading-6 text-gray-600">
+                Your next birthday is{" "}
+                <strong className="font-semibold text-gray-900">
+                  {formattedBirthday}
+                </strong>
+                .
               </p>
-              <p className="text-xs text-slate-500">Next Birthday</p>
             </div>
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Info */}
-      <div className="rounded-2xl bg-indigo-50/50 p-4 border border-indigo-200/50">
-        <p className="text-sm text-slate-600">
-          <span className="font-semibold text-indigo-600">💡 Pro Tip:</span> 
-          All calculations are processed entirely in your browser — <span className="font-medium">100% private</span>.
-          Age updates in real-time! 🕐
+      {/* About */}
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+        <h2 className="text-xl font-bold text-gray-900">
+          About the Age Calculator
+        </h2>
+
+        <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
+          <p>
+            The ToolNoveHub Age Calculator calculates
+            your calendar age from a date of birth to
+            today&apos;s date. It displays the result as
+            complete years, remaining months, and
+            remaining days.
+          </p>
+
+          <p>
+            Instead of simply dividing the number of
+            elapsed days by 365, the calculator works
+            with calendar years, months, and days. This
+            makes the result easier to understand for
+            birthdays and everyday age calculations.
+          </p>
+
+          <p>
+            The calculator also shows the total number
+            of elapsed calendar days and the date of
+            your next birthday.
+          </p>
+        </div>
+      </section>
+
+      {/* How to use */}
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+        <h2 className="text-xl font-bold text-gray-900">
+          How to use the Age Calculator
+        </h2>
+
+        <ol className="mt-5 space-y-4 text-sm leading-7 text-gray-600">
+          <li>
+            <strong className="text-gray-900">
+              1.
+            </strong>{" "}
+            Select your date of birth using the date
+            picker.
+          </li>
+
+          <li>
+            <strong className="text-gray-900">
+              2.
+            </strong>{" "}
+            Select{" "}
+            <strong className="text-gray-900">
+              Calculate Age
+            </strong>
+            .
+          </li>
+
+          <li>
+            <strong className="text-gray-900">
+              3.
+            </strong>{" "}
+            Review your age in years, months, and
+            days.
+          </li>
+
+          <li>
+            <strong className="text-gray-900">
+              4.
+            </strong>{" "}
+            Review the total elapsed days and next
+            birthday information.
+          </li>
+
+          <li>
+            <strong className="text-gray-900">
+              5.
+            </strong>{" "}
+            Select{" "}
+            <strong className="text-gray-900">
+              Reset
+            </strong>{" "}
+            to perform another calculation.
+          </li>
+        </ol>
+      </section>
+
+      {/* How it works */}
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+        <h2 className="text-xl font-bold text-gray-900">
+          How is age calculated?
+        </h2>
+
+        <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
+          <p>
+            The calculator compares the selected date
+            of birth with today&apos;s local calendar
+            date. It determines the difference in
+            complete years, months, and days.
+          </p>
+
+          <p>
+            If the current day is earlier than the birth
+            day, the calculation borrows days from the
+            previous calendar month. If the current
+            month is earlier than the birth month, one
+            year is borrowed and the month difference is
+            adjusted.
+          </p>
+
+          <p>
+            This produces a calendar-based result such
+            as{" "}
+            <strong className="text-gray-900">
+              25 years, 4 months, and 12 days
+            </strong>{" "}
+            rather than treating every year as exactly
+            365 days.
+          </p>
+        </div>
+      </section>
+
+      {/* Birthday notes */}
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+        <h2 className="text-xl font-bold text-gray-900">
+          Birthdays and leap years
+        </h2>
+
+        <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
+          <p>
+            Leap years contain February 29, while
+            ordinary years do not. The calculator
+            validates the original date of birth and
+            uses calendar-day calculations for elapsed
+            days.
+          </p>
+
+          <p>
+            If the date of birth is February 29, the
+            calculator uses February 28 as the birthday
+            date in a non-leap year so that the next
+            birthday remains a valid calendar date.
+          </p>
+
+          <p>
+            Different jurisdictions may use different
+            rules for specific legal or administrative
+            purposes involving February 29 birthdays.
+          </p>
+
+          <p>
+            For official age, eligibility, legal, or
+            administrative decisions, always follow the
+            rules and documentation of the relevant
+            authority.
+          </p>
+        </div>
+      </section>
+
+      {/* Examples */}
+      <section className="rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
+        <h2 className="text-xl font-bold text-gray-900">
+          Age calculation examples
+        </h2>
+
+        <div className="mt-5 grid gap-4 sm:grid-cols-3">
+          <InfoCard
+            title="Birthday has passed"
+            text="When your birthday has already occurred this year, the calculator counts the completed year and the remaining months and days."
+          />
+
+          <InfoCard
+            title="Birthday is coming"
+            text="When your birthday has not occurred yet this year, the completed-year count is adjusted before the remaining months and days are calculated."
+          />
+
+          <InfoCard
+            title="Leap-day birthday"
+            text="A February 29 birth date is validated as a real calendar date, with February 28 used for the birthday in non-leap years."
+          />
+        </div>
+      </section>
+
+      {/* Important notes */}
+      <section className="rounded-2xl border border-gray-200 bg-gray-50 p-6 sm:p-8">
+        <h2 className="text-xl font-bold text-gray-900">
+          Important notes
+        </h2>
+
+        <ul className="mt-5 space-y-3 text-sm leading-7 text-gray-600">
+          <li>
+            • The calculator uses your local calendar
+            date when determining today&apos;s date.
+          </li>
+
+          <li>
+            • Future dates are not accepted as dates of
+            birth.
+          </li>
+
+          <li>
+            • Invalid calendar dates are rejected.
+          </li>
+
+          <li>
+            • Total days use calendar-day differences
+            rather than assuming every day has exactly
+            the same elapsed duration.
+          </li>
+
+          <li>
+            • Leap-day birthdays are handled using a
+            documented February 28 rule in non-leap
+            years.
+          </li>
+
+          <li>
+            • For official eligibility or legal
+            requirements, use the relevant official
+            documentation or authority.
+          </li>
+        </ul>
+      </section>
+
+      {/* Privacy */}
+      <section className="rounded-2xl border border-blue-100 bg-blue-50 p-6 sm:p-8">
+        <h2 className="text-xl font-bold text-blue-900">
+          Browser-based calculation
+        </h2>
+
+        <p className="mt-4 text-sm leading-7 text-blue-800">
+          The age calculation is performed directly in
+          your web browser. No account is required, and
+          the date entered into this calculator does not
+          need to be uploaded to a server for the
+          calculation itself.
         </p>
+      </section>
+    </div>
+  );
+}
+
+function ResultCard({
+  value,
+  label,
+}: {
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="rounded-xl bg-white px-5 py-5 shadow-sm">
+      <div className="text-3xl font-bold text-gray-900">
+        {value}
+      </div>
+
+      <div className="mt-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+        {label}
       </div>
     </div>
+  );
+}
+
+function InfoResultCard({
+  value,
+  label,
+}: {
+  value: string;
+  label: string;
+}) {
+  return (
+    <div className="rounded-xl bg-white px-5 py-4 shadow-sm">
+      <div className="text-xl font-bold text-gray-900">
+        {value}
+      </div>
+
+      <div className="mt-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+        {label}
+      </div>
+    </div>
+  );
+}
+
+function InfoCard({
+  title,
+  text,
+}: {
+  title: string;
+  text: string;
+}) {
+  return (
+    <article className="rounded-xl border border-gray-200 bg-gray-50 p-5">
+      <h3 className="font-semibold text-gray-900">
+        {title}
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-gray-600">
+        {text}
+      </p>
+    </article>
   );
 }
