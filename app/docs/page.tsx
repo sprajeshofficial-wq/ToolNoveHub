@@ -6,6 +6,7 @@ import {
   Code2,
   Image as ImageIcon,
   Lock,
+  Palette,
   Search,
   Text,
   Wrench,
@@ -60,6 +61,13 @@ const categories = [
     description:
       "Count words, create URL-friendly slugs, and perform other text-related tasks.",
     href: "/tools/text",
+  },
+  {
+    icon: Palette,
+    title: "Design Tools",
+    description:
+      "Useful tools for colors, images, and creative work.",
+    href: "/tools/design",
   },
   {
     icon: Wrench,

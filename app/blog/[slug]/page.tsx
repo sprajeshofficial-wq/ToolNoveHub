@@ -14,24 +14,63 @@ import { blogPosts } from "../data/posts";
 const siteUrl = "https://toolnovehub.tools";
 
 interface BlogPostPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{
+    slug: string;
+  }>;
 }
 
-export async function generateStaticParams() {
+/*
+ * Generate all blog article routes at build time.
+ */
+export function generateStaticParams() {
   return blogPosts.map((post) => ({
     slug: post.slug,
   }));
 }
 
+/*
+ * Allow valid dynamic blog URLs to resolve even when
+ * Next.js is running in development mode.
+ */
+export const dynamicParams = true;
+
+/*
+ * Keep this page statically generated where possible.
+ */
+export const dynamic = "force-static";
+
+/*
+ * Find a blog post safely.
+ */
+function findPost(slug: string) {
+  const normalizedSlug = decodeURIComponent(slug)
+    .trim()
+    .toLowerCase();
+
+  return blogPosts.find(
+    (post) => post.slug.trim().toLowerCase() === normalizedSlug
+  );
+}
+
+/*
+ * SEO metadata
+ */
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogPosts.find((item) => item.slug === slug);
+
+  const post = findPost(slug);
 
   if (!post) {
     return {
       title: "Article Not Found | ToolNoveHub",
+      description:
+        "The requested ToolNoveHub blog article could not be found.",
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
@@ -40,9 +79,11 @@ export async function generateMetadata({
   return {
     title: `${post.title} | ToolNoveHub`,
     description: post.excerpt,
+
     alternates: {
       canonical,
     },
+
     openGraph: {
       type: "article",
       url: canonical,
@@ -51,6 +92,7 @@ export async function generateMetadata({
       siteName: "ToolNoveHub",
       publishedTime: post.date,
       authors: [post.author],
+
       images: [
         {
           url: `${siteUrl}/icon.png`,
@@ -60,18 +102,42 @@ export async function generateMetadata({
         },
       ],
     },
+
     twitter: {
       card: "summary",
       title: post.title,
       description: post.excerpt,
     },
+
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
   };
 }
 
-function RelatedPosts({ currentSlug }: { currentSlug: string }) {
+/*
+ * Related blog posts
+ */
+function RelatedPosts({
+  currentSlug,
+}: {
+  currentSlug: string;
+}) {
   const related = blogPosts
     .filter((post) => post.slug !== currentSlug)
     .slice(0, 3);
+
+  if (related.length === 0) {
+    return null;
+  }
 
   return (
     <section
@@ -97,6 +163,7 @@ function RelatedPosts({ currentSlug }: { currentSlug: string }) {
           className="inline-flex items-center text-sm font-semibold text-indigo-600 transition hover:text-indigo-800"
         >
           View all articles
+
           <ArrowRight
             className="ml-1 h-4 w-4"
             aria-hidden="true"
@@ -125,6 +192,7 @@ function RelatedPosts({ currentSlug }: { currentSlug: string }) {
 
             <span className="mt-4 inline-flex items-center text-sm font-semibold text-indigo-600">
               Read guide
+
               <ArrowRight
                 className="ml-1 h-4 w-4"
                 aria-hidden="true"
@@ -137,38 +205,61 @@ function RelatedPosts({ currentSlug }: { currentSlug: string }) {
   );
 }
 
+/*
+ * Blog article page
+ */
 export default async function BlogPostPage({
   params,
 }: BlogPostPageProps) {
   const { slug } = await params;
 
-  const post = blogPosts.find(
-    (item) => item.slug === slug
-  );
+  const post = findPost(slug);
 
+  /*
+   * Unknown article = proper 404.
+   */
   if (!post) {
     notFound();
   }
 
   const canonical = `${siteUrl}/blog/${post.slug}`;
 
+  /*
+   * Article structured data
+   */
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
+
     headline: post.title,
+
     description: post.excerpt,
+
     datePublished: post.date,
+
     dateModified: post.date,
+
     author: {
       "@type": "Organization",
       name: post.author,
     },
+
     publisher: {
       "@type": "Organization",
       name: "ToolNoveHub",
       url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/icon.png`,
+      },
     },
-    mainEntityOfPage: canonical,
+
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": canonical,
+    },
+
+    url: canonical,
   };
 
   return (
@@ -203,13 +294,16 @@ export default async function BlogPostPage({
 
             <li aria-hidden="true">/</li>
 
-            <li className="max-w-[18rem] truncate text-slate-700">
+            <li
+              className="max-w-[18rem] truncate text-slate-700"
+              aria-current="page"
+            >
               {post.title}
             </li>
           </ol>
         </nav>
 
-        {/* Back to blog */}
+        {/* Back to Blog */}
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-800"
@@ -218,10 +312,11 @@ export default async function BlogPostPage({
             className="h-4 w-4"
             aria-hidden="true"
           />
+
           Back to Blog
         </Link>
 
-        {/* Article header */}
+        {/* Article Header */}
         <header className="mt-7 rounded-3xl border border-slate-200 bg-white p-7 shadow-sm sm:p-10">
           <div className="flex flex-wrap items-center gap-x-5 gap-y-3 text-sm text-slate-500">
             <span className="inline-flex items-center gap-1.5 font-semibold text-indigo-600">
@@ -229,6 +324,7 @@ export default async function BlogPostPage({
                 className="h-4 w-4"
                 aria-hidden="true"
               />
+
               {post.category}
             </span>
 
@@ -237,6 +333,7 @@ export default async function BlogPostPage({
                 className="h-4 w-4"
                 aria-hidden="true"
               />
+
               {post.date}
             </span>
 
@@ -245,6 +342,7 @@ export default async function BlogPostPage({
                 className="h-4 w-4"
                 aria-hidden="true"
               />
+
               {post.readTime}
             </span>
           </div>
@@ -259,13 +357,14 @@ export default async function BlogPostPage({
 
           <div className="mt-6 border-t border-slate-100 pt-5 text-sm text-slate-500">
             Written by{" "}
+
             <span className="font-semibold text-slate-700">
               {post.author}
             </span>
           </div>
         </header>
 
-        {/* Article content */}
+        {/* Article Content */}
         <div
           className="
             mt-8 rounded-3xl border border-slate-200 bg-white p-7 shadow-sm sm:p-10
@@ -309,16 +408,17 @@ export default async function BlogPostPage({
             [&_a]:decoration-indigo-300
             [&_a]:underline-offset-4
             [&_a]:transition-colors
+
             [&_a:hover]:text-indigo-800
             [&_a:hover]:decoration-indigo-600
 
             [&_blockquote]:my-7
+            [&_blockquote]:rounded-r-xl
             [&_blockquote]:border-l-4
             [&_blockquote]:border-indigo-400
             [&_blockquote]:bg-indigo-50
             [&_blockquote]:px-5
             [&_blockquote]:py-4
-            [&_blockquote]:rounded-r-xl
 
             [&_code]:rounded
             [&_code]:bg-slate-100
@@ -361,6 +461,7 @@ export default async function BlogPostPage({
               className="inline-flex shrink-0 items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 font-semibold text-white shadow-sm transition hover:bg-indigo-700 hover:shadow-md"
             >
               Explore Free Tools
+
               <ArrowRight
                 className="ml-2 h-4 w-4"
                 aria-hidden="true"
@@ -369,7 +470,7 @@ export default async function BlogPostPage({
           </div>
         </section>
 
-        {/* Article navigation */}
+        {/* Article Navigation */}
         <div className="mt-8 flex flex-col gap-3 border-t border-slate-200 pt-8 sm:flex-row sm:items-center sm:justify-between">
           <Link
             href="/blog"
@@ -379,6 +480,7 @@ export default async function BlogPostPage({
               className="h-4 w-4"
               aria-hidden="true"
             />
+
             Browse all guides
           </Link>
 
@@ -387,6 +489,7 @@ export default async function BlogPostPage({
             className="inline-flex items-center gap-2 font-semibold text-indigo-600 transition hover:text-indigo-800"
           >
             Explore tools
+
             <ExternalLink
               className="h-4 w-4"
               aria-hidden="true"
@@ -394,10 +497,10 @@ export default async function BlogPostPage({
           </Link>
         </div>
 
-        {/* Related posts */}
+        {/* Related Posts */}
         <RelatedPosts currentSlug={post.slug} />
 
-        {/* Article structured data */}
+        {/* Article Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
