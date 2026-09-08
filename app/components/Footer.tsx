@@ -1,12 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
-import { Wrench } from "lucide-react";
 
 const toolLinks = [
-  { name: "All Tools", href: "/tools" },
-  { name: "Calculators", href: "/tools/calculators" },
-  { name: "Developer Tools", href: "/tools/developer" },
-  { name: "Image Tools", href: "/tools/image" },
-  { name: "Text Tools", href: "/tools/text" },
+  { label: "All Tools", href: "/tools" },
+  { label: "Calculators", href: "/tools/calculators" },
+  { label: "Developer Tools", href: "/tools/developer" },
+  { label: "Image Tools", href: "/tools/image" },
+  { label: "Text Tools", href: "/tools/text" },
+  { label: "Design Tools", href: "/tools/design" },
+  { label: "Utility Tools", href: "/tools/utility" },
 ];
 
 const companyLinks = [
@@ -26,15 +28,20 @@ export default function Footer() {
     <footer className="border-t border-gray-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+
           {/* Brand */}
           <div>
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-lg font-bold text-gray-900"
+              className="inline-flex items-center gap-3 text-lg font-bold text-gray-900"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600 text-white">
-                <Wrench size={19} />
-              </span>
+              <Image
+                src="/logo.png"
+                alt="ToolNoveHub"
+                width={42}
+                height={42}
+                className="h-10 w-10 object-contain"
+              />
 
               <span>
                 Tool<span className="text-blue-600">Nove</span>Hub
@@ -58,7 +65,7 @@ export default function Footer() {
                     href={link.href}
                     className="text-sm text-gray-600 transition hover:text-blue-600"
                   >
-                    {link.name}
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -102,6 +109,7 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Copyright */}
         <div className="mt-12 border-t border-gray-200 pt-6">
           <p className="text-center text-sm text-gray-500">
             © {new Date().getFullYear()} ToolNoveHub. All rights reserved.

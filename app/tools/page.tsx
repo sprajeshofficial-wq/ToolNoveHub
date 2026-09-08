@@ -249,15 +249,12 @@ export default function ToolsPage() {
           </p>
 
           <Link
-            href="/blog"
-            className="mt-6 inline-flex items-center rounded-xl bg-white px-5 py-3 font-semibold text-slate-900 transition hover:bg-slate-100"
-          >
-            Read the Blog
-            <ArrowRight
-              className="ml-2 h-4 w-4"
-              aria-hidden="true"
-            />
-          </Link>
+  href="/blog"
+  className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold !text-slate-900 shadow-sm transition hover:bg-gray-100"
+>
+  Read the Blog
+  <ArrowRight size={17} />
+</Link>
         </section>
       </div>
     </main>

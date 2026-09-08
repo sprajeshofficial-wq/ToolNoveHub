@@ -3,6 +3,9 @@ import {
   ArrowRight,
   QrCode,
   HardDrive,
+  Hash,
+  KeyRound,
+  RefreshCw,
 } from "lucide-react";
 
 const utilityTools = [
@@ -20,12 +23,33 @@ const utilityTools = [
       "Convert file sizes between bytes, KB, MB, GB, TB, and other common units.",
     icon: HardDrive,
   },
+  {
+    name: "Number to Words",
+    slug: "number-to-words",
+    description:
+      "Convert numbers into readable words for documents, invoices, checks, and everyday use.",
+    icon: Hash,
+  },
+  {
+    name: "Password Generator",
+    slug: "password-generator",
+    description:
+      "Generate strong random passwords with customizable length and character options.",
+    icon: KeyRound,
+  },
+  {
+    name: "Unit Converter",
+    slug: "unit-converter",
+    description:
+      "Convert common measurements including length, weight, temperature, area, volume, and speed.",
+    icon: RefreshCw,
+  },
 ];
 
 export const metadata = {
   title: "Free Utility Tools",
   description:
-    "Free online utility tools from ToolNoveHub for QR codes, file sizes, and everyday digital tasks.",
+    "Free online utility tools from ToolNoveHub for QR codes, file sizes, number conversion, passwords, units, and everyday digital tasks.",
   alternates: {
     canonical: "https://toolnovehub.tools/tools/utility",
   },
@@ -52,7 +76,8 @@ export default function UtilityToolsPage() {
 
             <p className="mt-5 text-lg leading-8 text-gray-600">
               Useful online utilities for QR codes, file
-              sizes, and everyday digital tasks.
+sizes, number conversion, passwords, units,
+and everyday digital tasks.
             </p>
           </div>
         </div>

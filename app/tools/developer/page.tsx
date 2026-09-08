@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
-  Braces,
   Binary,
   Code2,
 } from "lucide-react";
@@ -41,7 +40,14 @@ const developerTools = [
     slug: "json-formatter",
     description:
       "Format, beautify, minify, validate, and copy JSON data with a simple online tool.",
-    icon: Braces,
+    icon: Code2,
+  },
+  {
+    name: "JSON Validator",
+    slug: "json-validator",
+    description:
+      "Validate JSON data quickly and identify syntax errors with a simple browser-based tool.",
+    icon: Code2,
   },
   {
     name: "Binary Converter",

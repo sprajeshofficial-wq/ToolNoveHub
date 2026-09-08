@@ -76,6 +76,18 @@ const categories = [
     href: "/tools/text",
     icon: FileText,
   },
+  {
+    name: "Design Tools",
+    description: "Useful tools for colors, images, and creative work.",
+    href: "/tools/design",
+    icon: Sparkles,
+  },
+  {
+    name: "Utility Tools",
+    description: "Practical tools for QR codes, files, numbers, passwords, and units.",
+    href: "/tools/utility",
+    icon: Wrench,
+  },
 ];
 
 const benefits = [
@@ -226,7 +238,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => {
               const Icon = category.icon;
 
