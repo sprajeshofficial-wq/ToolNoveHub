@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -84,7 +85,8 @@ const categories = [
   },
   {
     name: "Utility Tools",
-    description: "Practical tools for QR codes, files, numbers, passwords, and units.",
+    description:
+      "Practical tools for QR codes, files, numbers, passwords, and units.",
     href: "/tools/utility",
     icon: Wrench,
   },
@@ -125,9 +127,7 @@ export default function HomePage() {
 
             <h1 className="text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl lg:text-6xl">
               Simple tools that help you
-              <span className="block text-blue-600">
-                get things done
-              </span>
+              <span className="block text-blue-600">get things done</span>
             </h1>
 
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-600">
@@ -136,7 +136,6 @@ export default function HomePage() {
             </p>
 
             <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
-              {/* Primary Button */}
               <Link
                 href="/tools"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold !text-white shadow-sm transition hover:bg-blue-700 sm:w-auto"
@@ -145,7 +144,6 @@ export default function HomePage() {
                 <ArrowRight size={18} />
               </Link>
 
-              {/* Secondary Button */}
               <Link
                 href="/about"
                 className="inline-flex w-full items-center justify-center rounded-xl border border-gray-300 bg-white px-6 py-3.5 text-sm font-semibold !text-gray-900 transition hover:bg-gray-50 sm:w-auto"
@@ -319,8 +317,16 @@ export default function HomePage() {
       {/* Information section */}
       <section className="bg-gray-950 py-16 text-white sm:py-20">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 !text-white">
-            <Wrench size={23} />
+
+          {/* ToolNoveHub Logo */}
+          <div className="mx-auto flex h-16 w-16 items-center justify-center">
+            <Image
+              src="/logo.png"
+              alt="ToolNoveHub logo"
+              width={64}
+              height={64}
+              className="h-16 w-16 object-contain"
+            />
           </div>
 
           <h2 className="mt-6 text-3xl font-bold tracking-tight !text-white">
@@ -334,7 +340,6 @@ export default function HomePage() {
           </p>
 
           <div className="mt-8">
-            {/* Dark Section Button */}
             <Link
               href="/tools"
               className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold !text-gray-900 shadow-sm transition hover:bg-gray-100"
