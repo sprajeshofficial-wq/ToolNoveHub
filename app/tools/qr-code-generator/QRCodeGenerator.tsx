@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 
 type QRType = "text" | "url" | "wifi";
-
 type WiFiSecurity = "WPA" | "WEP" | "nopass";
 
 const QR_SIZE = 320;
 const MAX_TEXT_LENGTH = 2000;
+const MAX_WIFI_FIELD_LENGTH = 255;
 
 function escapeWifiValue(value: string): string {
   return value.replace(/([\\;,":])/g, "\\$1");
@@ -24,22 +24,21 @@ function buildWifiPayload(
   const escapedPassword = escapeWifiValue(password);
 
   if (security === "nopass") {
-    return `WIFI:T:nopass;S:${escapedSsid};H:${hidden ? "true" : "false"};;`;
+    return `WIFI:T:nopass;S:${escapedSsid};H:${
+      hidden ? "true" : "false"
+    };;`;
   }
 
-  return `WIFI:T:${security};S:${escapedSsid};P:${escapedPassword};H:${hidden ? "true" : "false"};;`;
+  return `WIFI:T:${security};S:${escapedSsid};P:${escapedPassword};H:${
+    hidden ? "true" : "false"
+  };;`;
 }
 
 function clearCanvas(canvas: HTMLCanvasElement | null) {
-  if (!canvas) {
-    return;
-  }
+  if (!canvas) return;
 
   const context = canvas.getContext("2d");
-
-  if (!context) {
-    return;
-  }
+  if (!context) return;
 
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
@@ -48,7 +47,6 @@ export default function QRCodeGenerator() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [type, setType] = useState<QRType>("text");
-
   const [text, setText] = useState("");
 
   const [wifiSsid, setWifiSsid] = useState("");
@@ -63,7 +61,7 @@ export default function QRCodeGenerator() {
 
   const getQRValue = (): string => {
     if (type === "wifi") {
-      const ssid = wifiSsid.trim();
+      const ssid = wifiSsid;
 
       if (!ssid) {
         return "";
@@ -86,14 +84,12 @@ export default function QRCodeGenerator() {
 
   const validateInput = (): boolean => {
     if (type === "wifi") {
-      const ssid = wifiSsid.trim();
-
-      if (!ssid) {
+      if (!wifiSsid) {
         setError("Please enter the Wi-Fi network name.");
         return false;
       }
 
-      if (ssid.length > 255) {
+      if (wifiSsid.length > MAX_WIFI_FIELD_LENGTH) {
         setError(
           "The Wi-Fi network name is too long. Please use a shorter network name.",
         );
@@ -108,7 +104,7 @@ export default function QRCodeGenerator() {
         return false;
       }
 
-      if (wifiPassword.length > 255) {
+      if (wifiPassword.length > MAX_WIFI_FIELD_LENGTH) {
         setError(
           "The Wi-Fi password is too long. Please use a shorter password.",
         );
@@ -126,7 +122,6 @@ export default function QRCodeGenerator() {
           ? "Please enter a website URL."
           : "Please enter some text.",
       );
-
       return false;
     }
 
@@ -136,7 +131,6 @@ export default function QRCodeGenerator() {
           "en-US",
         )} characters or fewer for reliable QR generation and scanning.`,
       );
-
       return false;
     }
 
@@ -151,14 +145,12 @@ export default function QRCodeGenerator() {
           setError(
             "Please enter a valid HTTP or HTTPS URL.",
           );
-
           return false;
         }
       } catch {
         setError(
           "Please enter a valid website URL, such as https://example.com.",
         );
-
         return false;
       }
     }
@@ -180,11 +172,9 @@ export default function QRCodeGenerator() {
 
     if (!value || !canvasRef.current) {
       setGenerated(false);
-
       setError(
         "Unable to generate the QR code. Please try again.",
       );
-
       return;
     }
 
@@ -208,7 +198,6 @@ export default function QRCodeGenerator() {
     } catch {
       setGenerated(false);
       clearCanvas(canvasRef.current);
-
       setError(
         "Unable to generate the QR code. Please try shorter or simpler content.",
       );
@@ -250,7 +239,6 @@ export default function QRCodeGenerator() {
       setError(
         "Image copying is not supported by this browser. Please download the PNG instead.",
       );
-
       return;
     }
 
@@ -268,7 +256,6 @@ export default function QRCodeGenerator() {
         setError(
           "Unable to prepare the QR code for copying.",
         );
-
         return;
       }
 
@@ -282,7 +269,6 @@ export default function QRCodeGenerator() {
       setError("");
     } catch {
       setCopied(false);
-
       setError(
         "Unable to copy the QR code. Please use the download button instead.",
       );
@@ -291,7 +277,6 @@ export default function QRCodeGenerator() {
 
   const clearGenerator = () => {
     setText("");
-
     setWifiSsid("");
     setWifiPassword("");
     setWifiSecurity("WPA");
@@ -306,7 +291,6 @@ export default function QRCodeGenerator() {
 
   const changeType = (newType: QRType) => {
     setType(newType);
-
     setError("");
     setGenerated(false);
     setCopied(false);
@@ -357,14 +341,17 @@ export default function QRCodeGenerator() {
             },
           ].map((item) => {
             const selected = type === item.value;
+            const tabId = `qr-tab-${item.value}`;
+            const panelId = `qr-panel-${item.value}`;
 
             return (
               <button
                 key={item.value}
+                id={tabId}
                 type="button"
                 role="tab"
                 aria-selected={selected}
-                aria-controls={`qr-panel-${item.value}`}
+                aria-controls={panelId}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => changeType(item.value)}
                 className={`rounded-lg px-3 py-2.5 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 ${
@@ -386,7 +373,7 @@ export default function QRCodeGenerator() {
             <div
               id="qr-panel-text"
               role="tabpanel"
-              aria-labelledby="qr-text-tab"
+              aria-labelledby="qr-tab-text"
             >
               <label
                 htmlFor="qr-text"
@@ -433,7 +420,7 @@ export default function QRCodeGenerator() {
             <div
               id="qr-panel-url"
               role="tabpanel"
-              aria-labelledby="qr-url-tab"
+              aria-labelledby="qr-tab-url"
             >
               <label
                 htmlFor="qr-url"
@@ -464,8 +451,8 @@ export default function QRCodeGenerator() {
                 id="qr-url-help"
                 className="mt-2 text-xs leading-5 text-gray-500"
               >
-                Include the complete website address, such as
-                https://example.com.
+                Include the complete website address,
+                such as https://example.com.
               </p>
             </div>
           )}
@@ -475,7 +462,7 @@ export default function QRCodeGenerator() {
             <div
               id="qr-panel-wifi"
               role="tabpanel"
-              aria-labelledby="qr-wifi-tab"
+              aria-labelledby="qr-tab-wifi"
               className="space-y-5"
             >
               <div>
@@ -490,7 +477,7 @@ export default function QRCodeGenerator() {
                   id="wifi-ssid"
                   type="text"
                   autoComplete="off"
-                  maxLength={255}
+                  maxLength={MAX_WIFI_FIELD_LENGTH}
                   value={wifiSsid}
                   onChange={(event) => {
                     setWifiSsid(event.target.value);
@@ -499,8 +486,17 @@ export default function QRCodeGenerator() {
                     setError("");
                   }}
                   placeholder="My Wi-Fi"
+                  aria-describedby="wifi-ssid-help"
                   className="mt-2 w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                 />
+
+                <p
+                  id="wifi-ssid-help"
+                  className="mt-2 text-xs leading-5 text-gray-500"
+                >
+                  Enter the Wi-Fi network name exactly as it
+                  appears on your device.
+                </p>
               </div>
 
               <div>
@@ -518,7 +514,6 @@ export default function QRCodeGenerator() {
                     setWifiSecurity(
                       event.target.value as WiFiSecurity,
                     );
-
                     setGenerated(false);
                     setCopied(false);
                     setError("");
@@ -528,11 +523,9 @@ export default function QRCodeGenerator() {
                   <option value="WPA">
                     WPA / WPA2 / WPA3
                   </option>
-
                   <option value="WEP">
                     WEP
                   </option>
-
                   <option value="nopass">
                     No password
                   </option>
@@ -552,13 +545,12 @@ export default function QRCodeGenerator() {
                     id="wifi-password"
                     type="password"
                     autoComplete="off"
-                    maxLength={255}
+                    maxLength={MAX_WIFI_FIELD_LENGTH}
                     value={wifiPassword}
                     onChange={(event) => {
                       setWifiPassword(
                         event.target.value,
                       );
-
                       setGenerated(false);
                       setCopied(false);
                       setError("");

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import JSONValidator from "./JSONValidator";
 
+const siteUrl = "https://toolnovehub.tools";
+const pageUrl = `${siteUrl}/tools/json-validator`;
+
 export const metadata: Metadata = {
   title: "JSON Validator - Validate JSON Online",
   description:
@@ -17,17 +20,28 @@ export const metadata: Metadata = {
     "json error checker",
   ],
   alternates: {
-    canonical: "https://toolnovehub.tools/tools/json-validator",
+    canonical: pageUrl,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   openGraph: {
     title: "JSON Validator - Validate JSON Online",
     description:
       "Validate JSON syntax and format valid JSON directly in your browser.",
-    url: "https://toolnovehub.tools/tools/json-validator",
+    url: pageUrl,
     type: "website",
     images: [
       {
-        url: "https://toolnovehub.tools/og-json-validator.jpg",
+        url: `${siteUrl}/og-json-validator.jpg`,
         width: 1200,
         height: 630,
         alt: "JSON Validator - ToolNoveHub",
@@ -39,25 +53,69 @@ export const metadata: Metadata = {
     title: "JSON Validator - Validate JSON Online",
     description:
       "Validate JSON syntax and format valid JSON directly in your browser.",
-    images: ["https://toolnovehub.tools/og-json-validator.jpg"],
+    images: [`${siteUrl}/og-json-validator.jpg`],
   },
 };
+
+const faqItems = [
+  {
+    question: "What does a JSON validator check?",
+    answer:
+      "It parses the JSON and checks whether the document follows valid JSON syntax.",
+  },
+  {
+    question: "Can the validator find every programming error?",
+    answer:
+      "No. It checks JSON syntax and parsing validity. It does not determine whether the data is logically correct for your application or API.",
+  },
+  {
+    question: "Can I format valid JSON?",
+    answer:
+      "Yes. After parsing valid JSON, the Format JSON button adds indentation and line breaks to make the structure easier to read.",
+  },
+  {
+    question: "Do I need to install anything?",
+    answer:
+      "No. The tool works in a modern web browser with JavaScript enabled.",
+  },
+];
 
 export default function JSONValidatorPage() {
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "JSON Validator",
+    url: pageUrl,
     description:
       "Validate JSON syntax and format valid JSON directly in your browser.",
     applicationCategory: "DeveloperApplication",
     operatingSystem: "All",
     browserRequirements: "Requires JavaScript",
+    featureList: [
+      "Validate JSON syntax",
+      "Identify JSON parsing errors",
+      "Format valid JSON",
+      "Copy JSON output",
+      "Browser-based JSON processing",
+    ],
     offers: {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
     },
+  };
+
+  const faqSchemaData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
   };
 
   return (
@@ -82,7 +140,14 @@ export default function JSONValidatorPage() {
       </section>
 
       <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+        <section
+          aria-labelledby="validator-tool-heading"
+          className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
+        >
+          <h2 id="validator-tool-heading" className="sr-only">
+            JSON Validator Tool
+          </h2>
+
           <JSONValidator />
         </section>
 
@@ -90,10 +155,7 @@ export default function JSONValidatorPage() {
           aria-labelledby="how-to-use"
           className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8"
         >
-          <h2
-            id="how-to-use"
-            className="text-xl font-bold text-gray-900"
-          >
+          <h2 id="how-to-use" className="text-xl font-bold text-gray-900">
             How to use the JSON Validator
           </h2>
 
@@ -132,10 +194,7 @@ export default function JSONValidatorPage() {
           aria-labelledby="common-errors"
           className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8"
         >
-          <h2
-            id="common-errors"
-            className="text-xl font-bold text-gray-900"
-          >
+          <h2 id="common-errors" className="text-xl font-bold text-gray-900">
             Common JSON syntax errors
           </h2>
 
@@ -189,10 +248,7 @@ export default function JSONValidatorPage() {
           aria-labelledby="what-is-json"
           className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8"
         >
-          <h2
-            id="what-is-json"
-            className="text-xl font-bold text-gray-900"
-          >
+          <h2 id="what-is-json" className="text-xl font-bold text-gray-900">
             What is JSON?
           </h2>
 
@@ -204,8 +260,8 @@ export default function JSONValidatorPage() {
           </p>
 
           <p className="mt-4 text-sm leading-7 text-gray-600">
-            JSON supports objects, arrays, strings, numbers, booleans, and
-            null values. Because JSON follows strict syntax rules, even a small
+            JSON supports objects, arrays, strings, numbers, booleans, and null
+            values. Because JSON follows strict syntax rules, even a small
             punctuation or quotation error can make a document invalid.
           </p>
         </section>
@@ -223,8 +279,8 @@ export default function JSONValidatorPage() {
 
           <p className="mt-4 text-sm leading-7 text-gray-600">
             JSON validation and formatting are performed directly in your
-            browser using JavaScript. The tool does not require an account or a
-            separate server-side JSON processing service.
+            browser using JavaScript. The tool does not require an account or
+            a separate server-side JSON processing service.
           </p>
 
           <p className="mt-4 text-sm leading-7 text-gray-600">
@@ -232,6 +288,12 @@ export default function JSONValidatorPage() {
             service for these operations. As with any website, review the
             ToolNoveHub Privacy Policy for information about site-level
             analytics and other services.
+          </p>
+
+          <p className="mt-4 text-sm leading-7 text-gray-600">
+            For sensitive information, avoid entering confidential credentials,
+            private keys, passwords, or other data that you would not normally
+            place into a public website.
           </p>
         </section>
 
@@ -244,51 +306,15 @@ export default function JSONValidatorPage() {
           </h2>
 
           <div className="mt-5 space-y-5 text-sm leading-7 text-gray-600">
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                What does a JSON validator check?
-              </h3>
+            {faqItems.map((item) => (
+              <div key={item.question}>
+                <h3 className="font-semibold text-gray-900">
+                  {item.question}
+                </h3>
 
-              <p className="mt-1">
-                It parses the JSON and checks whether the document follows
-                valid JSON syntax.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Can the validator find every programming error?
-              </h3>
-
-              <p className="mt-1">
-                No. It checks JSON syntax and parsing validity. It does not
-                determine whether the data is logically correct for your
-                application or API.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Can I format valid JSON?
-              </h3>
-
-              <p className="mt-1">
-                Yes. After parsing valid JSON, the Format JSON button adds
-                indentation and line breaks to make the structure easier to
-                read.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Do I need to install anything?
-              </h3>
-
-              <p className="mt-1">
-                No. The tool works in a modern web browser with JavaScript
-                enabled.
-              </p>
-            </div>
+                <p className="mt-1">{item.answer}</p>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -339,6 +365,13 @@ export default function JSONValidatorPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(schemaData),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchemaData),
         }}
       />
     </div>

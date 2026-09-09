@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import NumberToWords from "./NumberToWords";
 
-const pageUrl =
-  "https://toolnovehub.tools/tools/number-to-words";
+const siteUrl = "https://toolnovehub.tools";
+const pageUrl = `${siteUrl}/tools/number-to-words`;
 
 export const metadata: Metadata = {
-  title:
-    "Number to Words Converter - Convert Numbers to Words",
+  title: "Number to Words Converter - Convert Numbers to Words",
   description:
     "Convert numbers to English words online. Supports whole numbers, decimals, negative numbers, commas, and large values with a fast browser-based converter.",
   keywords: [
@@ -22,8 +21,7 @@ export const metadata: Metadata = {
     canonical: pageUrl,
   },
   openGraph: {
-    title:
-      "Number to Words Converter - ToolNoveHub",
+    title: "Number to Words Converter - ToolNoveHub",
     description:
       "Convert numbers into English words, including decimals, negative numbers, commas, and large values.",
     url: pageUrl,
@@ -32,8 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title:
-      "Number to Words Converter - ToolNoveHub",
+    title: "Number to Words Converter - ToolNoveHub",
     description:
       "Convert numbers into English words with a free online converter.",
   },
@@ -50,38 +47,52 @@ export const metadata: Metadata = {
   },
 };
 
-export default function NumberToWordsPage() {
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "Number to Words Converter",
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Number to Words Converter",
+  url: pageUrl,
+  description:
+    "A free online tool for converting numbers into English words, including decimals, negative numbers, comma-separated values, and large numbers.",
+  applicationCategory: "UtilitiesApplication",
+  applicationSubCategory: "Number Converter",
+  operatingSystem: "Any",
+  browserRequirements: "Requires JavaScript",
+  isAccessibleForFree: true,
+  inLanguage: "en",
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": pageUrl,
     url: pageUrl,
-    description:
-      "A free online tool for converting numbers into English words, including decimals, negative numbers, comma-separated values, and large numbers.",
-    applicationCategory: "UtilitiesApplication",
-    applicationSubCategory: "Number Converter",
-    operatingSystem: "Any",
-    browserRequirements: "Requires JavaScript",
-    isAccessibleForFree: true,
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": pageUrl,
+    name: "Number to Words Converter",
+    inLanguage: "en",
+    isPartOf: {
+      "@type": "WebSite",
+      name: "ToolNoveHub",
+      url: siteUrl,
     },
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-    featureList: [
-      "Convert whole numbers to English words",
-      "Convert decimal numbers",
-      "Convert negative numbers",
-      "Support comma-separated numbers",
-      "Support large numbers",
-      "Copy converted text",
-    ],
-  };
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "ToolNoveHub",
+    url: siteUrl,
+  },
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  featureList: [
+    "Convert whole numbers to English words",
+    "Convert decimal numbers",
+    "Convert negative numbers",
+    "Support comma-separated numbers",
+    "Support large numbers",
+    "Copy converted text",
+  ],
+};
 
+export default function NumberToWordsPage() {
   return (
     <>
       <script

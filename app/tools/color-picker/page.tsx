@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import ColorPicker from "./ColorPicker";
 
+const siteUrl = "https://toolnovehub.tools";
+const pageUrl = `${siteUrl}/tools/color-picker`;
+
 export const metadata: Metadata = {
   title: "Color Picker - HEX, RGB & HSL Color Converter",
   description:
@@ -17,13 +20,13 @@ export const metadata: Metadata = {
     "hex color converter",
   ],
   alternates: {
-    canonical: "https://toolnovehub.tools/tools/color-picker",
+    canonical: pageUrl,
   },
   openGraph: {
     title: "Color Picker - HEX, RGB & HSL | ToolNoveHub",
     description:
       "Pick colors and instantly get HEX, RGB, and HSL values with a free browser-based color picker.",
-    url: "https://toolnovehub.tools/tools/color-picker",
+    url: pageUrl,
     siteName: "ToolNoveHub",
     type: "website",
   },
@@ -51,12 +54,23 @@ export default function ColorPickerPage() {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "Color Picker",
-    url: "https://toolnovehub.tools/tools/color-picker",
+    url: pageUrl,
     description:
-      "Pick a color and convert it to HEX, RGB, and HSL color values.",
+      "Free online color picker for selecting colors and converting them between HEX, RGB, and HSL values.",
     applicationCategory: "DesignApplication",
+    applicationSubCategory: "Color Picker",
     operatingSystem: "Any",
     browserRequirements: "Requires JavaScript",
+    isAccessibleForFree: true,
+    featureList: [
+      "Pick colors online",
+      "HEX color values",
+      "RGB color values",
+      "HSL color values",
+      "Color format conversion",
+      "Browser-based color processing",
+      "Copy color values",
+    ],
     offers: {
       "@type": "Offer",
       price: "0",

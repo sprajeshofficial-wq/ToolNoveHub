@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import FileSizeConverter from "./FileSizeConverter";
 
+const siteUrl = "https://toolnovehub.tools";
+const pageUrl = `${siteUrl}/tools/file-size-converter`;
+
 export const metadata: Metadata = {
   title: "File Size Converter - Convert Bytes, KB, MB, GB & TB",
   description:
@@ -15,13 +18,13 @@ export const metadata: Metadata = {
     "storage converter",
   ],
   alternates: {
-    canonical: "https://toolnovehub.tools/tools/file-size-converter",
+    canonical: pageUrl,
   },
   openGraph: {
     title: "File Size Converter - ToolNoveHub",
     description:
       "Convert Bytes, KB, MB, GB, and TB quickly with a free browser-based file size converter.",
-    url: "https://toolnovehub.tools/tools/file-size-converter",
+    url: pageUrl,
     siteName: "ToolNoveHub",
     type: "website",
   },
@@ -44,24 +47,36 @@ export const metadata: Metadata = {
   },
 };
 
-export default function FileSizeConverterPage() {
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: "File Size Converter",
-    url: "https://toolnovehub.tools/tools/file-size-converter",
-    description:
-      "Convert file sizes between Bytes, KB, MB, GB, and TB using a browser-based file size converter.",
-    applicationCategory: "UtilitiesApplication",
-    operatingSystem: "Any",
-    browserRequirements: "Requires JavaScript",
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-    },
-  };
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "File Size Converter",
+  url: pageUrl,
+  description:
+    "Free online file size converter for converting Bytes, KB, MB, GB, and TB.",
+  applicationCategory: "UtilitiesApplication",
+  applicationSubCategory: "File Size Conversion",
+  operatingSystem: "Any",
+  browserRequirements: "Requires JavaScript",
+  isAccessibleForFree: true,
+  featureList: [
+    "Bytes conversion",
+    "Kilobytes conversion",
+    "Megabytes conversion",
+    "Gigabytes conversion",
+    "Terabytes conversion",
+    "File size conversion",
+    "Storage unit conversion",
+    "Browser-based calculations",
+  ],
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+};
 
+export default function FileSizeConverterPage() {
   return (
     <>
       <script

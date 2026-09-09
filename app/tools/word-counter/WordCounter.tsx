@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
 type Stats = {
   words: number;
@@ -29,10 +29,13 @@ function countSentences(text: string): number {
     return 0;
   }
 
-  return trimmed
-    .split(/[.!?]+(?:\s|$)/u)
-    .map((sentence) => sentence.trim())
-    .filter(Boolean).length;
+  const matches = trimmed.match(
+    /[^.!?]+(?:[.!?]+(?=\s|$)|$)/gu,
+  );
+
+  return matches
+    ? matches.map((sentence) => sentence.trim()).filter(Boolean).length
+    : 0;
 }
 
 function countParagraphs(text: string): number {
@@ -57,8 +60,8 @@ function countLines(text: string): number {
 }
 
 export default function WordCounter() {
-  const [text, setText] = useState('');
-  const [copyStatus, setCopyStatus] = useState('');
+  const [text, setText] = useState("");
+  const [copyStatus, setCopyStatus] = useState("");
 
   const stats = useMemo<Stats>(() => {
     const words = countWords(text);
@@ -66,7 +69,9 @@ export default function WordCounter() {
     return {
       words,
       characters: Array.from(text).length,
-      charactersNoSpaces: Array.from(text.replace(/\s/gu, '')).length,
+      charactersNoSpaces: Array.from(
+        text.replace(/\s/gu, ""),
+      ).length,
       sentences: countSentences(text),
       paragraphs: countParagraphs(text),
       lines: countLines(text),
@@ -75,8 +80,8 @@ export default function WordCounter() {
   }, [text]);
 
   const clearText = () => {
-    setText('');
-    setCopyStatus('');
+    setText("");
+    setCopyStatus("");
   };
 
   const copyText = async () => {
@@ -86,17 +91,12 @@ export default function WordCounter() {
 
     try {
       await navigator.clipboard.writeText(text);
-      setCopyStatus('Text copied to your clipboard.');
+      setCopyStatus("Text copied.");
     } catch {
       setCopyStatus(
-        'Automatic copying was unavailable. Please select and copy the text manually.',
+        "Unable to copy automatically. Please select and copy the text manually.",
       );
     }
-  };
-
-  const updateText = (value: string) => {
-    setText(value);
-    setCopyStatus('');
   };
 
   return (
@@ -114,16 +114,15 @@ export default function WordCounter() {
             </h1>
 
             <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-gray-600">
-              Count words, characters, sentences, paragraphs, and lines in
-              your text. Get a simple reading-time estimate while you write,
-              edit, or review content.
+              Count words, characters, sentences, paragraphs, and lines
+              while estimating how long your text may take to read.
             </p>
           </div>
         </div>
       </section>
 
       <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        {/* Tool */}
+        {/* Editor */}
         <section
           aria-labelledby="word-counter-editor"
           className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
@@ -138,7 +137,7 @@ export default function WordCounter() {
               </h2>
 
               <p className="mt-1 text-sm text-gray-500">
-                Type or paste text below. The statistics update automatically.
+                Statistics update automatically as you type or paste text.
               </p>
             </div>
 
@@ -173,7 +172,10 @@ export default function WordCounter() {
           <textarea
             id="word-counter-text"
             value={text}
-            onChange={(event) => updateText(event.target.value)}
+            onChange={(event) => {
+              setText(event.target.value);
+              setCopyStatus("");
+            }}
             placeholder="Start typing or paste your text here..."
             spellCheck
             className="mt-6 min-h-[320px] w-full resize-y rounded-xl border border-gray-300 px-4 py-4 text-sm leading-7 text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
@@ -200,55 +202,100 @@ export default function WordCounter() {
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              label="Words"
-              value={stats.words}
-              description="Words detected"
-            />
+            {/* Words */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-gray-500">
+                Words
+              </p>
 
-            <StatCard
-              label="Characters"
-              value={stats.characters}
-              description="Including spaces"
-            />
+              <p className="mt-2 text-3xl font-bold text-gray-900">
+                {stats.words.toLocaleString()}
+              </p>
+            </div>
 
-            <StatCard
-              label="Characters without spaces"
-              value={stats.charactersNoSpaces}
-              description="Whitespace excluded"
-            />
+            {/* Characters */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-gray-500">
+                Characters
+              </p>
 
-            <StatCard
-              label="Sentences"
-              value={stats.sentences}
-              description="Based on sentence punctuation"
-            />
+              <p className="mt-2 text-3xl font-bold text-gray-900">
+                {stats.characters.toLocaleString()}
+              </p>
+            </div>
 
-            <StatCard
-              label="Paragraphs"
-              value={stats.paragraphs}
-              description="Separated by blank lines"
-            />
+            {/* Characters without spaces */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-gray-500">
+                Characters without spaces
+              </p>
 
-            <StatCard
-              label="Lines"
-              value={stats.lines}
-              description="Based on line breaks"
-            />
+              <p className="mt-2 text-3xl font-bold text-gray-900">
+                {stats.charactersNoSpaces.toLocaleString()}
+              </p>
+            </div>
 
-            <StatCard
-              label="Reading time"
-              value={stats.readingTime}
-              suffix="min"
-              description="Estimated at 200 words/min"
-            />
+            {/* Sentences */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-gray-500">
+                Sentences
+              </p>
 
-            <StatCard
-              label="Reading speed"
-              value={200}
-              suffix="WPM"
-              description="Used for the estimate"
-            />
+              <p className="mt-2 text-3xl font-bold text-gray-900">
+                {stats.sentences.toLocaleString()}
+              </p>
+            </div>
+
+            {/* Paragraphs */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-gray-500">
+                Paragraphs
+              </p>
+
+              <p className="mt-2 text-3xl font-bold text-gray-900">
+                {stats.paragraphs.toLocaleString()}
+              </p>
+            </div>
+
+            {/* Lines */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-gray-500">
+                Lines
+              </p>
+
+              <p className="mt-2 text-3xl font-bold text-gray-900">
+                {stats.lines.toLocaleString()}
+              </p>
+            </div>
+
+            {/* Reading time */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-gray-500">
+                Reading time
+              </p>
+
+              <p className="mt-2 text-3xl font-bold text-gray-900">
+                {stats.readingTime}
+                <span className="ml-1 text-base font-medium text-gray-500">
+                  min
+                </span>
+              </p>
+            </div>
+
+            {/* Reading speed */}
+            <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <p className="text-sm font-medium text-gray-500">
+                Reading speed
+              </p>
+
+              <p className="mt-2 text-3xl font-bold text-gray-900">
+                200
+              </p>
+
+              <p className="mt-1 text-xs text-gray-500">
+                words per minute
+              </p>
+            </div>
           </div>
         </section>
 
@@ -258,162 +305,114 @@ export default function WordCounter() {
             How to use the Word Counter
           </h2>
 
-          <ol className="mt-5 space-y-4 text-sm leading-7 text-gray-600">
+          <ol className="mt-5 space-y-4 text-sm leading-6 text-gray-600">
             <li>
               <strong className="text-gray-900">
                 1. Enter your text.
-              </strong>{' '}
-              Type directly into the editor or paste an existing article,
-              essay, report, caption, or other text.
+              </strong>{" "}
+              Type directly into the editor or paste existing content.
             </li>
 
             <li>
               <strong className="text-gray-900">
                 2. Review the statistics.
-              </strong>{' '}
-              Word count, character count, sentence count, paragraph count,
-              and line count are updated as you edit the text.
+              </strong>{" "}
+              The tool automatically calculates words, characters,
+              sentences, paragraphs, and lines.
             </li>
 
             <li>
               <strong className="text-gray-900">
-                3. Check the reading time.
-              </strong>{' '}
-              The tool estimates reading time using approximately 200 words
-              per minute. Actual reading speed varies from person to person.
+                3. Check reading time.
+              </strong>{" "}
+              The estimated reading time uses an approximate reading
+              speed of 200 words per minute.
             </li>
 
             <li>
               <strong className="text-gray-900">
                 4. Copy or clear the text.
-              </strong>{' '}
-              Use Copy when you want the text on your clipboard, or Clear to
-              start a new document.
+              </strong>{" "}
+              Use Copy to place the text on your clipboard or Clear to
+              start again.
             </li>
           </ol>
         </section>
 
-        {/* What is a word counter */}
+        {/* What it measures */}
         <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
           <h2 className="text-xl font-bold text-gray-900">
-            What is a Word Counter?
+            What the Word Counter measures
           </h2>
 
-          <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
-            <p>
-              A word counter is a writing utility that measures the amount of
-              text in a document or text field. The most common measurement is
-              the number of words, but useful word counters can also report
-              characters, sentences, paragraphs, and other basic statistics.
-            </p>
+          <div className="mt-5 grid gap-6 sm:grid-cols-2">
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Word count
+              </h3>
 
-            <p>
-              Word counts are useful when a document has a length requirement
-              or when you want to understand the size of a draft. Students,
-              writers, editors, marketers, developers, and business users can
-              all use word statistics for different types of written content.
-            </p>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Words are counted by separating non-empty groups of
+                text around whitespace characters such as spaces, tabs,
+                and line breaks.
+              </p>
+            </div>
 
-            <p>
-              ToolNoveHub calculates the displayed statistics as you type or
-              paste content into the editor, so you can monitor the length of
-              your text without manually counting it.
-            </p>
-          </div>
-        </section>
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Character count
+              </h3>
 
-        {/* What each count means */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            What each Word Counter statistic means
-          </h2>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                The character count includes letters, numbers,
+                punctuation, spaces, and other characters in the text.
+              </p>
+            </div>
 
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            <InfoCard
-              title="Word count"
-              text="Words are counted by separating non-empty groups of text around whitespace characters such as spaces, tabs, and line breaks."
-            />
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Characters without spaces
+              </h3>
 
-            <InfoCard
-              title="Character count"
-              text="The character count includes letters, numbers, punctuation, spaces, and other characters contained in the text."
-            />
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                This count removes whitespace characters before
+                calculating the number of remaining characters.
+              </p>
+            </div>
 
-            <InfoCard
-              title="Characters without spaces"
-              text="This measurement removes whitespace characters before counting the remaining characters."
-            />
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Sentences
+              </h3>
 
-            <InfoCard
-              title="Sentence count"
-              text="The sentence counter looks for common sentence-ending punctuation such as periods, question marks, and exclamation marks."
-            />
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Sentence counting looks for common sentence-ending
+                punctuation such as periods, question marks, and
+                exclamation marks.
+              </p>
+            </div>
 
-            <InfoCard
-              title="Paragraph count"
-              text="Paragraphs are identified as blocks of text separated by blank lines."
-            />
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Paragraphs
+              </h3>
 
-            <InfoCard
-              title="Line count"
-              text="Lines are counted according to the line breaks present in the text editor."
-            />
-          </div>
-        </section>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Paragraphs are identified from blocks of text separated
+                by blank lines.
+              </p>
+            </div>
 
-        {/* Word count vs character count */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            Word count vs. character count
-          </h2>
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Lines
+              </h3>
 
-          <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
-            <p>
-              Word count and character count measure different aspects of
-              writing. Word count tells you roughly how many separate words
-              appear in the text, while character count measures the individual
-              characters, including punctuation and spaces.
-            </p>
-
-            <p>
-              A word-count requirement is common for essays, reports, articles,
-              and other long-form writing. Character limits are more common for
-              short-form content such as titles, descriptions, messages, and
-              fields with strict length limits.
-            </p>
-
-            <p>
-              When a platform gives you a specific limit, always check whether
-              it refers to words or characters. The two measurements are not
-              interchangeable.
-            </p>
-          </div>
-        </section>
-
-        {/* Reading time */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            How reading time is estimated
-          </h2>
-
-          <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
-            <p>
-              ToolNoveHub uses an approximate reading speed of 200 words per
-              minute to estimate how long the text may take to read.
-            </p>
-
-            <p>
-              For example, a 400-word article produces an estimated reading
-              time of about 2 minutes. A 1,000-word article produces an
-              estimate of about 5 minutes.
-            </p>
-
-            <p>
-              Reading speed varies depending on the reader, language,
-              vocabulary, formatting, and complexity of the material. The
-              displayed value should therefore be treated as an estimate rather
-              than an exact reading time.
-            </p>
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Lines are counted according to the line breaks present
+                in the text editor.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -423,89 +422,30 @@ export default function WordCounter() {
             Who can use a Word Counter?
           </h2>
 
-          <div className="mt-5 space-y-5 text-sm leading-7 text-gray-600">
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Students
-              </h3>
-              <p className="mt-1">
-                Check essays, assignments, reports, applications, and other
-                academic writing against a required word count.
-              </p>
-            </div>
+          <div className="mt-5 space-y-4 text-sm leading-7 text-gray-600">
+            <p>
+              Students can use a word counter to check essays,
+              assignments, reports, and other written work against
+              word-count requirements.
+            </p>
 
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Writers and bloggers
-              </h3>
-              <p className="mt-1">
-                Monitor article length, compare draft sizes, and estimate
-                reading time while developing longer pieces of content.
-              </p>
-            </div>
+            <p>
+              Writers and bloggers can use it to estimate article
+              length, monitor drafts, and check how much text they have
+              written.
+            </p>
 
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Content creators
-              </h3>
-              <p className="mt-1">
-                Check the length of website copy, descriptions, newsletters,
-                captions, and other digital content.
-              </p>
-            </div>
+            <p>
+              Content creators and marketers can use word and character
+              counts when preparing website copy, descriptions,
+              newsletters, and other digital content.
+            </p>
 
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Business users
-              </h3>
-              <p className="mt-1">
-                Review the length of proposals, emails, reports, summaries, and
-                other business documents.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-gray-900">
-                Editors
-              </h3>
-              <p className="mt-1">
-                Quickly review the structure and length of a draft before
-                making detailed editorial changes.
-              </p>
-            </div>
+            <p>
+              The tool can also be useful for anyone who wants a quick
+              overview of the structure and length of a piece of text.
+            </p>
           </div>
-        </section>
-
-        {/* Practical tips */}
-        <section className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 sm:p-8">
-          <h2 className="text-xl font-bold text-gray-900">
-            Tips for meeting a word-count requirement
-          </h2>
-
-          <ul className="mt-5 space-y-3 text-sm leading-7 text-gray-600">
-            <li>
-              • Check the assignment or platform requirements before writing.
-            </li>
-
-            <li>
-              • Use the word count regularly instead of waiting until the end.
-            </li>
-
-            <li>
-              • Focus on useful information rather than adding unnecessary
-              words just to reach a target.
-            </li>
-
-            <li>
-              • Review headings, paragraphs, and sentences for clarity after
-              reaching the required length.
-            </li>
-
-            <li>
-              • If a platform specifies a character limit, use the character
-              count instead of the word count.
-            </li>
-          </ul>
         </section>
 
         {/* Privacy */}
@@ -516,25 +456,14 @@ export default function WordCounter() {
 
           <div className="mt-4 space-y-4 text-sm leading-7 text-gray-600">
             <p>
-              The Word Counter performs its calculations in your browser as
-              you type or paste text into the tool.
+              The Word Counter performs its calculations in your browser
+              as you type or paste text into the tool.
             </p>
 
             <p>
-              The tool does not require an account to count text. Your text is
-              used by the page to calculate the displayed statistics.
-            </p>
-
-            <p>
-              For information about data handling across the wider ToolNoveHub
-              website, please review the{' '}
-              <a
-                href="/privacy"
-                className="font-semibold text-blue-600 underline underline-offset-2 hover:text-blue-700"
-              >
-                ToolNoveHub Privacy Policy
-              </a>
-              .
+              The tool does not require an account. For information
+              about how ToolNoveHub handles data across the website,
+              review the ToolNoveHub Privacy Policy.
             </p>
           </div>
         </section>
@@ -545,121 +474,56 @@ export default function WordCounter() {
             Word Counter FAQ
           </h2>
 
-          <div className="mt-6 space-y-7">
-            <Faq
-              question="Is the Word Counter free?"
-              answer="Yes. You can use the ToolNoveHub Word Counter without creating an account."
-            />
+          <div className="mt-5 space-y-6">
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Is the Word Counter free?
+              </h3>
 
-            <Faq
-              question="Does the Word Counter update automatically?"
-              answer="Yes. The statistics are recalculated whenever the text in the editor changes."
-            />
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Yes. You can use the ToolNoveHub Word Counter without
+                creating an account.
+              </p>
+            </div>
 
-            <Faq
-              question="How is reading time calculated?"
-              answer="The estimate uses approximately 200 words per minute. Actual reading speed varies depending on the reader and the complexity of the text."
-            />
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Does the Word Counter update automatically?
+              </h3>
 
-            <Faq
-              question="What does the character count include?"
-              answer="The character count includes letters, numbers, punctuation, spaces, and other characters contained in the text."
-            />
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                Yes. The statistics are recalculated automatically
+                whenever the text in the editor changes.
+              </p>
+            </div>
 
-            <Faq
-              question="What is the difference between characters and characters without spaces?"
-              answer="The normal character count includes whitespace, while the characters-without-spaces count removes whitespace before calculating the total."
-            />
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                How is reading time calculated?
+              </h3>
 
-            <Faq
-              question="Can I count text in different languages?"
-              answer="The tool can process Unicode text, but word and sentence-counting rules can vary between languages. The displayed results follow the browser-side counting rules used by this tool."
-            />
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                The estimated reading time is based on approximately
+                200 words per minute. Actual reading speed varies by
+                person and by the complexity of the text.
+              </p>
+            </div>
 
-            <Faq
-              question="Does the Word Counter save my text?"
-              answer="The counter itself performs its calculations in the browser. For broader information about ToolNoveHub data handling, review the site's Privacy Policy."
-            />
+            <div>
+              <h3 className="font-semibold text-gray-900">
+                Can I count text in different languages?
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 text-gray-600">
+                The tool can process Unicode text, but word and
+                sentence counting rules can vary between languages.
+                The displayed counts are based on the browser-side
+                counting rules used by this tool.
+              </p>
+            </div>
           </div>
         </section>
       </main>
-    </div>
-  );
-}
-
-function StatCard({
-  label,
-  value,
-  suffix,
-  description,
-}: {
-  label: string;
-  value: number;
-  suffix?: string;
-  description: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-      <p className="text-sm font-medium text-gray-500">
-        {label}
-      </p>
-
-      <p
-        className="mt-2 text-3xl font-bold text-gray-900"
-        aria-label={`${value.toLocaleString()} ${label.toLowerCase()}`}
-      >
-        {value.toLocaleString()}
-
-        {suffix ? (
-          <span className="ml-1 text-base font-medium text-gray-500">
-            {suffix}
-          </span>
-        ) : null}
-      </p>
-
-      <p className="mt-1 text-xs leading-5 text-gray-500">
-        {description}
-      </p>
-    </div>
-  );
-}
-
-function InfoCard({
-  title,
-  text,
-}: {
-  title: string;
-  text: string;
-}) {
-  return (
-    <div>
-      <h3 className="font-semibold text-gray-900">
-        {title}
-      </h3>
-
-      <p className="mt-2 text-sm leading-6 text-gray-600">
-        {text}
-      </p>
-    </div>
-  );
-}
-
-function Faq({
-  question,
-  answer,
-}: {
-  question: string;
-  answer: string;
-}) {
-  return (
-    <div>
-      <h3 className="font-semibold text-gray-900">
-        {question}
-      </h3>
-
-      <p className="mt-2 text-sm leading-6 text-gray-600">
-        {answer}
-      </p>
     </div>
   );
 }

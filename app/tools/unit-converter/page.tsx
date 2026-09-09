@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import UnitConverter from "./UnitConverter";
 
+const siteUrl = "https://toolnovehub.tools";
+const pageUrl = `${siteUrl}/tools/unit-converter`;
+
 export const metadata: Metadata = {
   title: "Unit Converter - Length, Weight, Temperature & More",
   description:
@@ -19,13 +22,13 @@ export const metadata: Metadata = {
     "online unit converter",
   ],
   alternates: {
-    canonical: "https://toolnovehub.tools/tools/unit-converter",
+    canonical: pageUrl,
   },
   openGraph: {
     title: "Unit Converter - ToolNoveHub",
     description:
       "Convert length, weight, temperature, area, volume, and speed with a free online unit converter.",
-    url: "https://toolnovehub.tools/tools/unit-converter",
+    url: pageUrl,
     siteName: "ToolNoveHub",
     type: "website",
   },
@@ -48,20 +51,76 @@ export const metadata: Metadata = {
   },
 };
 
+const faqItems = [
+  {
+    question: "What units can I convert?",
+    answer:
+      "You can convert common length, weight, temperature, area, volume, and speed units.",
+  },
+  {
+    question: "Is the Unit Converter free?",
+    answer:
+      "Yes. ToolNoveHub provides this converter free to use without requiring an account.",
+  },
+  {
+    question: "How are temperature conversions calculated?",
+    answer:
+      "Celsius, Fahrenheit, and Kelvin require different formulas because their scales have different zero points and intervals.",
+  },
+  {
+    question: "Are the conversion results rounded?",
+    answer:
+      "The underlying calculation uses JavaScript number arithmetic. Results are formatted to a practical number of decimal places for display, so the displayed value may be rounded.",
+  },
+  {
+    question: "Does the converter upload my value?",
+    answer:
+      "The conversion calculation itself runs in your browser. No account is required for the basic conversion operation.",
+  },
+];
+
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: "Unit Converter",
-  url: "https://toolnovehub.tools/tools/unit-converter",
+  url: pageUrl,
   description:
     "Free online unit converter for length, weight, temperature, area, volume, and speed.",
   applicationCategory: "UtilitiesApplication",
+  applicationSubCategory: "Unit Conversion",
   operatingSystem: "Any",
+  browserRequirements: "Requires JavaScript",
+  isAccessibleForFree: true,
+  featureList: [
+    "Length conversion",
+    "Weight conversion",
+    "Temperature conversion",
+    "Area conversion",
+    "Volume conversion",
+    "Speed conversion",
+    "Metric unit conversion",
+    "Imperial unit conversion",
+    "Unit swapping",
+    "Browser-based calculations",
+  ],
   offers: {
     "@type": "Offer",
     price: "0",
     priceCurrency: "USD",
   },
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
 };
 
 export default function UnitConverterPage() {
@@ -71,6 +130,13 @@ export default function UnitConverterPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(structuredData),
+        }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
         }}
       />
 
@@ -247,30 +313,13 @@ export default function UnitConverterPage() {
             </h2>
 
             <div className="mt-6 space-y-6">
-              <Faq
-                question="What units can I convert?"
-                answer="You can convert common length, weight, temperature, area, volume, and speed units."
-              />
-
-              <Faq
-                question="Is the Unit Converter free?"
-                answer="Yes. ToolNoveHub provides this converter free to use without requiring an account."
-              />
-
-              <Faq
-                question="How are temperature conversions calculated?"
-                answer="Celsius, Fahrenheit, and Kelvin require different formulas because their scales have different zero points and intervals."
-              />
-
-              <Faq
-                question="Are the conversion results rounded?"
-                answer="The underlying calculation uses JavaScript number arithmetic. Results are formatted to a practical number of decimal places for display, so the displayed value may be rounded."
-              />
-
-              <Faq
-                question="Does the converter upload my value?"
-                answer="The conversion calculation itself runs in your browser. No account is required for the basic conversion operation."
-              />
+              {faqItems.map((item) => (
+                <Faq
+                  key={item.question}
+                  question={item.question}
+                  answer={item.answer}
+                />
+              ))}
             </div>
           </div>
         </section>
@@ -282,10 +331,7 @@ export default function UnitConverterPage() {
             </h2>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <RelatedTool
-                href="/tools/calculator"
-                title="Calculator"
-              />
+              <RelatedTool href="/tools/calculator" title="Calculator" />
 
               <RelatedTool
                 href="/tools/percentage-calculator"

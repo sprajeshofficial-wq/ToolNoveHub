@@ -150,7 +150,9 @@ export default function PrivacyPage() {
                 <li>Operating and improving our online tools.</li>
                 <li>Responding to support requests and messages.</li>
                 <li>Understanding website usage and performance.</li>
-                <li>Detecting and preventing abuse, fraud, or security issues.</li>
+                <li>
+                  Detecting and preventing abuse, fraud, or security issues.
+                </li>
                 <li>Displaying and measuring advertising where applicable.</li>
                 <li>Improving the user experience.</li>
               </ul>
@@ -164,9 +166,9 @@ export default function PrivacyPage() {
 
               <p className="mt-4 leading-7 text-gray-600">
                 ToolNoveHub and third-party services may use cookies, local
-                storage, pixels, or similar technologies to provide website
-                functionality, understand usage, maintain security, and
-                support advertising.
+                storage, pixels, web beacons, or similar technologies to
+                provide website functionality, understand usage, maintain
+                security, and support advertising.
               </p>
 
               <p className="mt-4 leading-7 text-gray-600">
@@ -211,15 +213,36 @@ export default function PrivacyPage() {
               </p>
 
               <p className="mt-4 leading-7 text-gray-600">
-                Advertising providers may use cookies or similar technologies
-                to provide, personalize, measure, and limit advertising, where
-                permitted by applicable law and user settings.
+                Google and other third-party advertising providers may use
+                cookies, web beacons, IP addresses, or similar technologies to
+                collect information when advertisements are displayed on
+                ToolNoveHub. These technologies may be used to serve,
+                personalize, measure, and limit advertising.
               </p>
 
               <p className="mt-4 leading-7 text-gray-600">
-                Third-party advertising providers may collect information about
-                visits to this and other websites in accordance with their own
-                privacy policies.
+                Google may use information about a user's previous visits to
+                ToolNoveHub or other websites to provide personalized
+                advertising, where permitted by applicable law and the user's
+                settings.
+              </p>
+
+              <p className="mt-4 leading-7 text-gray-600">
+                Users may choose to opt out of personalized advertising by
+                changing their advertising preferences through Google's Ads
+                Settings.
+              </p>
+
+              <p className="mt-4 leading-7 text-gray-600">
+                Third-party advertising providers may also use cookies or
+                similar technologies in accordance with their own privacy
+                policies and applicable laws.
+              </p>
+
+              <p className="mt-4 leading-7 text-gray-600">
+                For more information about how Google uses information from
+                sites and apps that use its services, please review Google's
+                applicable privacy information.
               </p>
             </section>
 

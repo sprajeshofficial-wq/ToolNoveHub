@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import TextToAscii from "./TextToAscii";
 
+const siteUrl = "https://toolnovehub.tools";
+const pageUrl = `${siteUrl}/tools/text-to-ascii`;
+
 export const metadata: Metadata = {
   title: "Text to ASCII Converter - Convert Text to ASCII Codes",
   description:
@@ -14,13 +17,13 @@ export const metadata: Metadata = {
     "convert text to ASCII",
   ],
   alternates: {
-    canonical: "https://toolnovehub.tools/tools/text-to-ascii",
+    canonical: pageUrl,
   },
   openGraph: {
     title: "Text to ASCII Converter - ToolNoveHub",
     description:
       "Convert text into ASCII character codes online with instant results and easy copying.",
-    url: "https://toolnovehub.tools/tools/text-to-ascii",
+    url: pageUrl,
     siteName: "ToolNoveHub",
     type: "website",
   },
@@ -47,11 +50,22 @@ const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: "Text to ASCII Converter",
-  url: "https://toolnovehub.tools/tools/text-to-ascii",
+  url: pageUrl,
   description:
-    "Convert text characters into ASCII decimal codes online.",
+    "Free online tool for converting text characters into ASCII decimal codes and displaying non-ASCII Unicode characters clearly.",
   applicationCategory: "DeveloperApplication",
+  applicationSubCategory: "Text to ASCII Converter",
   operatingSystem: "Any",
+  browserRequirements: "Requires JavaScript",
+  isAccessibleForFree: true,
+  featureList: [
+    "Convert text characters to ASCII decimal codes",
+    "Display character and code values",
+    "Handle non-ASCII Unicode characters",
+    "Copy converted results",
+    "Clear input and output",
+    "Browser-based text processing",
+  ],
   offers: {
     "@type": "Offer",
     price: "0",
